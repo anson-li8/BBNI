@@ -18,6 +18,7 @@ None
 **Paper reference:** "The MCMC Algorithm" section, specifically where it talks about the constraints on network topology updates: "There are three types of MCMC moves to update the parent sets: adding parent(s), removing parent(s) and swapping parent(s)... But if adding parent(s) leads to a cyclic graph, that specific move is illegal". This function outputs to the algorithm which nodes are upstream of which others, so it can prevent cycles when updating the network.
 
 **Status:** [x] Analyzed [ ] Cleaned [ ] Documented
+
 ---
 ## `check.ances.matrix`
 **Line:** 22
