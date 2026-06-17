@@ -1,8 +1,8 @@
 #################################
-library(bitops)
-library(stats)
-start.time=date()
-ptm <- proc.time()
+#library(bitops)
+#library(stats)
+#start.time=date()
+#ptm <- proc.time()
 ##################################################################################
 update.ancestor_matrix<-function(incid_matrix) #  for a given incidence matrix, generate corresponding ancestor matrix
 {
@@ -649,7 +649,7 @@ for (i in 1:num.node)
                          max.score.candidate<-bbb[bbb[,5]==max(score),]
                          if (is.numeric(max.score.candidate)==T)
                            add_parent=max.score.candidate
-                         if (is.matrix(max.score.candidate)==T)  
+                         if (is.matrix(max.score.candidate)==T)
                          if (nrow(max.score.candidate)>1)
                            add_parent<-max.score.candidate[sample.int(nrow(max.score.candidate),1),]
 
@@ -725,9 +725,9 @@ penalty=0.1
  for(i in 1:num.node)
   error[i,]<-rbinom(SampleSize,1,prob=para[num.node+1])
 ###############
-  true_network=GenerateNetwork(num.node)       # randomly generate a network 
+  true_network=GenerateNetwork(num.node)       # randomly generate a network
 
-  GeneData=matrix(nrow=num.node, ncol=SampleSize)   # based on the generated network, create a data set 
+  GeneData=matrix(nrow=num.node, ncol=SampleSize)   # based on the generated network, create a data set
   GeneData=GenerateSample(true_network)
  # GeneData<-read.table("GeneData_randomdatanoise0.1proposalinitialpenalty0.1multiplechains_3.txt",header=T)  #true network
  # GeneData<-data.matrix(GeneData)
@@ -740,7 +740,7 @@ penalty=0.1
        true_incid_matrix[i,j]<-1
   true_logpost=Error_LLH(true_network)[[1]][length(Error_LLH(true_network))]
 
-  Candidate=ProposalConstruction(GeneData)    # create the proposal for generated data  
+  Candidate=ProposalConstruction(GeneData)    # create the proposal for generated data
   prior.triplet<-Candidate[[1]]
  # prior.triplet=read.table("proposal_triplet_true_network.txt",header=T)
   prior.pairwise<-Candidate[[2]]
@@ -749,7 +749,7 @@ penalty=0.1
   StandAlone=matrix(nrow=num.node,ncol=2)   # calculate the BIC for each node
    for (i in 1:num.node)
      {
-      succ.prob=(sum(GeneData[i,])+pseudo.count)/(SampleSize+pseudo.count)  # calculate BIC for standalone gene 
+      succ.prob=(sum(GeneData[i,])+pseudo.count)/(SampleSize+pseudo.count)  # calculate BIC for standalone gene
       BIC.value=-2*(sum(GeneData[i,]+pseudo.count)*log(succ.prob)+(SampleSize-sum(GeneData[i,]))*log(1-succ.prob))+1*log(SampleSize)
       post.data=exp(-0.5*BIC.value)
       StandAlone[i,1]=i; StandAlone[i,2]=BIC.value
@@ -761,10 +761,10 @@ penalty=0.1
 #  All_Logpost=list()
   ###################################
 
- for (iii in 1:1)       # iii: number of simulations 
+ for (iii in 1:1)       # iii: number of simulations
   {
-  trans_func_matrix=ConstructInitial(Candidate)    # use the randomly selected initial 
-  #trans_func_matrix=read.table("correctrate0.4trans_func_matrix_twostepneighborhood3_8_works_finalnetwork.txt",header=T) # use specific initial 
+  trans_func_matrix=ConstructInitial(Candidate)    # use the randomly selected initial
+  #trans_func_matrix=read.table("correctrate0.4trans_func_matrix_twostepneighborhood3_8_works_finalnetwork.txt",header=T) # use specific initial
   # trans_func_matrix=read.table("CorrectRate0.55AsStartingNetwork.txt",header=T)
   incid_matrix<-trans_func_matrix
     for (i in 1:nrow(incid_matrix))
@@ -788,11 +788,11 @@ penalty=0.1
   n<-1; num[1]<-1;  iter<-1 ; jump_point<-numeric(); jump_point[1]<-1   # paramters for each chain
 for (ii in 1: num_update)       # run ii full rounds, with each round of num.node times
 {
- if (ii<=round(0.1*num_update))       # use adaptive ratio of using proposal information 
-   prop.ratio=0.1 
+ if (ii<=round(0.1*num_update))       # use adaptive ratio of using proposal information
+   prop.ratio=0.1
  if (ii>round(0.1*num_update))
-   prop.ratio=0.9 
-     
+   prop.ratio=0.9
+
  update_order<-sample.int(num.node,num.node,replace=FALSE)
  for (k in 1: length(update_order))         #   consider the updating node g_k
   {
@@ -836,7 +836,7 @@ for (ii in 1: num_update)       # run ii full rounds, with each round of num.nod
        {
          pairwise.prior.pare<-pairwise.prior.set[,1]
     #     all.maxscore.pairwise=pairwise.prior.set[pairwise.prior.set[,4]==max(pairwise.prior.set[,4]),]
-       }  
+       }
 
       triplet.prior.set<-matrix()
       triplet.prior.pare<-matrix()
@@ -846,7 +846,7 @@ for (ii in 1: num_update)       # run ii full rounds, with each round of num.nod
         {
          triplet.prior.pare<-triplet.prior.set[,1:2]
    #      all.maxscore.triplet=triplet.prior.set[triplet.prior.set[,5]==max(triplet.prior.set[,5]),]
-        } 
+        }
       if (ncol(triplet.prior.set)==1)
         {
           triplet.prior.set<-t(triplet.prior.set)
@@ -857,10 +857,10 @@ for (ii in 1: num_update)       # run ii full rounds, with each round of num.nod
    #   BIC.pairwise=0; BIC.triplet=0 # case1:  "numeric case"
    #     if(is.numeric(all.maxscore.pairwise)==T & length(all.maxscore.pairwise)>0)
    #        maxscore.pairwise=all.maxscore.pairwise
-   #       
+   #
    #     if(is.numeric(all.maxscore.triplet)==T & length(all.maxscore.triplet)>0)
    #        maxscore.triplet=all.maxscore.triplet
-   #       
+   #
    #     if (is.matrix(all.maxscore.pairwise)==T)
    #      if (nrow(all.maxscore.pairwise)>0)             # randomly select one row if maxscore.pairwsie has multiple rows
    #       if (is.matrix(all.maxscore.triplet)==T)
@@ -879,7 +879,7 @@ for (ii in 1: num_update)       # run ii full rounds, with each round of num.nod
       if (length(parent_of_update)==0) #  there are only add-parent moves, every time only one move can be proposed
         {
          num_legal_parent<-length(legal_parent)
-         if (num_legal_parent>1)          
+         if (num_legal_parent>1)
             uu<-runif(1)
          if (num_legal_parent==0)       # if no candiate nodes are available for adding parent, then ignore this node
             uu<-0
@@ -937,14 +937,14 @@ for (ii in 1: num_update)       # run ii full rounds, with each round of num.nod
               p2c_prob[1]<-1
 
              if (num_legal_parent>1)
-                 c2p_prob[1]<-1/2*add_one_prob   # this is Q(T_p|T_c) the probability of move type and specific node involved 
+                 c2p_prob[1]<-1/2*add_one_prob   # this is Q(T_p|T_c) the probability of move type and specific node involved
              else
                  c2p_prob[1]<-add_one_prob
              p2c_prob[2]<-1   # Q(R_c|T_c)
              c2p_prob[2]<-prop_trans_func_prob  # Q(R_p|T_p)
              p2c_prob[3]<-1 # Q(\theta_c|T_c, R_c), i.e. the prior probability for new root node
              c2p_prob[3]<-1                     # Q(\theta_p|T_p, R_p)
-                                                                                  
+
              nume<-sum((prop_sample_prob))+sum(log(p2c_prob))
              deno<-sum((curr_sample_prob))+sum(log(c2p_prob))
              acce_prob<-exp(nume-deno)
@@ -1330,7 +1330,7 @@ for (ii in 1: num_update)       # run ii full rounds, with each round of num.nod
                }
              }
            }
-         ############################################# additional move: swap two with one   
+         ############################################# additional move: swap two with one
            if (uu>=5/6 & length(swap_candi)>1)
              {
               legal.triplet.pare<-intersect(swap_candi, triplet.prior.pare)
@@ -1954,7 +1954,7 @@ for (i in 1:length(Trans_Func_Matrix))
 #  All_Trans_Func_Matrix[[iii]]=Trans_Func_Matrix
 #  All_Logpost[[iii]]=all_logpost
 #  All_Correct_Rate[[iii]]=SF_ratio
-} # end of iii  
+} # end of iii
 time.spent<-proc.time()-ptm
 ################### test the method
 #save(list=ls(),file="BICNoPerfectProposa23.RData")
