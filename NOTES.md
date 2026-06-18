@@ -38,17 +38,33 @@ None
 ---
 ## `Prop_Trans_Func_Matrix`
 
+**What it does:** For a proposed network topology, assigns an integer code to each nonzero entry that indicates the Boolean function used by the child node. The code range is based on parent count (1 or 2): Codes 1–10 correspond to ten non-degenerate two-input Boolean functions, while codes 11–12 correspond to the unary functions of identity and negation.
+
+**Arguments:**
+- `prop_incid_matrix` — (matrix) Proposed incidence matrix for network topology
+
+**Returns:**
+Matrix with same dimensions as input. Zeros indicate no incoming edge. Non-zero entries each contain a code from 1-12 indentifying which Boolean operation each genes utilizes for calculation of the input of its parents(s).
+
+**Hidden globals:** 
+None
+
+**Paper reference:** "Prior Distributions" subsection, specifically where it explains the allowable Boolean update rules: "If W(g_i) is the set {a}, f_i(a) can be either a or ¬a; if W(g_i) is the set {a, b}, f_i(a,b) has 10 non-degenerative choices...". This function follows that logic by mapping each parent set to its corresponding valid Boolean transition rule.
+
+**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
+
+---
+## `Error_LLH`
+
 **What it does:** 
 
 **Arguments:**
 - 
 
-**Returns:** 
+**Returns:**
 
 **Hidden globals:** 
-
 
 **Paper reference:** 
 
 **Status:** [x] Analyzed [ ] Cleaned [ ] Documented
-
