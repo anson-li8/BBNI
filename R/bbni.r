@@ -758,6 +758,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                     if(is.matrix(remove_pare)==T)
                       {
                       Remove_Pare<-remove_pare[remove_pare[,4]==max(remove_pare[,4]),]
+                      if (is.matrix(Remove_Pare)==T)
                       if (nrow(Remove_Pare)>1)
                         Remove_Pare<-Remove_Pare[sample.int(nrow(Remove_Pare), 1),]  # each candidate has equal chance
                       func_order<-Remove_Pare[3]
