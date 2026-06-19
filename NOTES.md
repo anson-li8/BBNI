@@ -144,11 +144,29 @@ Numeric BIC value (or NA if mismatch count exceeds threshold). Used to rank cand
 **Returns:** (list) Containing two matrices (Candidate[[1]] for 2-input triplets and Candidate[[2]] for 1-input pairs). These matrices store the candidate parent nodes, the best-fitting Boolean logic function, the raw miscounts, and the calculated proposal selection weights.
 
 **Hidden globals:**
-- SampleSize — (integer) Total number of time points. 
-**CRITICAL NOTE:** There is already a defined local variable sample.size <- ncol(gene.data) at the top of the function, but the global variable SampleSize is used instead inside the nested loop during subsetting: gene.data[i,1:(SampleSize-1)]. 
-- BF1 through BF14 — (functions) Fourteen external helper functions called in the inner loop to evaluate the BICS of the transition state counts (test.stat) and return the total data mismatches for each specific Boolean rule. (Note: Rules 11-14 in this script map to the 1-input rules for $g_i$, $g_j$, and their complements).
+- `SampleSize` — (integer) Total number of time points. 
+**CRITICAL NOTE:** There is already a defined local variable `sample.size <- ncol(gene.data)` at the top of the function, but the global variable `SampleSize` is used instead inside the nested loop during subsetting: `gene.data[i,1:(SampleSize-1)]`. 
+- `BF1` through `BF14` — (functions) Fourteen external helper functions called in the inner loop to evaluate the BICS of the transition state counts (test.stat) and return the total data mismatches for each specific Boolean rule. (Note: Rules 11-14 in this script map to the 1-input rules for $g_i$, $g_j$, and their complements).
 
 **Paper reference:**
 "Prior Distributions" subsection, specifically where it explains the allowable Boolean update rules: "If $W(g_i)$ is the set {a}, $f_i(a)$ can be either a or $\overline{a}$; if $W(g_i)$ is the set {a, b}, $f_i(a,b)$ has 10 non-degenerative choices...". These 14 functions are the candidates being evaluated and weighted in this distribution construction step.
+
+**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
+
+---
+## `ConstructInitial`
+**What it does:** Builds a single valid starting network topology and Boolean transition function matrix for the MCMC algorithm. It uses a 50/50 chance of one vs. two parents per node then selects the most probable parent-child relationships via the pre-computed proposal weights, while strictly ensuring the DAG constraint.
+
+**Arguments:**
+- Candidate — (list) Output from `ProposalConstruction()`, with the transition function selection weights for 2-input and 1-input node combinations
+
+**Returns:**  (matrix) square transition function matrix representing the initial state of the network $T^{(0)}$ and its corresponding Boolean rules $F^{(0)}$, providing an optimal acyclic starting network for the MCMC.
+
+**Hidden globals:**
+- `num.node` — (integer) total number of network nodes
+- Calls `update.ancestor_matrix()` and `check.ances.matrix()` for validation
+
+**Paper reference:**
+"Simulation Studies" subsection, describomg how a valid starting network is constructed: “we first randomly generated a valid network topology T... checked the validity... and repeated this process till a valid network topology is obtained.” This function embodies that requirement by selecting high‑weight parent sets while enforcing the acyclic constraint to produce a valid initial `T(0)`,`F(0)`.
 
 **Status:** [x] Analyzed [ ] Cleaned [ ] Documented
