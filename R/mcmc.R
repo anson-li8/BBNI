@@ -852,7 +852,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                     max.score.candidate<-bbb[bbb[,5]==max(score),]
                     if (is.numeric(max.score.candidate)==T)
                       swap_parent<-max.score.candidate
-                    if (is.matrix(max.score.candiate)==T)
+                    if (is.matrix(max.score.candidate)==T)
                     if (nrow(max.score.candidate)>1)
                       swap_parent<-max.score.candidate[sample.int(nrow(max.score.candidate),1),]
                     swap_one_node<-setdiff(swap_parent[1:2], parent_of_update)

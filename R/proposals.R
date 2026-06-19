@@ -1,10 +1,10 @@
  ProposalConstruction<-function(GeneData)
  {
 gene.data=GeneData
-sample.size<-ncol(gene.data)
+# SampleSize<-ncol(gene.data)
 num.node<-nrow(gene.data)
 error.prop<-0.4; pseudo.count<-0.01
-sample.size<-sample.size+pseudo.count*8; threshold<-sample.size*error.prop
+SampleSize<-SampleSize+pseudo.count*8; threshold<-SampleSize*error.prop
 candidate.prior<-list()
 kk<-1
 for (i in 1: nrow(gene.data))
@@ -165,7 +165,7 @@ return(Candidate)
 ############
 ConstructInitial<-function(Candidate)
 {
-prior.triple=Candidate[[1]]
+prior.triplet=Candidate[[1]]
 prior.pairwise=Candidate[[2]]
 trans_func_matrix<-matrix(0,nrow=num.node,ncol=num.node)
 prop_trans_func_matrix<-matrix(0,nrow=num.node, ncol=num.node)
