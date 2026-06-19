@@ -1,5 +1,5 @@
 # BBNI Function Analysis
-
+CRITICAL NOTE FOR REFACTORING: R utilizes static scoping. The "Hidden globals" listed in the functions below don't currently resolve across files because they are locally defined inside run_bbni and not assigned to the global environment (`<<-`. Executing the code as currently factored will result in object not found errors. The primary refactoring objective is to thread every listed hidden global into an explicit function argument.
 ---
 ## `update.ancestor_matrix`
 
@@ -36,6 +36,8 @@ None
 ---
 ## `Prop_Trans_Func_Matrix`
 
+CRITICAL: DEAD CODE. never called anywhere in the pipeline. ConstructIntial performs function-assignment inline instead of using this module. Decide to integrate or delete it during refactor.
+
 **What it does:** For a proposed network topology, assigns an integer code to each nonzero entry that indicates the Boolean function used by the child node. The code range is based on parent count (1 or 2): Codes 1–10 correspond to ten non-degenerate two-input Boolean functions, while codes 11–12 correspond to the unary functions of identity and negation.
 
 **Arguments:**
@@ -68,6 +70,7 @@ None
 - `penalty` - (numeric) The structural prior probability per edge used to penalize network complexity $P(T)$
 
 **Paper reference:**“Posterior Distributions” subsection: “To circumvent this problem, we analytically integrate out all pᵢ’s and $p_E$ from the above posterior distribution, which results in the following collapsed version of the posterior distribution: Equation (4)” “We have designed an MCMC algorithm to sample from $𝑝(𝐹,𝑇∣𝐺)$, which avoids the dimension change caused by pᵢ’s.” This function directly implements the collapsed posterior model described in Equation (4), using mismatch counts 𝐵 and root ON‑counts $C_i$ to compute the integrated likelihood.
+DIVERGENCE: code adds edge-count penalized structural prior, deviating from papers assumption of unfirom prior (1/$\delta$) over valid topologies.
 
 **Status:** [x] Analyzed [ ] Cleaned [ ] Documented
 
@@ -117,7 +120,7 @@ $Pr(g_{ij}=1)=p_i$.” Non‑root nodes follow the noisy Boolean update in Equat
 - `test.stat` - (integer vector) Frequency count vector [c000, c001, c010, c011, c100, c101, c110, c111] storing how many times each specific combination of parent and child states occurs together in the data
 
 **Returns:**
-Numeric BIC value (or NA if mismatch count exceeds threshold). Used to rank candidate functions.
+Numeric BIC value (or `NULL` if mismatch count exceeds threshold). Returning `NULL` results in `ProposalConstruction` dropping the entry, by reducing output vector length from 5 to 4 so it can be filtered out. Used to rank candidate functions.
 
 **Hidden globals:**
 - `SampleSize` - (integer) Sample size
@@ -164,6 +167,7 @@ Numeric BIC value (or NA if mismatch count exceeds threshold). Used to rank cand
 
 **Hidden globals:**
 - `num.node` - (integer) total number of network nodes
+- `prior.triplet` - (matrix) TYPO/SCOPE BUG: argument is `prior.triple`, but inner loop looks for `prior.triplet`, causing it to look in global environment not passed argument
 - Calls `update.ancestor_matrix()` and `check.ances.matrix()` for validation
 
 **Paper reference:**
@@ -186,7 +190,7 @@ Numeric BIC value (or NA if mismatch count exceeds threshold). Used to rank cand
 **Returns:**  (list) Full trajectory of the MCMC chain, including the recorded Trans_Func_Matrix, Incidence_Matrix, and log-posterior scores, all representing samples drawn from the marginal posterior distribution $P(T,F|G)$ which are then used for Bayesian model averaging.
 
 **Hidden globals:**
-- None — (All variables used inside the function are either passed as arguments or defined locally).
+- `max.score.candidate` - CRITICAL TYPO: missed assignment during two-parent swap move (`if (is.matrix(max.score.candiate)==T)`). Correct local variable is `max.score.candidate`
 
 CRITICAL AUDIT NOTE: While there are no hidden global variables, this function contains a fatal architectural bug for a modern R package. Immediately upon entering the function, there is hardcode and override for every single argument passed to it (e.g., num.node=20; SampleSize=200; penalty=0.1). Furthermore, the function relies on the 7 helper functions (Error_LLH, ProposalConstruction, etc.) existing in the global environment.
 
