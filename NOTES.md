@@ -1,4 +1,5 @@
 # BBNI Function Analysis
+
 ---
 ## `update.ancestor_matrix`
 
@@ -22,14 +23,11 @@ None
 
 **What it does:** It ensures that the proposed network topology fulfills the directed acyclic graph constraint by checking the diagonal (self-referring) of ancestor matrix for illegal cyclic loops.
 
-**Arguments:**
-- `ances_matrix` — (matrix) The transitive closure matrix of the network topology 𝑇, where (i, j) = 1 means node i is an ancestor of node j
+**Arguments:** - `ances_matrix` — (matrix) The transitive closure matrix of the network topology 𝑇, where (i, j) = 1 means node i is an ancestor of node j
 
-**Returns:** (numeric)
-Integer count of the number of nodes that are ancestors of themselves. If greater than 0, the proposed topology has cyclic loops and must be rejected.
+**Returns:** (numeric) Integer count of the number of nodes that are ancestors of themselves. If greater than 0, the proposed topology has cyclic loops and must be rejected.
 
-**Hidden globals:** 
-None
+**Hidden globals:** None
 
 **Paper reference:** "The MCMC Algorithm" section, specifically where it talks about the constraints on network topology updates: "There are three types of MCMC moves to update the parent sets: adding parent(s), removing parent(s) and swapping parent(s)... But if adding parent(s) leads to a cyclic graph, that specific move is illegal". This function helps enforce that acyclic requirement by returning a loop count greater than 0 to indicate a topology that must be rejected.
 
@@ -44,27 +42,47 @@ None
 - `prop_incid_matrix` — (matrix) Proposed incidence matrix for network topology
 
 **Returns:**
-Matrix with same dimensions as input. Zeros indicate no incoming edge. Non-zero entries each contain a code from 1-12 indentifying which Boolean operation each genes utilizes for calculation of the input of its parents(s).
+Transition-function matrix with same dimensions as input. 0 indicates no incoming edge. Non-zero entries each contain a code from 1-12 indentifying which Boolean operation each genes utilizes for calculation of the input of its parents(s).
 
 **Hidden globals:** 
 None
 
-**Paper reference:** "Prior Distributions" subsection, specifically where it explains the allowable Boolean update rules: "If W(g_i) is the set {a}, f_i(a) can be either a or ¬a; if W(g_i) is the set {a, b}, f_i(a,b) has 10 non-degenerative choices...". This function follows that logic by mapping each parent set to its corresponding valid Boolean transition rule.
+**Paper reference:** "Prior Distributions" subsection, specifically where it explains the allowable Boolean update rules: "If $W(g_i)$ is the set {a}, $f_i(a)$ can be either a or $\overline{a}$; if $W(g_i)$ is the set {a, b}, $f_i(a,b)$ has 10 non-degenerative choices...". This function follows that logic by mapping each parent set to its corresponding valid Boolean transition rule.
 
 **Status:** [x] Analyzed [ ] Cleaned [ ] Documented
 
 ---
 ## `Error_LLH`
+What it does: It calculates the collapsed posterior log-probability of a proposed network topology (T) and its Boolean functions (F) given the observed data (G). It parses the TRFUM into root and non-root nodes, predicts each node's value based on its Boolean rule, counts mismatches, and evaluates the Beta-Binomial collapsed likelihood. By integrating out Bernoulli parameters $θ=\{𝑝_𝐸,𝑝_𝑖\}$ under Beta priors, the function returns $logp(T,F|G)$, which is the model score for the MCMC algorithm.
 
-**What it does:** 
+Arguments: 
+- TRFUM - (matrix) Transition Function Matrix combining both the current network topology T and the specific Boolean logic functions F assigned to each node (integer codes 1-12).
 
-**Arguments:**
+Returns: (list) List of two vectors containing evaluating model fit. results[[1]] contains [ErrorFactor, RootFactor, likelihood, post_para, log_post_model], with the most notable being log_post_model, which is the collapsed posterior metric $logp(T,F|G)$. results[[2]] contains [para_sample, mismath, Perror], containing point estimates of the root ON-probabilities, total mismatches, and estimate noise error rate, e.
+
+Hidden globals: 
+- GeneData - (matrix) Observed binary gene expression time-series dataset G (rows = nodes, columns = time points) 
+- SampleSize - (integer) Total number of time points/samples in GeneData 
+- num.node - (integer) Total number of genes/nodes in the network 
+- prior_para - (matrix) Beta distribution hyperparameters ($\alpha, \beta$) for root nodes and the global noise parameter $e$ 
+- penalty - (numeric) The structural prior probability per edge used to penalize network complexity $P(T)$
+
+Paper reference: “Posterior Distributions” subsection: “To circumvent this problem, we analytically integrate out all pᵢ’s and $p_E$ from the above posterior distribution, which results in the following collapsed version of the posterior distribution: Equation (4)” “We have designed an MCMC algorithm to sample from $𝑝(𝐹,𝑇∣𝐺)$, which avoids the dimension change caused by pᵢ’s.” This function directly implements the collapsed posterior model described in Equation (4), using mismatch counts 𝐵 and root ON‑counts $C_i$ to compute the integrated likelihood.
+
+Status: [x] Analyzed [ ] Cleaned [ ] Documented
+
+---
+## `Error_LLH`
+What it does: 
+
+Arguments: 
 - 
 
-**Returns:**
+Returns: 
 
-**Hidden globals:** 
+Hidden globals: 
+- 
 
-**Paper reference:** 
+Paper reference: 
 
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
+Status: [x] Analyzed [ ] Cleaned [ ] Documented
