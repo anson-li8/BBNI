@@ -56,16 +56,16 @@ None
 What it does: It calculates the collapsed posterior log-probability of a proposed network topology (T) and its Boolean functions (F) given the observed data (G). It parses the TRFUM into root and non-root nodes, predicts each node's value based on its Boolean rule, counts mismatches, and evaluates the Beta-Binomial collapsed likelihood. By integrating out Bernoulli parameters $θ=\{𝑝_𝐸,𝑝_𝑖\}$ under Beta priors, the function returns $logp(T,F|G)$, which is the model score for the MCMC algorithm.
 
 Arguments: 
-- TRFUM - (matrix) Transition Function Matrix combining both the current network topology T and the specific Boolean logic functions F assigned to each node (integer codes 1-12).
+- `TRFUM` - (matrix) Transition Function Matrix combining both the current network topology T and the specific Boolean logic functions F assigned to each node (integer codes 1-12).
 
 Returns: (list) List of two vectors containing evaluating model fit. results[[1]] contains [ErrorFactor, RootFactor, likelihood, post_para, log_post_model], with the most notable being log_post_model, which is the collapsed posterior metric $logp(T,F|G)$. results[[2]] contains [para_sample, mismath, Perror], containing point estimates of the root ON-probabilities, total mismatches, and estimate noise error rate, e.
 
 Hidden globals: 
-- GeneData - (matrix) Observed binary gene expression time-series dataset G (rows = nodes, columns = time points) 
-- SampleSize - (integer) Total number of time points/samples in GeneData 
-- num.node - (integer) Total number of genes/nodes in the network 
-- prior_para - (matrix) Beta distribution hyperparameters ($\alpha, \beta$) for root nodes and the global noise parameter $e$ 
-- penalty - (numeric) The structural prior probability per edge used to penalize network complexity $P(T)$
+- `GeneData` - (matrix) Observed binary gene expression time-series dataset G (rows = nodes, columns = time points) 
+- `SampleSize` - (integer) Total number of time points/samples in GeneData 
+- `num.node` - (integer) Total number of genes/nodes in the network 
+- `prior_para` - (matrix) Beta distribution hyperparameters ($\alpha, \beta$) for root nodes and the global noise parameter $e$ 
+- `penalty` - (numeric) The structural prior probability per edge used to penalize network complexity $P(T)$
 
 Paper reference: “Posterior Distributions” subsection: “To circumvent this problem, we analytically integrate out all pᵢ’s and $p_E$ from the above posterior distribution, which results in the following collapsed version of the posterior distribution: Equation (4)” “We have designed an MCMC algorithm to sample from $𝑝(𝐹,𝑇∣𝐺)$, which avoids the dimension change caused by pᵢ’s.” This function directly implements the collapsed posterior model described in Equation (4), using mismatch counts 𝐵 and root ON‑counts $C_i$ to compute the integrated likelihood.
 
@@ -76,7 +76,7 @@ Status: [x] Analyzed [ ] Cleaned [ ] Documented
 What it does: Randomly generates an initial, legal DAG graph topology $T$ and assigns a corresponding Boolean transition function $F$ to each node, ensuring a maximum in-degree value of 2.
 
 Arguments: 
-- num.node - (integer) Total number of genes/nodes in the network
+- `num.node` - (integer) Total number of genes/nodes in the network
 
 Returns: (matrix) Square transition function matrix combining both the initial DAG topology and the randomly assigned Boolean logic functions (integer code from 1-12). Ensures graph is acyclic before returning
 
@@ -84,5 +84,27 @@ Hidden globals:
 - None. Relies on `update.ancestor_matrix` and `check.ances.matrix` functions to verify DAG constraint
 
 Paper reference: "Model" subsection, stating structural constraints of the Boolean network: “we will focus on the case where the maximum in-degree of all nodes in the network is bounded by 2” and that the required structure is a “directed acyclic graph denoted by ${G, T, F}$.”  This function generates an initial topology that fulfills those requirements by assigning random parent sets of size 0-2 and rejecting any topology that forms a directed loop.
+
+Status: [x] Analyzed [ ] Cleaned [ ] Documented
+
+---
+## `GenerateSample`
+What it does: Simulate a time-series observation dataset $G$ by identifying root nodes to simulate independently, then topologically computing the remaining nodes from $t-1$ to time $t$ using their specified Boolean logic functions and an inverted noise parameter $e$.
+
+Arguments: 
+- `trans_matrix` - (matrix) Square matrix combining network topology $T$ and integer coded Boolean logic functions $F$ assigned to each directed edge.
+
+Returns: (matrix) Simulated binary gene expression matrix $G$, where rows represent individual genes/nodes and columns represents sequential points in time, acting as final output data with simulated biological noise
+
+Hidden globals: 
+- `num.node` - (integer) Total number of network nodes
+- `SampleSize` - (integer) Total number of time points to simulate
+- `para` - (numeric vector) Baseline success probabilities $\theta_i$ used to generate the expression states of root nodes by independent Bernoullli trials.
+- `error` - (matrix) Pre-generated binary noise matrix. Applied by `bitXor` operation to occasionally flip Boolean output, injecting natural noise expected by model
+
+Paper reference: 
+"Model" subsection, where the data‑generation equations are defined. Root nodes follow the Bernoulli model in Equation (1):
+“If $W(g_i)$ is an empty set... we assume an independent Bernoulli distribution for it, i.e., 
+$Pr(g_{ij}=1)=p_i$.” Non‑root nodes follow the noisy Boolean update in Equation (1): “$g_i=f_i(W(g_i))\oplus\epsilon$”, where $\epsilon$ is a Bernoulli noise term with probability $p_\epsilon$ of flipping the output. This function implements these equations by randomizing roots independently and applying corresponding Boolean logic with XOR‑calculated noise for the non‑roots.
 
 Status: [x] Analyzed [ ] Cleaned [ ] Documented
