@@ -3,3 +3,5 @@
 importFrom(bitops,bitAnd)
 importFrom(bitops,bitOr)
 importFrom(bitops,bitXor)
+importFrom(stats,rbinom)
+importFrom(stats,runif)

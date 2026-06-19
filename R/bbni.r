@@ -1,8 +1,10 @@
+#' @importFrom stats runif
 run_bbni <- function(GeneData, num.node, SampleSize, prior_para, 
                      num_update, penalty, prop.ratio) {
   ###############  MCMC
   prop.ratio<-0.1       # proposal information is used with probability prop.ratio
   prop_beta1<-2; prop_beta2<-100
+  pseudo.count <- 0.01
   Trans_Func<-seq(1,12)     # all transition functions where each node has two parents at most
   # num.node=20; SampleSize=200 overrides function argument
   # error.prop<-0.2; pseudo.count<-0.01 overrides function argument
@@ -33,9 +35,9 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
   #     for (j in 1:ncol(true_incid_matrix))
   #       if (true_incid_matrix[i,j]>0)
   #       true_incid_matrix[i,j]<-1
-  #   true_logpost=Error_LLH(true_network)[[1]][length(Error_LLH(true_network))]
+  #   true_logpost=Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =true_network)[[1]][length(Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =true_network))]
 
-    Candidate=ProposalConstruction(GeneData)    # create the proposal for generated data
+    Candidate=ProposalConstruction(GeneData, SampleSize)    # create the proposal for generated data
     prior.triplet<-Candidate[[1]]
   # prior.triplet=read.table("proposal_triplet_true_network.txt",header=T)
     prior.pairwise<-Candidate[[2]]
@@ -58,7 +60,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
 
   for (iii in 1:1)       # iii: number of simulations
     {
-    trans_func_matrix=ConstructInitial(Candidate)    # use the randomly selected initial
+    trans_func_matrix=ConstructInitial(Candidate, num.node)    # use the randomly selected initial
     #trans_func_matrix=read.table("correctrate0.4trans_func_matrix_twostepneighborhood3_8_works_finalnetwork.txt",header=T) # use specific initial
     # trans_func_matrix=read.table("CorrectRate0.55AsStartingNetwork.txt",header=T)
     incid_matrix<-trans_func_matrix
@@ -73,12 +75,12 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
     Ancestor_Matrix<-list()     # Matrix: Ancestor Matrix recording ancesor-offspring relatons for the whole chain
     Trans_Func_Matrix<-list()    # Matrix: Transition Function Matrix for the whole chain
     Sample_Matrix<-matrix(nrow=num.node*num_update+1, ncol=num.node+2)
-    Sample_Matrix[1,]<-Error_LLH(trans_func_matrix)[[2]]
+    Sample_Matrix[1,]<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =trans_func_matrix)[[2]]
     Incidence_Matrix[[1]]<-incid_matrix
     Ancestor_Matrix[[1]]<-ances_matrix
     Trans_Func_Matrix[[1]]<-trans_func_matrix
     num<-numeric();logpost<-numeric()
-    all_logpost<-numeric(); aa<-Error_LLH(Trans_Func_Matrix[[1]]);  all_logpost[1]<-aa[[1]][length(aa[[1]])]
+    all_logpost<-numeric(); aa<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =Trans_Func_Matrix[[1]]);  all_logpost[1]<-aa[[1]][length(aa[[1]])]
     logpost[1]<-all_logpost[1]
     n<-1; num[1]<-1;  iter<-1 ; jump_point<-numeric(); jump_point[1]<-1   # paramters for each chain
   for (ii in 1: num_update)       # run ii full rounds, with each round of num.node times
@@ -95,7 +97,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
       cat("n=", n,"\n" )
       old<-n
   #   print("iter="); print(iter)
-      cat("true_logpost=", true_logpost, "\n")
+      # cat("true_logpost=", true_logpost, "\n")
       cat("all_logpost=", all_logpost[iter],"\n")
       current_incid_matrix<-Incidence_Matrix[[iter]]
       current_ances_matrix<-Ancestor_Matrix[[iter]]
@@ -217,7 +219,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 }
               add_one_prob<-1/length(legal_parent)
               prop_trans_func_prob<-1/2  #  there are in all two types of boolean functions to choose for pairwise genes
-              xxx<-Error_LLH(prop_trans_func_matrix)
+              xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
               prop_sample<-xxx[[2]]
               prop_post<-xxx[[1]][length(xxx[[1]])]
               prop_sample_prob<-numeric(); p2c_prob<-numeric()   # calculate acceptance probability
@@ -303,7 +305,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   }
                 sample_two_prob<-1/choose(num_legal_parent,2)
                 prop_trans_func_prob<-1/10
-                xxx<-Error_LLH(prop_trans_func_matrix)
+                xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                 prop_sample<-xxx[[2]]
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
@@ -395,7 +397,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   }
                 add_one_prob<-1/length(legal_parent)
                 prop_trans_func_prob<-1/10  # there are 10 functions to choose
-                xxx<-Error_LLH(prop_trans_func_matrix)
+                xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                 prop_sample<-xxx[[2]]
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
@@ -468,7 +470,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   }
                 swap_one_prob<-1/length(swap_candi)
                 prop_trans_func_prob<-1/2  #  new proposal transition function matrix
-                xxx<-Error_LLH(prop_trans_func_matrix)
+                xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                 prop_sample<-xxx[[2]]
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 prop_sample_prob<-numeric(); p2c_prob<-numeric()  # calculate acceptance probability
@@ -508,7 +510,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               prop_trans_func_matrix<-current_trans_func_matrix
               prop_trans_func_matrix[update_order[k], remove_one_node]<-0
               prop_trans_func_prob<-1
-              xxx<-Error_LLH(prop_trans_func_matrix)
+              xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
               prop_sample<-xxx[[2]]
               prop_post<-xxx[[1]][length(xxx[[1]])]
               prop_sample_prob<-numeric(); p2c_prob<-numeric()   # calculate acceptance probability
@@ -554,13 +556,13 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                     j<-j+1; parent_parent[j]<-i
                   }
               prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
-              if(check.ances.matrix(prop_ances_matrix)==0 && length(parent_parent)==0)  # make sure no loops && parent_of_update no parents
+              if(check_ances_matrix(prop_ances_matrix)==0 && length(parent_parent)==0)  # make sure no loops && parent_of_update no parents
                 {
                 prop_trans_func_matrix<-current_trans_func_matrix
                 func_order<-current_trans_func_matrix[update_order[k],parent_of_update]
                 prop_trans_func_matrix[update_order[k],parent_of_update]<-0
                 prop_trans_func_matrix[parent_of_update,update_order[k]]<-func_order
-                xxx<-Error_LLH(prop_trans_func_matrix)
+                xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                 prop_sample<-xxx[[2]]
                 prop_post<-xxx[[1]][length(xxx[[1]])]
 
@@ -603,7 +605,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_incid_matrix[parent_of_update, update_order[k]]<-1
                 prop_incid_matrix[parent_of_update, children]<-1
                 prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
-                if (check.ances.matrix(prop_ances_matrix)==0)  # ensure no directed cycles
+                if (check_ances_matrix(prop_ances_matrix)==0)  # ensure no directed cycles
                 {
                   prop_trans_func_matrix<-current_trans_func_matrix
                   prop_trans_func_matrix[update_order[k], parent_of_update]<-0
@@ -613,7 +615,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   prop_trans_func_matrix[parent_of_update, children]<-func_order
                   if (length(parent_child)==2)
                       prop_trans_func_matrix[children,setdiff(parent_child, parent_of_update)]<-10+sample.int(2,1)
-                  xxx<-Error_LLH(prop_trans_func_matrix)
+                  xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                   prop_sample<-xxx[[2]]
                   prop_post<-xxx[[1]][length(xxx[[1]])]
 
@@ -682,7 +684,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   }
                 swap_two_prob<-1/choose(length(swap_candi),2)
                 prop_trans_func_prob<-1/10
-                xxx<-Error_LLH(prop_trans_func_matrix)
+                xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                 prop_sample<-xxx[[2]]
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
@@ -757,7 +759,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                       func_order<-10+sample.int(2,1)
                   prop_trans_func_matrix[update_order[k], setdiff(parent_of_update, remove_one_node)]<-func_order
                   prop_trans_func_prob<-1/2
-                  xxx<-Error_LLH(prop_trans_func_matrix)
+                  xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                   prop_sample<-xxx[[2]]
                   prop_post<-xxx[[1]][length(xxx[[1]])]
                   prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
@@ -802,7 +804,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               prop_trans_func_matrix<-current_trans_func_matrix
               prop_trans_func_matrix[update_order[k], remove_node[1]]<-0; prop_trans_func_matrix[update_order[k], remove_node[2]]<-0
               prop_trans_func_prob<-1
-              xxx<-Error_LLH(prop_trans_func_matrix)
+              xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
               prop_sample<-xxx[[2]]
               prop_post<-xxx[[1]][length(xxx[[1]])]
               prop_sample_prob<-numeric(); p2c_prob<-numeric()    # calculate acceptance probability
@@ -883,7 +885,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   }
                 swap_one_prob<-1/length(swap_candi)*1/2
                 prop_trans_func_prob<-1/10
-                xxx<-Error_LLH(prop_trans_func_matrix)
+                xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                 prop_sample<-xxx[[2]]
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
@@ -976,7 +978,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   }
                 swap_two_prob<-1/choose(length(swap_candi),2)
                 prop_trans_func_prob<-1/10
-                xxx<-Error_LLH(prop_trans_func_matrix)
+                xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                 prop_sample<-xxx[[2]]
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
@@ -1025,7 +1027,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_incid_matrix[sample.child,update_order[k]]<-1
                 prop_incid_matrix[sample.child,setdiff(parent_of_update,sample.child)]<-1
                 prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
-                if (check.ances.matrix(prop_ances_matrix)==0)      # make sure no directed cycles
+                if (check_ances_matrix(prop_ances_matrix)==0)      # make sure no directed cycles
                 {
                   prop_trans_func_matrix<-current_trans_func_matrix
                   func_order<-current_trans_func_matrix[update_order[k],parent_of_update[1]]
@@ -1033,7 +1035,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                     prop_trans_func_matrix[update_order[k],parent_of_update[i]]<-0
                   prop_trans_func_matrix[sample.child,update_order[k]]<-func_order
                   prop_trans_func_matrix[sample.child,setdiff(parent_of_update,sample.child)]<-func_order
-                  xxx<-Error_LLH(prop_trans_func_matrix)
+                  xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                   prop_sample<-xxx[[2]]
                   prop_post<-xxx[[1]][length(xxx[[1]])]
 
@@ -1064,14 +1066,14 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   prop_incid_matrix[update_order[k], reverse_pare]<-0
                   prop_incid_matrix[reverse_pare, update_order[k]]<-1
                   prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
-                  if (check.ances.matrix(prop_ances_matrix)==0) # make sure no loops
+                  if (check_ances_matrix(prop_ances_matrix)==0) # make sure no loops
                   {
                     prop_trans_func_matrix<-current_trans_func_matrix
                     prop_trans_func_matrix[update_order[k], reverse_pare]<-0
                     ###############################
                     prop_trans_func_matrix[update_order[k], remain_pare]<-10+sample.int(2,1)   # try no use prior
                     prop_trans_func_matrix[reverse_pare, update_order[k]]<-10+sample.int(2,1)
-                    xxx<-Error_LLH(prop_trans_func_matrix)
+                    xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                     prop_sample<-xxx[[2]]
                     prop_post<-xxx[[1]][length(xxx[[1]])]
 
@@ -1088,7 +1090,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_incid_matrix[update_order[k], reverse_pare]<-0
                 prop_incid_matrix[reverse_pare, update_order[k]]<-1
                 prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
-                if (check.ances.matrix(prop_ances_matrix)==0) # make sure no loops
+                if (check_ances_matrix(prop_ances_matrix)==0) # make sure no loops
                 {
                   prop_trans_func_matrix<-current_trans_func_matrix
                   prop_trans_func_matrix[update_order[k], reverse_pare]<-0
@@ -1097,7 +1099,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   func_order<-sample.int(10,1)
                   prop_trans_func_matrix[reverse_pare, update_order[k]]<-func_order
                   prop_trans_func_matrix[reverse_pare, reverse_node_pare]<-func_order
-                  xxx<-Error_LLH(prop_trans_func_matrix)
+                  xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                   prop_sample<-xxx[[2]]
                   prop_post<-xxx[[1]][length(xxx[[1]])]
 
@@ -1153,7 +1155,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   for (i in 1:2)
                     prop_trans_func_matrix[update_order[k], parent_of_update[i]]<-func_order
                 }
-                xxx<-Error_LLH(prop_trans_func_matrix)
+                xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =prop_trans_func_matrix)
                 prop_sample<-xxx[[2]]
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 nume<-sum(prop_post)
@@ -1168,7 +1170,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
         if (old==n)    # no update
           {
           iter<-iter+1
-          xxx<-Error_LLH(current_trans_func_matrix)
+          xxx<-Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM =current_trans_func_matrix)
           current_sample<-xxx[[2]]
           Sample_Matrix[iter,]<-current_sample
           all_logpost[iter]<-xxx[[1]][length(xxx[[1]])]
@@ -1200,59 +1202,59 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
   #  if (num[i]==max(num))
   #     max_num<-i
   ######################################
-  true_root<-numeric(); j<-0
-  for ( i in 1:nrow(true_network))
-    if (sum(true_network[i,])==0)
-    {
-      j<-j+1; true_root[j]<-i
-    }
-  common_links<-list(); common_root<-list(); model_root<-list()
-  non_inferred_links<-numeric(); distance_matrix1<-list(); false_links<-numeric()
-  correct_links_ratio1<-numeric(); correct_links_ratio2<-numeric()
-  for (i in 1:length(Incidence_Matrix))
-    {
-    k<-0 ; root_node<-numeric()
-    for (j in 1:nrow(Incidence_Matrix[[i]]))
-      if (sum(Incidence_Matrix[[i]][j,])==0)
-        {
-          k<-k+1; root_node[k]<-j
-        }
-    model_root[[i]]<-root_node
-    common_root[[i]]<-intersect(true_root, root_node)
-    distance_matrix1[[i]]<-true_incid_matrix-Incidence_Matrix[[i]]
-    bb<-distance_matrix1[[i]]
-    cc<-bb[bb>0]; dd<-bb[bb<0]
-    non_inferred_links[i]<-sum(cc)
-    false_links[i]<-abs(sum(dd))
-    correct_links_ratio1[i]<-(sum(Incidence_Matrix[[i]])-false_links[i]+length(common_root[[i]]))/(sum(Incidence_Matrix[[i]])+length(root_node))  # correct_links_ratio=correctly inferred links/inferred total links
-    correct_links_ratio2[i]<-(sum(true_incid_matrix)-non_inferred_links[i]+length(common_root[[i]]))/(sum(true_incid_matrix)+length(true_root))
-    }
-  ###########################
-  total_func<-0        # report inferred structure and functions
-  for (i in 1:nrow(true_incid_matrix))
-    if (sum(true_incid_matrix[i,])>0)
-      total_func<-total_func+1
-  non_inferred_SF<-numeric(); SF_ratio<-numeric();  distance_matrix2<-list()
-  for (i in 1:length(Trans_Func_Matrix))
-    {
-    distance_matrix2[[i]]<-true_network-Trans_Func_Matrix[[i]]
-    tt<-0
-    for (j in 1:nrow(distance_matrix2[[i]]))
-      {
-        bb<-distance_matrix2[[i]][j,]
-        if(max(bb)>0)
-          tt<-tt+1
-      }
-    non_inferred_SF[i]<-tt
-    SF_ratio[i]<-(total_func-tt+length(common_root[[i]]))/(total_func+length(true_root))
-    }
+  # true_root<-numeric(); j<-0
+  # for ( i in 1:nrow(true_network))
+  #   if (sum(true_network[i,])==0)
+  #   {
+  #     j<-j+1; true_root[j]<-i
+  #   }
+  # common_links<-list(); common_root<-list(); model_root<-list()
+  # non_inferred_links<-numeric(); distance_matrix1<-list(); false_links<-numeric()
+  # correct_links_ratio1<-numeric(); correct_links_ratio2<-numeric()
+  # for (i in 1:length(Incidence_Matrix))
+  #   {
+  #   k<-0 ; root_node<-numeric()
+  #   for (j in 1:nrow(Incidence_Matrix[[i]]))
+  #     if (sum(Incidence_Matrix[[i]][j,])==0)
+  #       {
+  #         k<-k+1; root_node[k]<-j
+  #       }
+  #   model_root[[i]]<-root_node
+  #   common_root[[i]]<-intersect(true_root, root_node)
+  #   distance_matrix1[[i]]<-true_incid_matrix-Incidence_Matrix[[i]]
+  #   bb<-distance_matrix1[[i]]
+  #   cc<-bb[bb>0]; dd<-bb[bb<0]
+  #   non_inferred_links[i]<-sum(cc)
+  #   false_links[i]<-abs(sum(dd))
+  #   correct_links_ratio1[i]<-(sum(Incidence_Matrix[[i]])-false_links[i]+length(common_root[[i]]))/(sum(Incidence_Matrix[[i]])+length(root_node))  # correct_links_ratio=correctly inferred links/inferred total links
+  #   correct_links_ratio2[i]<-(sum(true_incid_matrix)-non_inferred_links[i]+length(common_root[[i]]))/(sum(true_incid_matrix)+length(true_root))
+  #   }
+  # ###########################
+  # total_func<-0        # report inferred structure and functions
+  # for (i in 1:nrow(true_incid_matrix))
+  #   if (sum(true_incid_matrix[i,])>0)
+  #     total_func<-total_func+1
+  # non_inferred_SF<-numeric(); SF_ratio<-numeric();  distance_matrix2<-list()
+  # for (i in 1:length(Trans_Func_Matrix))
+  #   {
+  #   distance_matrix2[[i]]<-true_network-Trans_Func_Matrix[[i]]
+  #   tt<-0
+  #   for (j in 1:nrow(distance_matrix2[[i]]))
+  #     {
+  #       bb<-distance_matrix2[[i]][j,]
+  #       if(max(bb)>0)
+  #         tt<-tt+1
+  #     }
+  #   non_inferred_SF[i]<-tt
+  #   SF_ratio[i]<-(total_func-tt+length(common_root[[i]]))/(total_func+length(true_root))
+  #   }
   #  All_Trans_Func_Matrix[[iii]]=Trans_Func_Matrix
   #  All_Logpost[[iii]]=all_logpost
   #  All_Correct_Rate[[iii]]=SF_ratio
   } # end of iii
   return(list(
     networks = Trans_Func_Matrix,
-    log_posterior = all_logpost,
-    correct_rate = correct_links_ratio1
+    log_posterior = all_logpost
+    # correct_rate = correct_links_ratio1
   ))
 }

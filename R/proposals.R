@@ -162,6 +162,7 @@ Candidate[[2]]=CandidatePairwise
 return(Candidate)
  }
 ############
+#' @importFrom stats runif
 ConstructInitial <- function(Candidate, num.node)
 {
 prior.triplet=Candidate[[1]]
