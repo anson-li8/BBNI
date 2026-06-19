@@ -1,5 +1,17 @@
- ProposalConstruction<-function(GeneData, SampleSize)
- {
+#' Pre-compute Weighted Proposal Distribution
+#'
+#' Pre-computes a weighted proposal distribution for the MCMC algorithm by
+#' evaluating all possible 1-input and 2-input Boolean logic functions using
+#' Bayesian Information Criterion (BIC). The inverse BIC values of the potential
+#' candidates are used as selection weights for the MCMC sampler.
+#'
+#' @param GeneData A matrix of observational gene expression data.
+#' @param SampleSize An integer representing the total number of time points in the dataset.
+#'
+#' @return A list containing two matrices (`Candidate[[1]]` for 2-input triplets and `Candidate[[2]]` for 1-input pairs). These matrices store the candidate parent nodes, the best-fitting Boolean logic function, the raw miscounts, and the calculated proposal selection weights.
+#' @noRd
+ProposalConstruction<-function(GeneData, SampleSize)
+{
 gene.data=GeneData
 num.node<-nrow(gene.data)
 error.prop<-0.4; pseudo.count<-0.01
@@ -160,9 +172,22 @@ Candidate=list()
 Candidate[[1]]=CandidateTriplet
 Candidate[[2]]=CandidatePairwise
 return(Candidate)
- }
-############
+}
+
+#' Build Initial Network Topology and Boolean Transition Matrix
+#'
+#' Builds a single valid starting network topology and Boolean transition function
+#' matrix for the MCMC algorithm. It assigns parents using a 50/50 probability
+#' of one versus two parents per node, then selects the most probable parent-child
+#' relationships using pre-computed proposal weights. The function strictly ensures
+#' the directed acyclic graph (DAG) constraint is maintained.
+#'
+#' @param Candidate A list containing transition function selection weights for 2-input and 1-input node combinations.
+#' @param num.node An integer representing the total number of network nodes.
+#'
+#' @return A square transition function matrix representing the initial state of the network $T^{(0)}$ and its corresponding Boolean rules $F^{(0)}$, providing an optimal acyclic starting network for the MCMC.
 #' @importFrom stats runif
+#' @noRd
 ConstructInitial <- function(Candidate, num.node)
 {
 prior.triplet=Candidate[[1]]
@@ -281,7 +306,21 @@ for (i in 1:num.node)
   }
   return(trans_func_matrix)
 }
-#########################################################################################
+
+#' Propose Transition Function Matrix
+#'
+#' **NOTE:** Currently an unused function. For a proposed network
+#' topology, this assigns an integer code to each nonzero entry indicating the
+#' Boolean function used by the child node. The code range is based on parent
+#' count: codes 1–10 correspond to ten non-degenerate two-input Boolean functions,
+#' while codes 11–12 correspond to the unary functions of identity and negation.
+#' This maps each parent set $W(g_i)$ to its corresponding valid Boolean transition
+#' rule (e.g., $f_i(a)$ can be $a$ or $\overline{a}$).
+#'
+#' @param prop_incid_matrix A proposed incidence matrix for the network topology.
+#'
+#' @return A transition-function matrix with the same dimensions as the input. A 0 indicates no incoming edge. Non-zero entries contain a code from 1-12 identifying which Boolean operation each gene utilizes for calculation of the input of its parent(s).
+#' @noRd
 Prop_Trans_Func_Matrix<-function(prop_incid_matrix)      # based on incidence matrix, define transition function matrix
   {
        prop_trans_func_matrix<-prop_incid_matrix; jj<-numeric()
@@ -306,4 +345,3 @@ Prop_Trans_Func_Matrix<-function(prop_incid_matrix)      # based on incidence ma
                  }
       return(prop_trans_func_matrix)
   }
-#################################################################################

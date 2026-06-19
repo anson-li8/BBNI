@@ -1,5 +1,6 @@
 # BBNI Function Analysis
 CRITICAL NOTE FOR REFACTORING: R utilizes static scoping. The "Hidden globals" listed in the functions below don't currently resolve across files because they are locally defined inside run_bbni and not assigned to the global environment (`<<-`. Executing the code as currently factored will result in object not found errors. The primary refactoring objective is to thread every listed hidden global into an explicit function argument.
+
 ---
 ## `update.ancestor_matrix`
 
@@ -16,8 +17,6 @@ None
 
 **Paper reference:** "The MCMC Algorithm" section, specifically where it talks about the constraints on network topology updates: "There are three types of MCMC moves to update the parent sets: adding parent(s), removing parent(s) and swapping parent(s)... But if adding parent(s) leads to a cyclic graph, that specific move is illegal". This function outputs to the algorithm which nodes are upstream of which others, so it can prevent cycles when updating the network.
 
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
-
 ---
 ## `check.ances.matrix`
 
@@ -30,8 +29,6 @@ None
 **Hidden globals:** None
 
 **Paper reference:** "The MCMC Algorithm" section, specifically where it talks about the constraints on network topology updates: "There are three types of MCMC moves to update the parent sets: adding parent(s), removing parent(s) and swapping parent(s)... But if adding parent(s) leads to a cyclic graph, that specific move is illegal". This function helps enforce that acyclic requirement by returning a loop count greater than 0 to indicate a topology that must be rejected.
-
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
 
 ---
 ## `Prop_Trans_Func_Matrix`
@@ -50,8 +47,6 @@ Transition-function matrix with same dimensions as input. 0 indicates no incomin
 None
 
 **Paper reference:** "Prior Distributions" subsection, specifically where it explains the allowable Boolean update rules: "If $W(g_i)$ is the set {a}, $f_i(a)$ can be either a or $\overline{a}$; if $W(g_i)$ is the set {a, b}, $f_i(a,b)$ has 10 non-degenerative choices...". This function follows that logic by mapping each parent set to its corresponding valid Boolean transition rule.
-
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
 
 ---
 ## `Error_LLH`
@@ -72,8 +67,6 @@ None
 **Paper reference:**“Posterior Distributions” subsection: “To circumvent this problem, we analytically integrate out all pᵢ’s and $p_E$ from the above posterior distribution, which results in the following collapsed version of the posterior distribution: Equation (4)” “We have designed an MCMC algorithm to sample from $𝑝(𝐹,𝑇∣𝐺)$, which avoids the dimension change caused by pᵢ’s.” This function directly implements the collapsed posterior model described in Equation (4), using mismatch counts 𝐵 and root ON‑counts $C_i$ to compute the integrated likelihood.
 DIVERGENCE: code adds edge-count penalized structural prior, deviating from papers assumption of unfirom prior (1/$\delta$) over valid topologies.
 
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
-
 ---
 ## `GenerateNetwork`
 **What it does:** Randomly generates an initial, legal DAG graph topology $T$ and assigns a corresponding Boolean transition function $F$ to each node, ensuring a maximum in-degree value of 2.
@@ -87,8 +80,6 @@ DIVERGENCE: code adds edge-count penalized structural prior, deviating from pape
 - None. Relies on `update.ancestor_matrix` and `check.ances.matrix` functions to verify DAG constraint
 
 **Paper reference:**"Model" subsection, stating structural constraints of the Boolean network: “we will focus on the case where the maximum in-degree of all nodes in the network is bounded by 2” and that the required structure is a “directed acyclic graph denoted by ${G, T, F}$.”  This function generates an initial topology that fulfills those requirements by assigning random parent sets of size 0-2 and rejecting any topology that forms a directed loop.
-
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
 
 ---
 ## `GenerateSample`
@@ -109,8 +100,6 @@ DIVERGENCE: code adds edge-count penalized structural prior, deviating from pape
 "Model" subsection, where the data‑generation equations are defined. Root nodes follow the Bernoulli model in Equation (1):
 “If $W(g_i)$ is an empty set... we assume an independent Bernoulli distribution for it, i.e., 
 $Pr(g_{ij}=1)=p_i$.” Non‑root nodes follow the noisy Boolean update in Equation (1): “$g_i=f_i(W(g_i))\oplus\epsilon$”, where $\epsilon$ is a Bernoulli noise term with probability $p_\epsilon$ of flipping the output. This function implements these equations by randomizing roots independently and applying corresponding Boolean logic with XOR‑calculated noise for the non‑roots.
-
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
 
 ---
 ## `BF1` through `BF14`
@@ -135,8 +124,6 @@ Numeric BIC value (or `NULL` if mismatch count exceeds threshold). Returning `NU
 - `BF11-BF12`: Pairwise relations (identity, identity of second parent)
 - `BF13-BF14`: Negations (NOT of first, NOT of second)
 
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
-
 ---
 ## `ProposalConstruction`
 **What it does:** Pre-computes a weighted proposal distribution for the MCMC algorithm. It evaluates all possible 1-input and 2-input Boolean logic functions using BIC. The inverse BIC of the potential candidates are used as selection weights for the MCMC sampler.
@@ -154,8 +141,6 @@ Numeric BIC value (or `NULL` if mismatch count exceeds threshold). Returning `NU
 **Paper reference:**
 "Prior Distributions" subsection, specifically where it explains the allowable Boolean update rules: "If $W(g_i)$ is the set {a}, $f_i(a)$ can be either a or $\overline{a}$; if $W(g_i)$ is the set {a, b}, $f_i(a,b)$ has 10 non-degenerative choices...". These 14 functions are the candidates being evaluated and weighted in this distribution construction step.
 
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
-
 ---
 ## `ConstructInitial`
 **What it does:** Builds a single valid starting network topology and Boolean transition function matrix for the MCMC algorithm. It uses a 50/50 chance of one vs. two parents per node then selects the most probable parent-child relationships via the pre-computed proposal weights, while strictly ensuring the DAG constraint.
@@ -172,8 +157,6 @@ Numeric BIC value (or `NULL` if mismatch count exceeds threshold). Returning `NU
 
 **Paper reference:**
 "Simulation Studies" subsection, describomg how a valid starting network is constructed: “we first randomly generated a valid network topology T... checked the validity... and repeated this process till a valid network topology is obtained.” This function embodies that requirement by selecting high‑weight parent sets while enforcing the acyclic constraint to produce a valid initial `T(0)`,`F(0)`.
-
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
 
 ---
 ## `run_bbni`
@@ -198,5 +181,3 @@ CRITICAL AUDIT NOTE: While there are no hidden global variables, this function c
 “The MCMC Algorithm” subsection describes the sampling algorithm: “The general MCMC framework will be the Metropolis-within-Gibbs algorithm… iteratively updates [T and F] from their conditional posterior distributions.”  
 It further specifies the legal topology‑update moves:
 “There are three types of MCMC moves… adding parent(s), removing parent(s) and swapping parent(s)… if adding parent(s) leads to a cyclic graph, that specific move is illegal.” Then it describes the MH update step: “We sequentially and iteratively update each node’s parent set W(gᵢ) and associated function fᵢ through a MH algorithm using the proposal distributions…” This function implements that exact Metropolis‑within‑Gibbs procedure.
-
-**Status:** [x] Analyzed [ ] Cleaned [ ] Documented

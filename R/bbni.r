@@ -1,5 +1,25 @@
+#' Execute Metropolis-within-Gibbs MCMC Sampler for Boolean Networks
+#'
+#' Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm
+#' to sample from the joint posterior distribution of network topologies ($T$)
+#' and Boolean logic transition functions ($F$). The sampler loops through
+#' individual network nodes and proposes parent set mutations (additions,
+#' removals, or swaps) among 14 candidate Boolean rules. Proposed states are
+#' verified to follow the directed acyclic graph (DAG) constraint and evaluated
+#' with a Metropolis-Hastings acceptance gate using the log-posterior ratios.
+#'
+#' @param GeneData A matrix of the observational binary expression data ($G$).
+#' @param num.node An integer representing the total number of network nodes.
+#' @param SampleSize An integer representing the total number of time points in the dataset.
+#' @param prior_para A matrix of Beta prior hyperparameters \eqn{\alpha} and \eqn{\beta} for root node probabilities and the global noise parameter e.
+#' @param num_update An integer representing the total number of MCMC iterations to perform.
+#' @param penalty A numeric value representing the structural prior probability per edge used to penalize network complexity $P(T)$.
+#' @param prop.ratio A numeric probability threshold used to decide whether to sample a move from the empirical proposal distribution or a uniform random distribution.
+#'
+#' @return A list containing the full trajectory of the MCMC chain. Specifically, `networks` (a list of sampled transition function matrices) and `log_posterior` (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution $P(T,F|G)$ used for Bayesian model averaging.
 #' @importFrom stats runif
-run_bbni <- function(GeneData, num.node, SampleSize, prior_para, 
+#' @export
+run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                      num_update, penalty, prop.ratio) {
   ###############  MCMC
   prop.ratio<-0.1       # proposal information is used with probability prop.ratio

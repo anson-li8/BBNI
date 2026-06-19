@@ -1,4 +1,22 @@
-#################################################################################
+#' Calculate Collapsed Posterior Log-Probability
+#'
+#' Calculates the collapsed posterior log-probability of a proposed network
+#' topology ($T$) and its Boolean functions ($F$) given the observed data ($G$).
+#' It parses the transition function matrix (TRFUM) into root and non-root nodes,
+#' predicts each node's value based on its Boolean rule, counts mismatches, and
+#' evaluates the Beta-Binomial collapsed likelihood. By integrating out Bernoulli
+#' parameters $\theta = \{p_E, p_i\}$ under Beta priors, the function computes
+#' $\log p(T, F \mid G)$, the model score for the MCMC algorithm.
+#'
+#' @param TRFUM A matrix combining the current network topology and the specific Boolean logic functions assigned to each node (integer codes 1-12).
+#' @param GeneData A matrix of the observed binary gene expression time-series dataset (rows = nodes, columns = time points).
+#' @param SampleSize An integer representing the total number of time points/samples in `GeneData`.
+#' @param num.node An integer representing the total number of genes/nodes in the network.
+#' @param prior_para A matrix of Beta distribution hyperparameters ($\alpha, \beta$) for root nodes and the global noise parameter $e$.
+#' @param penalty A numeric value representing the structural prior probability per edge used to penalize network complexity $P(T)$.
+#'
+#' @return A list of two vectors evaluating model fit. `results[[1]]` contains `[ErrorFactor, RootFactor, likelihood, post_para, log_post_model]`, where `log_post_model` is the collapsed posterior metric $\log p(T, F \mid G)$. `results[[2]]` contains `[para_sample, mismatch, Perror]`, providing point estimates of the root ON-probabilities, total mismatches, and estimated noise error rate $e$.
+#' @noRd
 Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty)   # compute error-likelihood, this function depends on the TRansition FUnction Matrix
    {                                             # error_prior is a vector not a matrix
         InOutPair<-list(); ii<-0; root_node<-numeric(); root<-0
@@ -117,9 +135,22 @@ Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty
                 para_sample[i]<-succ_prob[j]
          result[[2]]<-c(para_sample, mismatch, Perror)
      return(result)
-   }
-#############################################################################################################################
-#############################################################################################################################
+}
+
+#' Evaluate Boolean Function 1 (AND)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF1<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i and g_j
   { #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -130,7 +161,22 @@ BF1<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i
    if (false.count<=threshold)
    # return(false.count)
      return(BIC.value)
-  }
+}
+
+#' Evaluate Boolean Function 2 (NAND)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF2<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i and g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -141,7 +187,22 @@ BF2<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=com
    if (false.count<=threshold)
    # return(false.count)
     return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Function 3 (OR)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF3<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=(g_i or g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -152,7 +213,22 @@ BF3<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=(g_
    if (false.count<=threshold)
    # return(false.count)
      return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Function 4 (NOR)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF4<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i or g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -163,7 +239,22 @@ BF4<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=com
    if (false.count<=threshold)
    # return(false.count)
      return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Function 5 (OR-NOT)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF5<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i) or g_j
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -174,7 +265,22 @@ BF5<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=com
    if (false.count<=threshold)
    # return(false.count)
      return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Function 6 (NOT-OR)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF6<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i or complement( g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -185,7 +291,22 @@ BF6<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i
    if (false.count<=threshold)
    # return(false.count)
      return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Function 7 (AND-NOT)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF7<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i) and g_j
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -196,7 +317,22 @@ BF7<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=com
    if (false.count<=threshold)
    # return(false.count)
      return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Function 8 (NOT-AND)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF8<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i and complement(g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -207,7 +343,22 @@ BF8<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i
    if (false.count<=threshold)
    # return(false.count)
      return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Function 9 (XOR)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF9<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i xor g_j
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -218,7 +369,22 @@ BF9<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i
    if (false.count<=threshold)
    # return(false.count)
     return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Function 10 (NXOR)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
  BF10<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i xor g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -230,6 +396,21 @@ BF9<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i
    # return(false.count)
      return(BIC.value)
  }
+
+ #' Evaluate Boolean Pairwise Relation 11 (Identity First Parent)
+ #'
+ #' Computes a Bayesian Information Criterion (BIC) score for a candidate
+ #' Boolean function by counting state mismatches between predicted and
+ #' observed outputs. It compresses the raw data into a compact 3-gene
+ #' frequency count (truth table) to efficiently evaluate matching patterns.
+ #'
+ #' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+ #' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+ #' @param SampleSize An integer representing the total sample size.
+ #' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+ #'
+ #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+ #' @noRd
 BF11<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -240,7 +421,22 @@ BF11<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_
    if (false.count<=threshold)
    # return(false.count)
      return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Pairwise Relation 12 (Identity Second Parent)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF12<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_j
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -251,7 +447,22 @@ BF12<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_
    if (false.count<=threshold)
    # return(false.count)
      return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Negation 13 (NOT First Parent)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
 BF13<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -262,7 +473,22 @@ BF13<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=co
    if (false.count<=threshold)
    # return(false.count)
      return(BIC.value)
- }
+}
+
+#' Evaluate Boolean Negation 14 (NOT Second Parent)
+#'
+#' Computes a Bayesian Information Criterion (BIC) score for a candidate
+#' Boolean function by counting state mismatches between predicted and
+#' observed outputs. It compresses the raw data into a compact 3-gene
+#' frequency count (truth table) to efficiently evaluate matching patterns.
+#'
+#' @param test.stat An integer frequency count vector storing how many times each specific combination of parent and child states occurs together in the data.
+#' @param pseudo.count A numeric pseudocount added to avoid zero cells.
+#' @param SampleSize An integer representing the total sample size.
+#' @param threshold A numeric rejection threshold. If the error rate exceeds this, the function is rejected.
+#'
+#' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
+#' @noRd
  BF14<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement( g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
@@ -274,4 +500,3 @@ BF13<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=co
    # return(false.count)
      return(BIC.value)
  }
-#######################################################################################

@@ -1,0 +1,95 @@
+---
+title: "Introduction to BBNI"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to BBNI}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Overview
+
+The `BBNI` (Boolean Genetic Network Inference) package provides a Bayesian approach for inferring both the topology and the Boolean logic transition functions of genetic networks from time-series expression data. 
+
+As described in Han et al. (2014), biological systems often exhibit noise and uncertainty. `BBNI` uses a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm to sample from the joint posterior distribution of valid Directed Acyclic Graph (DAG) topologies and their corresponding Boolean rules, specifically accounting for biological noise.
+
+## Setup and Data Simulation
+
+First, load the package:
+
+```{r setup}
+library(BBNI)
+```
+
+To test the MCMC sampler, we will use the package's built-in simulation functions to generate a artificial true network topology and its corresponding noisy time-series data. This allows us to verify if the algorithm can recover the true topology.
+
+```{r simulate-data}
+set.seed(235)
+num_nodes <- 10
+sample_size <- 50
+
+# 1. Generate a true network topology (T) and Boolean rules (F)
+true_network <- GenerateNetwork(num.node = num_nodes)
+
+# 2. Setup parameters for data generation
+# Baseline success probabilities for root nodes
+root_probs <- rep(0.5, num_nodes) 
+
+# Generate a binary noise matrix (e.g., 5% natural error rate)
+error_rate <- 0.05
+error_matrix <- matrix(rbinom(num_nodes * sample_size, 1, error_rate), 
+                       nrow = num_nodes, 
+                       ncol = sample_size)
+
+# 3. Simulate the time-series observational data (G)
+dummy_data <- GenerateSample(trans_matrix = true_network,
+                             num.node = num_nodes,
+                             SampleSize = sample_size,
+                             para = root_probs,
+                             error = error_matrix)
+```
+
+## Running the MCMC Sampler
+
+Now we apply the `run_bbni()` algorithm to our synthetic data to see if it can infer the underlying network. We must define a few hyperparameters, including the Beta priors ($\alpha, \beta$) for the root node probabilities and the global noise parameter $e$.
+
+```{r run-model, results='hide'}
+# Define hyperparameters
+num_update <- 100       # Number of MCMC iterations (kept low for tutorial speed)
+penalty <- 0.1          # Structural prior penalty for network complexity
+prop_ratio <- 0.1       # Proposal threshold
+
+# Set Beta priors: 
+# The last row represents the global noise parameter 'e' (needs beta1 < beta2)
+prior_para <- matrix(3, nrow = num_nodes + 1, ncol = 2)
+prior_para[num_nodes + 1, 1] <- 2    
+prior_para[num_nodes + 1, 2] <- 100  
+
+# Execute the sampler
+mcmc_results <- run_bbni(GeneData = dummy_data, 
+                         num.node = num_nodes, 
+                         SampleSize = sample_size, 
+                         prior_para = prior_para, 
+                         num_update = num_update, 
+                         penalty = penalty, 
+                         prop.ratio = prop_ratio)
+```
+
+## Analyzing the Output
+
+The `run_bbni()` function returns a list outlining the MCMC chain trajectory. We can now see the final sampled transition matrix and compare the log-posterior scores.
+
+```{r view-results}
+# View the log-posterior scores of the final 5 iterations
+tail(mcmc_results$log_posterior, 5)
+
+# The final sampled network topology and boolean functions
+final_network <- tail(mcmc_results$networks, 1)[[1]]
+```

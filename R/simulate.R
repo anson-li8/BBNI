@@ -1,5 +1,16 @@
-#############################################################################################################################
+#' Generate Initial Network Topology
+#'
+#' Randomly generates an initial, legal directed acyclic graph (DAG) topology
+#' $T$ and assigns a corresponding Boolean transition function $F$ to each node.
+#' This ensures that the maximum in-degree for any node is bounded by 2, and
+#' utilizes internal checks to guarantee the resulting structure contains no
+#' directed cyclic loops.
+#'
+#' @param num.node An integer representing the total number of genes/nodes in the network.
+#'
+#' @return A square transition function matrix combining both the initial DAG topology and the randomly assigned Boolean logic functions (represented by integer codes 1-12).
 #' @importFrom stats rbinom runif
+#' @export
 GenerateNetwork<-function(num.node)
 {
  loop=1
@@ -30,9 +41,25 @@ GenerateNetwork<-function(num.node)
   }
   return(tent_trans_matrix)
 }
-#############################################################################################################################
-#############################################################################################################################
+#' Simulate Time-Series Observation Dataset
+#'
+#' Simulates a time-series observation dataset ($G$) by identifying root nodes
+#' to simulate independently via Bernoulli trials, then topologically computing
+#' the remaining non-root nodes from $t-1$ to time $t$. The non-root updates
+#' use their specified Boolean logic functions and incorporate a noise parameter.
+#' A pre-generated binary noise matrix is applied via a bitwise XOR operation
+#' to occasionally flip the Boolean output, injecting the natural biological
+#' noise expected by the model.
+#'
+#' @param trans_matrix A square matrix combining the network topology $T$ and integer-coded Boolean logic functions $F$ assigned to each directed edge.
+#' @param num.node An integer representing the total number of network nodes.
+#' @param SampleSize An integer representing the total number of time points to simulate.
+#' @param para A numeric vector of baseline success probabilities ($\theta_i$) used to generate the expression states of root nodes via independent Bernoulli trials.
+#' @param error A pre-generated binary noise matrix applied to occasionally flip Boolean outputs, injecting natural noise.
+#'
+#' @return A simulated binary gene expression matrix $G$, where rows represent individual genes/nodes and columns represent sequential points in time.
 #' @importFrom bitops bitXor bitAnd bitOr
+#' @export
 GenerateSample<-function(trans_matrix, num.node, SampleSize, para, error)
 {
  node_ances=matrix(nrow=num.node, ncol=2)
@@ -90,4 +117,3 @@ GenerateSample<-function(trans_matrix, num.node, SampleSize, para, error)
    }
  return(GeneData)
 }
-#############################################################################################################################
