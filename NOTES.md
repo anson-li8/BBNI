@@ -3,7 +3,7 @@
 ---
 ## `update.ancestor_matrix`
 
-**What it does:** It calculates the transitive closure of the network's directed adjacency matrix to locate all ancestor-descendant relationships. This helps in ensuring the proposed MCMC topologies represent directed acyclic graphs without cyclic loops.
+**What it does:** It calculates the transitive closure of the network's directed adjacency matrix to locate all ancestor-descendant relationships. This helps in ensuring the proposed MCMC topologies represent directed acyclic graphs (DAG) without cyclic loops.
 
 **Arguments:**
 - `incid_matrix` — (matrix) A square binary adjacency matrix that represents the current network topology 𝑇
@@ -21,7 +21,7 @@ None
 ---
 ## `check.ances.matrix`
 
-**What it does:** It ensures that the proposed network topology fulfills the directed acyclic graph constraint by checking the diagonal (self-referring) of ancestor matrix for illegal cyclic loops.
+**What it does:** It ensures that the proposed network topology fulfills the DAG constraint by checking the diagonal (self-referring) of ancestor matrix for illegal cyclic loops.
 
 **Arguments:** - `ances_matrix` — (matrix) The transitive closure matrix of the network topology 𝑇, where (i, j) = 1 means node i is an ancestor of node j
 
@@ -72,17 +72,17 @@ Paper reference: “Posterior Distributions” subsection: “To circumvent this
 Status: [x] Analyzed [ ] Cleaned [ ] Documented
 
 ---
-## `Error_LLH`
-What it does: 
+## `GenerateNetwork`
+What it does: Randomly generates an initial, legal DAG graph topology $T$ and assigns a corresponding Boolean transition function $F$ to each node, ensuring a maximum in-degree value of 2.
 
 Arguments: 
-- 
+- num.node - (integer) Total number of genes/nodes in the network
 
-Returns: 
+Returns: (matrix) Square transition function matrix combining both the initial DAG topology and the randomly assigned Boolean logic functions (integer code from 1-12). Ensures graph is acyclic before returning
 
 Hidden globals: 
-- 
+- None. Relies on `update.ancestor_matrix` and `check.ances.matrix` functions to verify DAG constraint
 
-Paper reference: 
+Paper reference: "Model" subsection, stating structural constraints of the Boolean network: “we will focus on the case where the maximum in-degree of all nodes in the network is bounded by 2” and that the required structure is a “directed acyclic graph denoted by ${G, T, F}$.”  This function generates an initial topology that fulfills those requirements by assigning random parent sets of size 0-2 and rejecting any topology that forms a directed loop.
 
 Status: [x] Analyzed [ ] Cleaned [ ] Documented
