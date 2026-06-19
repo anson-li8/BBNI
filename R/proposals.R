@@ -1,4 +1,3 @@
-
  ProposalConstruction<-function(GeneData)
  {
 gene.data=GeneData

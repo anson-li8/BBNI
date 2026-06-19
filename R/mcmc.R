@@ -1,4 +1,3 @@
-R
 run_bbni <- function(GeneData, num.node, SampleSize, prior_para, 
                      num_update, penalty, prop.ratio) {
   ###############  MCMC
