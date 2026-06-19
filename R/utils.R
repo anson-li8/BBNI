@@ -1,5 +1,5 @@
 ##################################################################################
-update.ancestor_matrix<-function(incid_matrix) #  for a given incidence matrix, generate corresponding ancestor matrix
+update_ancestor_matrix<-function(incid_matrix) #  for a given incidence matrix, generate corresponding ancestor matrix
 {
  ances_matrix<-matrix(0, nrow=nrow(incid_matrix), ncol=ncol(incid_matrix))  # important! every time before updating, ancestor matrix should be cleared.
  ances_matrix<-incid_matrix
@@ -14,7 +14,7 @@ update.ancestor_matrix<-function(incid_matrix) #  for a given incidence matrix, 
  return(ances_matrix)
 }
 #########################################################################################
-check.ances.matrix<-function(ances_matrix) # check whether there are loops in the whole network by checking ancestor matrix
+check_ances_matrix<-function(ances_matrix) # check whether there are loops in the whole network by checking ancestor matrix
  {
    loop<-0
    for (i in 1:nrow(ances_matrix))

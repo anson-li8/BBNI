@@ -66,7 +66,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
       for (j in 1:ncol(incid_matrix))
         if (incid_matrix[i,j]>0)
         incid_matrix[i,j]<-1
-    ances_matrix=update.ancestor_matrix(incid_matrix)
+    ances_matrix=update_ancestor_matrix(incid_matrix)
 
 
     Incidence_Matrix<-list()
@@ -206,7 +206,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   add_one_parent<-legal_parent[sample_node]
                 }
               prop_incid_matrix<-current_incid_matrix; prop_incid_matrix[update_order[k], add_one_parent]<-1
-              prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+              prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
               prop_trans_func_matrix<-current_trans_func_matrix
               if (aa>0)
                 prop_trans_func_matrix[update_order[k], add_one_parent]<-add_parent[3]     # function prior
@@ -288,7 +288,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 }
                 prop_incid_matrix<-current_incid_matrix
                 prop_incid_matrix[update_order[k], add_two_parent[1]]<-1;prop_incid_matrix[update_order[k], add_two_parent[2]]<-1
-                prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                 prop_trans_func_matrix<-current_trans_func_matrix
                 if (aa>0)
                   {
@@ -380,7 +380,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                     add_one_parent<-legal_parent[sample_node]
                 }
                 prop_incid_matrix<-current_incid_matrix ; prop_incid_matrix[update_order[k], add_one_parent]<-1
-                prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                 prop_trans_func_matrix<-current_trans_func_matrix
                 if (aa>0)
                   {
@@ -456,7 +456,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_incid_matrix<-current_incid_matrix
                 prop_incid_matrix[update_order[k],parent_of_update]<-0
                 prop_incid_matrix[update_order[k],swap_one_node]<-1
-                prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                 prop_trans_func_matrix<-current_trans_func_matrix
                 prop_trans_func_matrix[update_order[k],parent_of_update]<-0
                 if (aa>0)
@@ -504,7 +504,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               remove_one_node<-parent_of_update; remove_one_prob<-1
               prop_incid_matrix<-current_incid_matrix
               prop_incid_matrix[update_order[k],remove_one_node]<-0  #remove parent move does not need function.
-              prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+              prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
               prop_trans_func_matrix<-current_trans_func_matrix
               prop_trans_func_matrix[update_order[k], remove_one_node]<-0
               prop_trans_func_prob<-1
@@ -553,7 +553,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   {
                     j<-j+1; parent_parent[j]<-i
                   }
-              prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+              prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
               if(check.ances.matrix(prop_ances_matrix)==0 && length(parent_parent)==0)  # make sure no loops && parent_of_update no parents
                 {
                 prop_trans_func_matrix<-current_trans_func_matrix
@@ -602,7 +602,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_incid_matrix[children, parent_of_update]<-0
                 prop_incid_matrix[parent_of_update, update_order[k]]<-1
                 prop_incid_matrix[parent_of_update, children]<-1
-                prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                 if (check.ances.matrix(prop_ances_matrix)==0)  # ensure no directed cycles
                 {
                   prop_trans_func_matrix<-current_trans_func_matrix
@@ -666,7 +666,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_incid_matrix[update_order[k],parent_of_update]<-0
                 prop_incid_matrix[update_order[k],swap_two_parent[1]]<-1
                 prop_incid_matrix[update_order[k],swap_two_parent[2]]<-1
-                prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                 prop_trans_func_matrix<-current_trans_func_matrix
                 prop_trans_func_matrix[update_order[k],parent_of_update]<-0
                 if (aa>0)
@@ -748,7 +748,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                     }
                   remove_one_prob<-1/length(parent_of_update)
                   prop_incid_matrix<-current_incid_matrix; prop_incid_matrix[update_order[k], remove_one_node]<-0
-                  prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                  prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                   prop_trans_func_matrix<-current_trans_func_matrix
                   prop_trans_func_matrix[update_order[k], remove_one_node]<-0
                   if (aa>0)
@@ -798,7 +798,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               remove_node<-parent_of_update;  remove_prob<-1
               prop_incid_matrix<-current_incid_matrix
               prop_incid_matrix[update_order[k], remove_node[1]]<-0; prop_incid_matrix[update_order[k], remove_node[2]]<-0
-              prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+              prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
               prop_trans_func_matrix<-current_trans_func_matrix
               prop_trans_func_matrix[update_order[k], remove_node[1]]<-0; prop_trans_func_matrix[update_order[k], remove_node[2]]<-0
               prop_trans_func_prob<-1
@@ -867,7 +867,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_incid_matrix<-current_incid_matrix
                 prop_incid_matrix[update_order[k],sample_one_parent]<-0
                 prop_incid_matrix[update_order[k],swap_one_node]<-1
-                prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                 prop_trans_func_matrix<-current_trans_func_matrix
                 prop_trans_func_matrix[update_order[k],sample_one_parent]<-0
                 if (aa>0)
@@ -959,7 +959,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_incid_matrix[update_order[k],parent_of_update[2]]<-0
                 prop_incid_matrix[update_order[k],swap_two_parent[1]]<-1
                 prop_incid_matrix[update_order[k],swap_two_parent[2]]<-1
-                prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                 prop_trans_func_matrix<-current_trans_func_matrix
                 prop_trans_func_matrix[update_order[k],parent_of_update[1]]<-0
                 prop_trans_func_matrix[update_order[k],parent_of_update[2]]<-0
@@ -1024,7 +1024,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 {
                 prop_incid_matrix[sample.child,update_order[k]]<-1
                 prop_incid_matrix[sample.child,setdiff(parent_of_update,sample.child)]<-1
-                prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                 if (check.ances.matrix(prop_ances_matrix)==0)      # make sure no directed cycles
                 {
                   prop_trans_func_matrix<-current_trans_func_matrix
@@ -1063,7 +1063,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   prop_incid_matrix<-current_incid_matrix
                   prop_incid_matrix[update_order[k], reverse_pare]<-0
                   prop_incid_matrix[reverse_pare, update_order[k]]<-1
-                  prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                  prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                   if (check.ances.matrix(prop_ances_matrix)==0) # make sure no loops
                   {
                     prop_trans_func_matrix<-current_trans_func_matrix
@@ -1087,7 +1087,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_incid_matrix<-current_incid_matrix
                 prop_incid_matrix[update_order[k], reverse_pare]<-0
                 prop_incid_matrix[reverse_pare, update_order[k]]<-1
-                prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                 if (check.ances.matrix(prop_ances_matrix)==0) # make sure no loops
                 {
                   prop_trans_func_matrix<-current_trans_func_matrix
@@ -1142,7 +1142,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                       }
                     }
                 prop_incid_matrix<-current_incid_matrix
-                prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+                prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
                 prop_trans_func_matrix<-current_trans_func_matrix
                 if (aa>0)
                   for (i in 1:2)

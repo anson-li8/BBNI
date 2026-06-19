@@ -12,6 +12,7 @@ What the package does (one paragraph).
 Useful links:
 \itemize{
   \item \url{https://anson-li8.github.io/BBNI}
+  \item \url{https://anson-li8.github.io/BBNI/}
   \item Report bugs at \url{https://github.com/anson-li8/BBNI/issues}
 }
 

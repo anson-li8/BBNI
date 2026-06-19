@@ -242,7 +242,7 @@ for (i in 1:num.node)
                 for (jj in 1:ncol(prop_trans_func_matrix))
                  if (prop_trans_func_matrix[ii,jj]>0)
                    prop_incid_matrix[ii,jj]<-1
-              prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+              prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
               if (check.ances.matrix(prop_ances_matrix)==0)
                {
                 trans_func_matrix[i,]<-prop_trans_func_matrix[i,]
@@ -271,7 +271,7 @@ for (i in 1:num.node)
              for (jj in 1:ncol(prop_trans_func_matrix))
                if (prop_trans_func_matrix[ii,jj]>0)
                  prop_incid_matrix[ii,jj]<-1
-           prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
+           prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
            if (check.ances.matrix(prop_ances_matrix)==0)
             {
              trans_func_matrix[i,]<-prop_trans_func_matrix[i,]

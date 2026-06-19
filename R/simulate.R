@@ -24,14 +24,15 @@ GenerateNetwork<-function(num.node)
         func=sample(10,1); tent_trans_matrix[i,position[1]]=func; tent_trans_matrix[i,position[2]]=func
        }
      }
-   tent_ances_matrix=update.ancestor_matrix(tent_incid_matrix)
+   tent_ances_matrix=update_ancestor_matrix(tent_incid_matrix)
    loop=check.ances.matrix(tent_ances_matrix)
   }
   return(tent_trans_matrix)
 }
 #############################################################################################################################
 #############################################################################################################################
-GenerateSample<-function(trans_matrix)
+#' @importFrom bitops bitXor bitAnd bitOr
+GenerateSample<-function(trans_matrix, num.node, SampleSize, para, error)
 {
  node_ances=matrix(nrow=num.node, ncol=2)
  GeneData=matrix(0, nrow=num.node, ncol=SampleSize)
@@ -40,7 +41,7 @@ GenerateSample<-function(trans_matrix)
      for (j in 1:ncol(trans_matrix))
       if (trans_matrix[i,j]>0)
        incid_matrix[i,j]<-1
- ances_matrix=update.ancestor_matrix(incid_matrix)
+ ances_matrix=update_ancestor_matrix(incid_matrix)
  for (i in 1:num.node)
   {
    node_ances[i,1]=i
