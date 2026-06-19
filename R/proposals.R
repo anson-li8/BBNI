@@ -162,7 +162,7 @@ Candidate[[2]]=CandidatePairwise
 return(Candidate)
  }
 ############
-ConstructInitial<-function(Candidate)
+ConstructInitial <- function(Candidate, num.node)
 {
 prior.triplet=Candidate[[1]]
 prior.pairwise=Candidate[[2]]
@@ -242,7 +242,7 @@ for (i in 1:num.node)
                  if (prop_trans_func_matrix[ii,jj]>0)
                    prop_incid_matrix[ii,jj]<-1
               prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
-              if (check.ances.matrix(prop_ances_matrix)==0)
+              if (check_ances_matrix(prop_ances_matrix)==0)
                {
                 trans_func_matrix[i,]<-prop_trans_func_matrix[i,]
                 incid_matrix[i,]<-prop_incid_matrix[i,]
@@ -271,7 +271,7 @@ for (i in 1:num.node)
                if (prop_trans_func_matrix[ii,jj]>0)
                  prop_incid_matrix[ii,jj]<-1
            prop_ances_matrix<-update_ancestor_matrix(prop_incid_matrix)
-           if (check.ances.matrix(prop_ances_matrix)==0)
+           if (check_ances_matrix(prop_ances_matrix)==0)
             {
              trans_func_matrix[i,]<-prop_trans_func_matrix[i,]
              incid_matrix[i,]<-prop_incid_matrix[i,]

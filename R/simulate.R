@@ -25,7 +25,7 @@ GenerateNetwork<-function(num.node)
        }
      }
    tent_ances_matrix=update_ancestor_matrix(tent_incid_matrix)
-   loop=check.ances.matrix(tent_ances_matrix)
+   loop=check_ances_matrix(tent_ances_matrix)
   }
   return(tent_trans_matrix)
 }

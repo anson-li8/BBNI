@@ -1,5 +1,5 @@
 #################################################################################
-Error_LLH<-function(TRFUM)   # compute error-likelihood, this function depends on the TRansition FUnction Matrix
+Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty)   # compute error-likelihood, this function depends on the TRansition FUnction Matrix
    {                                             # error_prior is a vector not a matrix
         InOutPair<-list(); ii<-0; root_node<-numeric(); root<-0
         for ( i in 1:nrow(TRFUM))          #  i row   find each input output combination
