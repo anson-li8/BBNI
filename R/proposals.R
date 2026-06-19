@@ -11,28 +11,28 @@ for (i in 1: nrow(gene.data))
   for (j in 1: nrow(gene.data))
    if (j!=i)
    for (k in 1: nrow(gene.data))
-    if (k!=i & k!=j)
+    if (k!=i && k!=j)
       {  # print(i)
        test.result<-list()  # save test results for all possible relations
        gene.triplet<-rbind(rbind(gene.data[i,1:(SampleSize-1)], gene.data[j,1:(SampleSize-1)]),gene.data[k,2:SampleSize])
         c000<-0; c001<-0; c010<-0; c011<-0; c100<-0; c101<-0; c110<-0; c111<-0
         for (ii in 1: (ncol(gene.triplet)-1))   # counts in each cell
      {
-      if (gene.triplet[1,ii]==0 & gene.triplet[2,ii]==0 & gene.triplet[3,(ii+1)]==0)
+      if (gene.triplet[1,ii]==0 && gene.triplet[2,ii]==0 && gene.triplet[3,(ii+1)]==0)
          c000<-c000+1
-      if (gene.triplet[1,ii]==0 & gene.triplet[2,ii]==0 & gene.triplet[3,(ii+1)]==1)
+      if (gene.triplet[1,ii]==0 && gene.triplet[2,ii]==0 && gene.triplet[3,(ii+1)]==1)
          c001<-c001+1
-      if (gene.triplet[1,ii]==0 & gene.triplet[2,ii]==1 & gene.triplet[3,(ii+1)]==0)
+      if (gene.triplet[1,ii]==0 && gene.triplet[2,ii]==1 && gene.triplet[3,(ii+1)]==0)
          c010<-c010+1
-      if (gene.triplet[1,ii]==0 & gene.triplet[2,ii]==1 & gene.triplet[3,(ii+1)]==1)
+      if (gene.triplet[1,ii]==0 && gene.triplet[2,ii]==1 && gene.triplet[3,(ii+1)]==1)
          c011<-c011+1
-      if (gene.triplet[1,ii]==1 & gene.triplet[2,ii]==0 & gene.triplet[3,(ii+1)]==0)
+      if (gene.triplet[1,ii]==1 && gene.triplet[2,ii]==0 && gene.triplet[3,(ii+1)]==0)
          c100<-c100+1
-      if (gene.triplet[1,ii]==1 & gene.triplet[2,ii]==0 & gene.triplet[3,(ii+1)]==1)
+      if (gene.triplet[1,ii]==1 && gene.triplet[2,ii]==0 && gene.triplet[3,(ii+1)]==1)
          c101<-c101+1
-      if (gene.triplet[1,ii]==1 & gene.triplet[2,ii]==1 & gene.triplet[3,(ii+1)]==0)
+      if (gene.triplet[1,ii]==1 && gene.triplet[2,ii]==1 && gene.triplet[3,(ii+1)]==0)
          c110<-c110+1
-      if (gene.triplet[1,ii]==1 & gene.triplet[2,ii]==1 & gene.triplet[3,(ii+1)]==1)
+      if (gene.triplet[1,ii]==1 && gene.triplet[2,ii]==1 && gene.triplet[3,(ii+1)]==1)
          c111<-c111+1
       }
        test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)   #  generate random sample
@@ -64,7 +64,7 @@ for (i in 1: nrow(gene.data))
          {
             min.miscount<-min(miscount)
            for (ii in 1:length(test.result))
-           if ( length(test.result[[ii]])==5 & test.result[[ii]][5]==min.miscount)
+           if ( length(test.result[[ii]])==5 && test.result[[ii]][5]==min.miscount)
              {
               candidate.prior[[kk]]<-test.result[[ii]]
               kk<-kk+1
@@ -187,14 +187,14 @@ for (i in 1:num.node)
          pairwise.prior.set<-t(pairwise.prior.set)
          pairwise.prior.pare<-t(data.matrix(pairwise.prior.set[,1]))
        }
-      if (ncol(pairwise.prior.set)>1 & nrow(pairwise.prior.set)>0)
+      if (ncol(pairwise.prior.set)>1 && nrow(pairwise.prior.set)>0)
         pairwise.prior.pare<-pairwise.prior.set[,1]
 
       triplet.prior.set<-matrix()
       triplet.prior.pare<-matrix()
       triplet.prior.set<-prior.triplet[prior.triplet[,3]==i,]
       triplet.prior.set<-data.matrix(triplet.prior.set)
-      if (ncol(triplet.prior.set)>1 & nrow(triplet.prior.set)>0)
+      if (ncol(triplet.prior.set)>1 && nrow(triplet.prior.set)>0)
         triplet.prior.pare<-triplet.prior.set[,1:2]
       if (ncol(triplet.prior.set)==1)
         {

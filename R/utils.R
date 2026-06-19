@@ -8,7 +8,7 @@ update.ancestor_matrix<-function(incid_matrix) #  for a given incidence matrix, 
   for (i in 1: nrow(ances_matrix))
     for (j in 1:ncol(ances_matrix))
      for (k in 1: nrow(ances_matrix))
-       if (ances_matrix[i,j]==1 & ances_matrix[j,k]==1)      # it should be updated num.node times
+       if (ances_matrix[i,j]==1 && ances_matrix[j,k]==1)      # it should be updated num.node times
           ances_matrix[i,k]<-1
  }
  return(ances_matrix)

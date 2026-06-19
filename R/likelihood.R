@@ -130,7 +130,7 @@ GenerateNetwork<-function(num.node)
    for (i in 1:num.node)
      {
       u1=runif(1); uu=4       # uu determines the network complexity
-      if (u1>1/10 & u1<=uu/10)
+      if (u1>1/10 && u1<=uu/10)
        {
         position=sample(seq(num.node)[-i],1); tent_incid_matrix[i,position]=1
         u2=runif(1)

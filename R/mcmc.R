@@ -108,10 +108,10 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
           {
           parent_of_update[j]<-i; j<-j+1
           }
-      swap_candi<-numeric(); j2<-1       # swap_candi  is used for swapping parent action     # swap_candi & legal_parent depend on current_parent
+      swap_candi<-numeric(); j2<-1       # swap_candi  is used for swapping parent action     # swap_candi && legal_parent depend on current_parent
       legal_parent<-numeric(); j1<-1    # legal_parent is used for adding parent action
       for (i in 1:num.node)
-      if ( i!=update_order[k] & current_ances_matrix[i,update_order[k]]!=1 & (i  %in% parent_of_update == FALSE))
+      if ( i!=update_order[k] && current_ances_matrix[i,update_order[k]]!=1 && (i  %in% parent_of_update == FALSE))
         {
         legal_parent[j1]<-i; j1<-j1+1 #; print(i)
         }
@@ -127,7 +127,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
           pairwise.prior.pare<-t(data.matrix(pairwise.prior.set[,1]))
       #     all.maxscore.pairwise=pairwise.prior.set
         }
-        if (ncol(pairwise.prior.set)>1 & nrow(pairwise.prior.set)>0)
+        if (ncol(pairwise.prior.set)>1 && nrow(pairwise.prior.set)>0)
         {
           pairwise.prior.pare<-pairwise.prior.set[,1]
       #     all.maxscore.pairwise=pairwise.prior.set[pairwise.prior.set[,4]==max(pairwise.prior.set[,4]),]
@@ -137,7 +137,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
         triplet.prior.pare<-matrix()
         triplet.prior.set<-prior.triplet[prior.triplet[,3]==update_order[k],]      # triplet proposal for node update_order[k]
         triplet.prior.set<-data.matrix(triplet.prior.set)
-        if (ncol(triplet.prior.set)>1 & nrow(triplet.prior.set)>0)
+        if (ncol(triplet.prior.set)>1 && nrow(triplet.prior.set)>0)
           {
           triplet.prior.pare<-triplet.prior.set[,1:2]
     #      all.maxscore.triplet=triplet.prior.set[triplet.prior.set[,5]==max(triplet.prior.set[,5]),]
@@ -150,10 +150,10 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
           }
         ###########################  find the minimum mismatches for gene pairs and gene triplet
     #   BIC.pairwise=0; BIC.triplet=0 # case1:  "numeric case"
-    #     if(is.numeric(all.maxscore.pairwise)==T & length(all.maxscore.pairwise)>0)
+    #     if(is.numeric(all.maxscore.pairwise)==T && length(all.maxscore.pairwise)>0)
     #        maxscore.pairwise=all.maxscore.pairwise
     #
-    #     if(is.numeric(all.maxscore.triplet)==T & length(all.maxscore.triplet)>0)
+    #     if(is.numeric(all.maxscore.triplet)==T && length(all.maxscore.triplet)>0)
     #        maxscore.triplet=all.maxscore.triplet
     #
     #     if (is.matrix(all.maxscore.pairwise)==T)
@@ -178,7 +178,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               uu<-runif(1)
           if (num_legal_parent==0)       # if no candiate nodes are available for adding parent, then ignore this node
               uu<-0
-          if (num_legal_parent==1||(num_legal_parent>1 & uu>=pairwise.ratio))
+          if (num_legal_parent==1||(num_legal_parent>1 && uu>=pairwise.ratio))
             {
               ################################     Every move should have a reasonable proposal probability
               # proposal move 1: add one parent
@@ -186,7 +186,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
 
               prop.prob<-runif(1); aa<-0
               if (prop.prob>=prop.ratio)    # proposal information is used with probability 1-prop.ratio
-              if (length(prop.legal.overlap)>=1 & nrow(pairwise.prior.set)>0)
+              if (length(prop.legal.overlap)>=1 && nrow(pairwise.prior.set)>0)
                 {
                   aa<-aa+1
                   candidate.pare.set<-pairwise.prior.set[pairwise.prior.set[,1]%in%prop.legal.overlap==T,]
@@ -222,7 +222,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               prop_post<-xxx[[1]][length(xxx[[1]])]
               prop_sample_prob<-numeric(); p2c_prob<-numeric()   # calculate acceptance probability
               curr_sample_prob<-numeric(); c2p_prob<-numeric()
-              prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0      #  this is the prior & likelihood
+              prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0      #  this is the prior && likelihood
               curr_sample_prob[1]<-current_post[1];curr_sample_prob[2]<-0
               prop_sample_prob[3]<-log(1/2); curr_sample_prob[3]<-log(1)    #  this is P(R|T)
 
@@ -249,7 +249,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
             }
               ##################################
               # proposal move 2 add two parents
-              if(num_legal_parent>1 & uu<pairwise.ratio)      # add two parents one time
+              if(num_legal_parent>1 && uu<pairwise.ratio)      # add two parents one time
               {
                 prop.prob<-runif(1); aa<-0
                 if(prop.prob>=prop.ratio)
@@ -308,7 +308,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
                 curr_sample_prob<-numeric(); c2p_prob<-numeric()
-                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior & likelihood
+                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior && likelihood
                 curr_sample_prob[1]<-current_post[1];curr_sample_prob[2]<-0
                 prop_sample_prob[3]<-log(prop_trans_func_prob); curr_sample_prob[3]<-log(1)    #  this is P(R|T)
 
@@ -341,16 +341,16 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
             one.parent.ratio=1/6
             #################################
             #proposal move 1: add one parent
-            if (length(legal_parent)>0 & uu<one.parent.ratio)
+            if (length(legal_parent)>0 && uu<one.parent.ratio)
               {
               prop.prob<-runif(1);aa<-0
               if(prop.prob>=prop.ratio)
-                if (nrow(triplet.prior.set)>=1 & ncol(triplet.prior.set)>1)
+                if (nrow(triplet.prior.set)>=1 && ncol(triplet.prior.set)>1)
                   {
                       candidate.pare.set<-list()
                       for (jj in 1:nrow(triplet.prior.set))
                         if (length(intersect(parent_of_update,triplet.prior.pare[jj,] ))==1)
-                        if (parent_of_update %in% triplet.prior.pare[jj,]==T & setdiff(triplet.prior.pare[jj,], parent_of_update) %in% legal_parent==T)
+                        if (parent_of_update %in% triplet.prior.pare[jj,]==T && setdiff(triplet.prior.pare[jj,], parent_of_update) %in% legal_parent==T)
                           {
                             aa<-aa+1
                             candidate.pare.set[[aa]]<-triplet.prior.set[jj,]
@@ -400,7 +400,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
                 curr_sample_prob<-numeric(); c2p_prob<-numeric()
-                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior & likelihood
+                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior && likelihood
                 curr_sample_prob[1]<-current_post[1];curr_sample_prob[2]<-0
                 prop_sample_prob[3]<-log(prop_trans_func_prob); curr_sample_prob[3]<-log(1)    #  this is P(R|T)
 
@@ -429,12 +429,12 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
             }
             ##################################
             # proposal move 2, swap one parent
-            if (length(swap_candi)>0 & uu>=1/6 & uu<2/6)
+            if (length(swap_candi)>0 && uu>=1/6 && uu<2/6)
               {
                 swap.prior.overlap<-intersect(swap_candi, pairwise.prior.pare)
                 prop.prob<-runif(1); aa<-0
                 if(prop.prob>prop.ratio)
-                if (length(swap.prior.overlap)>0 & nrow(pairwise.prior.set)>0)
+                if (length(swap.prior.overlap)>0 && nrow(pairwise.prior.set)>0)
                   {
                   aa<-aa+1
                   swap.candidate<-pairwise.prior.set[pairwise.prior.set[,1]%in%swap.prior.overlap==T,]
@@ -473,7 +473,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 prop_sample_prob<-numeric(); p2c_prob<-numeric()  # calculate acceptance probability
                 curr_sample_prob<-numeric(); c2p_prob<-numeric()
-                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior & likelihood
+                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior && likelihood
                 curr_sample_prob[1]<-current_post[1];curr_sample_prob[2]<-0
                 prop_sample_prob[3]<-log(prop_trans_func_prob); curr_sample_prob[3]<-log(1)    #  this is P(R|T)
 
@@ -499,7 +499,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               }
             ##################################
             # proposal move 3; remove one parent ### this move may introduce new root node
-            if(uu>=2/6 & uu<3/6)
+            if(uu>=2/6 && uu<3/6)
               {
               remove_one_node<-parent_of_update; remove_one_prob<-1
               prop_incid_matrix<-current_incid_matrix
@@ -513,7 +513,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               prop_post<-xxx[[1]][length(xxx[[1]])]
               prop_sample_prob<-numeric(); p2c_prob<-numeric()   # calculate acceptance probability
               curr_sample_prob<-numeric(); c2p_prob<-numeric()
-              prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior & likelihood
+              prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior && likelihood
               curr_sample_prob[1]<-current_post[1];curr_sample_prob[2]<-0
               prop_sample_prob[3]<-log(prop_trans_func_prob); curr_sample_prob[3]<-log(1)    #  this is P(R|T)
 
@@ -542,7 +542,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
             }
             ####################################
             # additional move 1: reverse one arc in pairwise genes
-            if(uu>=3/6 & uu<4/6)
+            if(uu>=3/6 && uu<4/6)
               {
               prop_incid_matrix<-current_incid_matrix
               prop_incid_matrix[update_order[k],parent_of_update]<-0
@@ -554,7 +554,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                     j<-j+1; parent_parent[j]<-i
                   }
               prop_ances_matrix<-update.ancestor_matrix(prop_incid_matrix)
-              if(check.ances.matrix(prop_ances_matrix)==0 & length(parent_parent)==0)  # make sure no loops & parent_of_update no parents
+              if(check.ances.matrix(prop_ances_matrix)==0 && length(parent_parent)==0)  # make sure no loops && parent_of_update no parents
                 {
                 prop_trans_func_matrix<-current_trans_func_matrix
                 func_order<-current_trans_func_matrix[update_order[k],parent_of_update]
@@ -573,13 +573,13 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               }
               ###################################
               # additional move 2: reverse two arcs simultanously
-            if(uu>=4/6 & uu<5/6)
+            if(uu>=4/6 && uu<5/6)
               {
               parent_parent<-numeric(); j1<-0
               children<-numeric(); j<-0           # find the children of parent_of_update
               for (i  in 1:ncol(current_incid_matrix))
                 {
-                if (i !=update_order[k] & current_incid_matrix[i, parent_of_update]>0)
+                if (i !=update_order[k] && current_incid_matrix[i, parent_of_update]>0)
                   {
                   j<-j+1; children[j]<-i
                   }
@@ -588,7 +588,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   j1<-j1+1; parent_parent[j1]<-i
                   }
                 }
-              if (length(children)==1 & length(parent_parent)==0)   # parent_of_update has two exact 2 children and no parents
+              if (length(children)==1 && length(parent_parent)==0)   # parent_of_update has two exact 2 children and no parents
                 {
                 parent_child<-numeric(); j<-0        # find parent of children to determine the trans_func_matrix
                 for (i in 1:num.node)
@@ -626,16 +626,16 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               }
             }
           ############################################# additional move: swap two with one
-            if (uu>=5/6 & length(swap_candi)>1)
+            if (uu>=5/6 && length(swap_candi)>1)
               {
                 legal.triplet.pare<-intersect(swap_candi, triplet.prior.pare)
                 prop.prob<-runif(1); aa<-0
                 if(prop.prob>prop.ratio)
                 {
                   swap.candidate<-list()
-                  if (length(intersect(parent_of_update, legal.triplet.pare))==0 & nrow(triplet.prior.set)>0)
+                  if (length(intersect(parent_of_update, legal.triplet.pare))==0 && nrow(triplet.prior.set)>0)
                   for (jj in 1: nrow(triplet.prior.pare))
-                    if (length(intersect(parent_of_update, triplet.prior.pare[jj,]))==0 & length(intersect(triplet.prior.pare[jj,], swap_candi))==2)
+                    if (length(intersect(parent_of_update, triplet.prior.pare[jj,]))==0 && length(intersect(triplet.prior.pare[jj,], swap_candi))==2)
                     {
                       aa<-aa+1
                       swap.candidate[[aa]]<-triplet.prior.set[jj,]
@@ -688,7 +688,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
                 curr_sample_prob<-numeric(); c2p_prob<-numeric()
 
-                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior & likelihood
+                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior && likelihood
                 curr_sample_prob[1]<-current_post[1];curr_sample_prob[2]<-0
                 prop_sample_prob[3]<-log(prop_trans_func_prob); curr_sample_prob[3]<-log(1)    #  this is P(R|T)
 
@@ -726,7 +726,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   pare.prior.overlap<-intersect(parent_of_update, pairwise.prior.pare)
                   prop.prob<-runif(1);aa<-0
                   if(prop.prob>=prop.ratio)
-                    if (length(pare.prior.overlap)==1 & nrow(pairwise.prior.set)>0)
+                    if (length(pare.prior.overlap)==1 && nrow(pairwise.prior.set)>0)
                     {
                     aa<-aa+1
                     remove_one_node<-setdiff(parent_of_update, pairwise.prior.pare)
@@ -763,7 +763,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                   prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
                   curr_sample_prob<-numeric(); c2p_prob<-numeric()
 
-                  prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior & likelihood
+                  prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior && likelihood
                   curr_sample_prob[1]<-current_post[1];curr_sample_prob[2]<-0
                   prop_sample_prob[3]<-log(prop_trans_func_prob); curr_sample_prob[3]<-log(1)    #  this is P(R|T)
 
@@ -793,7 +793,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               }
             ############################
             # proposal move 2; remove two parents
-            if (uu>=two.parent.ratio & uu<2/7)
+            if (uu>=two.parent.ratio && uu<2/7)
               {
               remove_node<-parent_of_update;  remove_prob<-1
               prop_incid_matrix<-current_incid_matrix
@@ -807,7 +807,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               prop_post<-xxx[[1]][length(xxx[[1]])]
               prop_sample_prob<-numeric(); p2c_prob<-numeric()    # calculate acceptance probability
               curr_sample_prob<-numeric(); c2p_prob<-numeric()
-              prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior & likelihood
+              prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior && likelihood
               curr_sample_prob[1]<-current_post[1];curr_sample_prob[2]<-0
               prop_sample_prob[3]<-log(prop_trans_func_prob); curr_sample_prob[3]<-log(1)    #  this is P(R|T)
 
@@ -826,14 +826,14 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
             }
             ############################
             #proposal move 3: swap one parent
-              if (uu>=2/7 & uu<3/7 & length(swap_candi)>0)
+              if (uu>=2/7 && uu<3/7 && length(swap_candi)>0)
               {
                 legal.triplet.pare<-intersect(swap_candi, triplet.prior.pare)
                 prop.prob<-runif(1);aa<-0
                 if(prop.prob>=prop.ratio)
                 {
                   swap.candidate<-list()
-                  if (length(intersect(parent_of_update, legal.triplet.pare))==1 & nrow(triplet.prior.set)>0)
+                  if (length(intersect(parent_of_update, legal.triplet.pare))==1 && nrow(triplet.prior.set)>0)
                   for (jj in 1: nrow(triplet.prior.pare))
                     if (length(intersect(parent_of_update, triplet.prior.pare[jj,]))==1)
                     {
@@ -888,7 +888,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_post<-xxx[[1]][length(xxx[[1]])]
                 prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
                 curr_sample_prob<-numeric(); c2p_prob<-numeric()
-                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior & likelihood
+                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior && likelihood
                 curr_sample_prob[1]<-current_post[1];curr_sample_prob[2]<-0
                 prop_sample_prob[3]<-log(prop_trans_func_prob); curr_sample_prob[3]<-log(1)    #  this is P(R|T)
 
@@ -918,16 +918,16 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               }
           ##############################
           #proposal move 4, swap two parents
-            if (uu>=3/7 & uu<4/7 & length(swap_candi)>1)
+            if (uu>=3/7 && uu<4/7 && length(swap_candi)>1)
             {
                 legal.triplet.pare<-intersect(swap_candi, triplet.prior.pare)
                 prop.prob<-runif(1); aa<-0
                 if(prop.prob>prop.ratio)
                 {
                   swap.candidate<-list()
-                  if (length(intersect(parent_of_update, legal.triplet.pare))==0 & nrow(triplet.prior.set)>0)
+                  if (length(intersect(parent_of_update, legal.triplet.pare))==0 && nrow(triplet.prior.set)>0)
                   for (jj in 1: nrow(triplet.prior.pare))
-                    if (length(intersect(parent_of_update, triplet.prior.pare[jj,]))==0 & length(intersect(triplet.prior.pare[jj,], swap_candi))==2)
+                    if (length(intersect(parent_of_update, triplet.prior.pare[jj,]))==0 && length(intersect(triplet.prior.pare[jj,], swap_candi))==2)
                     {
                       aa<-aa+1
                       swap.candidate[[aa]]<-triplet.prior.set[jj,]
@@ -982,7 +982,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 prop_sample_prob<-numeric(); p2c_prob<-numeric() # calculate acceptance probability
                 curr_sample_prob<-numeric(); c2p_prob<-numeric()
 
-                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior & likelihood
+                prop_sample_prob[1]<-prop_post;prop_sample_prob[2]<-0       #  this is the prior && likelihood
                 curr_sample_prob[1]<-current_post[1];curr_sample_prob[2]<-0
                 prop_sample_prob[3]<-log(prop_trans_func_prob); curr_sample_prob[3]<-log(1)    #  this is P(R|T)
 
@@ -1008,7 +1008,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               }
           #############################################################
         #  additional move 1: reorder the input and output variables  for XOR relation
-              if (uu>=4/7 & uu<5/7 & current_trans_func_matrix[update_order[k],parent_of_update[1]]==9)
+              if (uu>=4/7 && uu<5/7 && current_trans_func_matrix[update_order[k],parent_of_update[1]]==9)
               {
                 prop_incid_matrix<-current_incid_matrix
                 sample.child<-parent_of_update[sample.int(2,1)]
@@ -1047,7 +1047,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               }
         ###################################################
         # additional move 2: reverse one arc among gene triplet
-          if (uu>=5/7 & uu<6/7)
+          if (uu>=5/7 && uu<6/7)
               {
                 reverse_pare<-parent_of_update[sample.int(2,1)]
                 remain_pare<-setdiff(parent_of_update, reverse_pare)
@@ -1115,7 +1115,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               {
                 prop.prob<-runif(1);aa<-0
                 if(prop.prob>=prop.ratio)
-                  if (nrow(triplet.prior.set)>=1 & ncol(triplet.prior.set)>1)
+                  if (nrow(triplet.prior.set)>=1 && ncol(triplet.prior.set)>1)
                     {
                     candidate.pare.set<-list()
                     for (jj in 1:nrow(triplet.prior.set))
@@ -1159,7 +1159,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 nume<-sum(prop_post)
                 deno<-sum(current_post)
                 acce_prob<-exp(nume-deno); ratio<-runif(1)
-                if ( acce_prob!=1 & ratio<=acce_prob)
+                if ( acce_prob!=1 && ratio<=acce_prob)
                   n<-n+1
               }
           }
