@@ -4,36 +4,36 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
   prop.ratio<-0.1       # proposal information is used with probability prop.ratio
   prop_beta1<-2; prop_beta2<-100
   Trans_Func<-seq(1,12)     # all transition functions where each node has two parents at most
-  num.node=20; SampleSize=200
-  error.prop<-0.2; pseudo.count<-0.01
-  threshold<-SampleSize*error.prop
-  num_update=200
-  penalty=0.1
-  prior_para<-matrix(3, nrow=(num.node+1), ncol=2)
-  prior_para[num.node+1,1]<-2;prior_para[num.node+1,2]<-100    # for error, it should be beta1e<beta2e
+  # num.node=20; SampleSize=200 overrides function argument
+  # error.prop<-0.2; pseudo.count<-0.01 overrides function argument
+  # threshold<-SampleSize*error.prop overrides function argument
+  # num_update=200 overrides function argument
+  # penalty=0.1 overrides function argument
+  # prior_para<-matrix(3, nrow=(num.node+1), ncol=2)
+  # prior_para[num.node+1,1]<-2;prior_para[num.node+1,2]<-100    # for error, it should be beta1e<beta2e
 
-  para<-numeric(); ncp=0
-  for (i in 1:nrow(prior_para))
-      para[i]<-rbeta(1, prior_para[i,1], prior_para[i,2],ncp)
-  para[21]=0.1
-  error<-matrix(0, nrow=num.node,ncol=SampleSize)
-  for(i in 1:num.node)
-    error[i,]<-rbinom(SampleSize,1,prob=para[num.node+1])
-  ###############
-    true_network=GenerateNetwork(num.node)       # randomly generate a network
+  # para<-numeric(); ncp=0
+  # for (i in 1:nrow(prior_para))
+      # para[i]<-rbeta(1, prior_para[i,1], prior_para[i,2],ncp)
+  # para[21]=0.1
+  # error<-matrix(0, nrow=num.node,ncol=SampleSize)
+  # for(i in 1:num.node)
+  #   error[i,]<-rbinom(SampleSize,1,prob=para[num.node+1])
+  # ###############
+  #   true_network=GenerateNetwork(num.node)       # randomly generate a network
 
-    GeneData=matrix(nrow=num.node, ncol=SampleSize)   # based on the generated network, create a data set
-    GeneData=GenerateSample(true_network)
-  # GeneData<-read.table("GeneData_randomdatanoise0.1proposalinitialpenalty0.1multiplechains_3.txt",header=T)  #true network
-  # GeneData<-data.matrix(GeneData)
-  # true_network<-read.table("TrueNetwork_randomdatanoise0.1proposalinitialpenalty0.1multiplechains_3.txt",header=T)
-  # true_network<-data.matrix(true_network)
-    true_incid_matrix<-true_network
-      for (i in 1:nrow(true_incid_matrix))
-      for (j in 1:ncol(true_incid_matrix))
-        if (true_incid_matrix[i,j]>0)
-        true_incid_matrix[i,j]<-1
-    true_logpost=Error_LLH(true_network)[[1]][length(Error_LLH(true_network))]
+  #   GeneData=matrix(nrow=num.node, ncol=SampleSize)   # based on the generated network, create a data set
+  #   GeneData=GenerateSample(true_network)
+  # # GeneData<-read.table("GeneData_randomdatanoise0.1proposalinitialpenalty0.1multiplechains_3.txt",header=T)  #true network
+  # # GeneData<-data.matrix(GeneData)
+  # # true_network<-read.table("TrueNetwork_randomdatanoise0.1proposalinitialpenalty0.1multiplechains_3.txt",header=T)
+  # # true_network<-data.matrix(true_network)
+  #   true_incid_matrix<-true_network
+  #     for (i in 1:nrow(true_incid_matrix))
+  #     for (j in 1:ncol(true_incid_matrix))
+  #       if (true_incid_matrix[i,j]>0)
+  #       true_incid_matrix[i,j]<-1
+  #   true_logpost=Error_LLH(true_network)[[1]][length(Error_LLH(true_network))]
 
     Candidate=ProposalConstruction(GeneData)    # create the proposal for generated data
     prior.triplet<-Candidate[[1]]
