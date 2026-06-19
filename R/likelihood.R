@@ -120,7 +120,7 @@ Error_LLH<-function(TRFUM)   # compute error-likelihood, this function depends o
    }
 #############################################################################################################################
 #############################################################################################################################
-BF1<-function(test.stat)    # model g_k=g_i and g_j
+BF1<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i and g_j
   { #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[2],test.stat[4],test.stat[6],test.stat[7])
@@ -131,7 +131,7 @@ BF1<-function(test.stat)    # model g_k=g_i and g_j
    # return(false.count)
      return(BIC.value)
   }
-BF2<-function(test.stat)    # model g_k=complement(g_i and g_j)
+BF2<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i and g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[1],test.stat[3],test.stat[5],test.stat[8])
@@ -142,7 +142,7 @@ BF2<-function(test.stat)    # model g_k=complement(g_i and g_j)
    # return(false.count)
     return(BIC.value)
  }
-BF3<-function(test.stat)    # model g_k=(g_i or g_j)
+BF3<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=(g_i or g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[2],test.stat[3],test.stat[5],test.stat[7])
@@ -153,7 +153,7 @@ BF3<-function(test.stat)    # model g_k=(g_i or g_j)
    # return(false.count)
      return(BIC.value)
  }
-BF4<-function(test.stat)    # model g_k=complement(g_i or g_j)
+BF4<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i or g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[1],test.stat[4],test.stat[6],test.stat[8])
@@ -164,7 +164,7 @@ BF4<-function(test.stat)    # model g_k=complement(g_i or g_j)
    # return(false.count)
      return(BIC.value)
  }
-BF5<-function(test.stat)    # model g_k=complement(g_i) or g_j
+BF5<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i) or g_j
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[1],test.stat[3],test.stat[6],test.stat[7])
@@ -175,7 +175,7 @@ BF5<-function(test.stat)    # model g_k=complement(g_i) or g_j
    # return(false.count)
      return(BIC.value)
  }
-BF6<-function(test.stat)    # model g_k=g_i or complement( g_j)
+BF6<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i or complement( g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[1],test.stat[4],test.stat[5],test.stat[7])
@@ -186,7 +186,7 @@ BF6<-function(test.stat)    # model g_k=g_i or complement( g_j)
    # return(false.count)
      return(BIC.value)
  }
-BF7<-function(test.stat)    # model g_k=complement(g_i) and g_j
+BF7<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i) and g_j
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[2],test.stat[3],test.stat[6],test.stat[8])
@@ -197,7 +197,7 @@ BF7<-function(test.stat)    # model g_k=complement(g_i) and g_j
    # return(false.count)
      return(BIC.value)
  }
-BF8<-function(test.stat)    # model g_k=g_i and complement(g_j)
+BF8<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i and complement(g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[2],test.stat[4],test.stat[5],test.stat[8])
@@ -208,7 +208,7 @@ BF8<-function(test.stat)    # model g_k=g_i and complement(g_j)
    # return(false.count)
      return(BIC.value)
  }
-BF9<-function(test.stat)    # model g_k=g_i xor g_j
+BF9<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i xor g_j
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[2],test.stat[3],test.stat[5],test.stat[8])
@@ -219,7 +219,7 @@ BF9<-function(test.stat)    # model g_k=g_i xor g_j
    # return(false.count)
     return(BIC.value)
  }
- BF10<-function(test.stat)    # model g_k=complement(g_i xor g_j)
+ BF10<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i xor g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[1],test.stat[4],test.stat[6],test.stat[7])
@@ -230,7 +230,7 @@ BF9<-function(test.stat)    # model g_k=g_i xor g_j
    # return(false.count)
      return(BIC.value)
  }
-BF11<-function(test.stat)    # model g_k=g_i
+BF11<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_i
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[2],test.stat[4],test.stat[5],test.stat[7])
@@ -241,7 +241,7 @@ BF11<-function(test.stat)    # model g_k=g_i
    # return(false.count)
      return(BIC.value)
  }
-BF12<-function(test.stat)    # model g_k=g_j
+BF12<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=g_j
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[2],test.stat[3],test.stat[6],test.stat[7])
@@ -252,7 +252,7 @@ BF12<-function(test.stat)    # model g_k=g_j
    # return(false.count)
      return(BIC.value)
  }
-BF13<-function(test.stat)    # model g_k=complement(g_i)
+BF13<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement(g_i)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[1],test.stat[3],test.stat[6],test.stat[8])
@@ -263,7 +263,7 @@ BF13<-function(test.stat)    # model g_k=complement(g_i)
    # return(false.count)
      return(BIC.value)
  }
- BF14<-function(test.stat)    # model g_k=complement( g_j)
+ BF14<-function(test.stat, pseudo.count, SampleSize, threshold)    # model g_k=complement( g_j)
   {  #test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)
    test.stat<-test.stat+pseudo.count  # prevent come cells from being 0
    false.count<-sum(test.stat[1],test.stat[4],test.stat[5],test.stat[8])

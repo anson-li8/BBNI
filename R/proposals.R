@@ -1,7 +1,6 @@
- ProposalConstruction<-function(GeneData)
+ ProposalConstruction<-function(GeneData, SampleSize)
  {
 gene.data=GeneData
-# SampleSize<-ncol(gene.data)
 num.node<-nrow(gene.data)
 error.prop<-0.4; pseudo.count<-0.01
 SampleSize<-SampleSize+pseudo.count*8; threshold<-SampleSize*error.prop
@@ -36,20 +35,20 @@ for (i in 1: nrow(gene.data))
          c111<-c111+1
       }
        test.stat<-c(c000, c001, c010, c011, c100, c101, c110, c111)   #  generate random sample
-       test.result[[1]]<-c(i,j, k, 1, BF1(test.stat))
-       test.result[[2]]<-c(i,j, k, 2, BF2(test.stat))
-       test.result[[3]]<-c(i,j, k, 3, BF3(test.stat))
-       test.result[[4]]<-c(i,j, k, 4, BF4(test.stat))
-       test.result[[5]]<-c(i,j, k, 5, BF5(test.stat))
-       test.result[[6]]<-c(i,j, k, 6, BF6(test.stat))
-       test.result[[7]]<-c(i,j, k, 7, BF7(test.stat))
-       test.result[[8]]<-c(i,j, k, 8, BF8(test.stat))
-       test.result[[9]]<-c(i,j, k, 9, BF9(test.stat))
-       test.result[[10]]<-c(i,j, k, 10, BF10(test.stat))
-       test.result[[11]]<-c(i,j, k, 11, BF11(test.stat)) # model g_k=g_i
-       test.result[[12]]<-c(i,j, k, 12, BF12(test.stat)) # model g_k=g_j
-       test.result[[13]]<-c(i,j, k, 13, BF13(test.stat)) # model g_k=complement(g_i)
-       test.result[[14]]<-c(i,j, k, 14, BF14(test.stat))  # model g_k=complement(g_j)
+       test.result[[1]]<-c(i,j, k, 1, BF1(test.stat, pseudo.count, SampleSize, threshold))
+       test.result[[2]]<-c(i,j, k, 2, BF2(test.stat, pseudo.count, SampleSize, threshold))
+       test.result[[3]]<-c(i,j, k, 3, BF3(test.stat, pseudo.count, SampleSize, threshold))
+       test.result[[4]]<-c(i,j, k, 4, BF4(test.stat, pseudo.count, SampleSize, threshold))
+       test.result[[5]]<-c(i,j, k, 5, BF5(test.stat, pseudo.count, SampleSize, threshold))
+       test.result[[6]]<-c(i,j, k, 6, BF6(test.stat, pseudo.count, SampleSize, threshold))
+       test.result[[7]]<-c(i,j, k, 7, BF7(test.stat, pseudo.count, SampleSize, threshold))
+       test.result[[8]]<-c(i,j, k, 8, BF8(test.stat, pseudo.count, SampleSize, threshold))
+       test.result[[9]]<-c(i,j, k, 9, BF9(test.stat, pseudo.count, SampleSize, threshold))
+       test.result[[10]]<-c(i,j, k, 10, BF10(test.stat, pseudo.count, SampleSize, threshold))
+       test.result[[11]]<-c(i,j, k, 11, BF11(test.stat, pseudo.count, SampleSize, threshold)) # model g_k=g_i
+       test.result[[12]]<-c(i,j, k, 12, BF12(test.stat, pseudo.count, SampleSize, threshold)) # model g_k=g_j
+       test.result[[13]]<-c(i,j, k, 13, BF13(test.stat, pseudo.count, SampleSize, threshold)) # model g_k=complement(g_i)
+       test.result[[14]]<-c(i,j, k, 14, BF14(test.stat, pseudo.count, SampleSize, threshold))  # model g_k=complement(g_j)
        # save the most likely of all 14 relations by their false counts.
        # *******************here it may filter out some true ones due to noise and model uncertainty ****************
        miscount<-numeric(); jj<-1
