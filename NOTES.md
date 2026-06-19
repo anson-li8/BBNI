@@ -53,7 +53,7 @@ None
 
 ---
 ## `Error_LLH`
-What it does: It calculates the collapsed posterior log-probability of a proposed network topology (T) and its Boolean functions (F) given the observed data (G). It parses the TRFUM into root and non-root nodes, predicts each node's value based on its Boolean rule, counts mismatches, and evaluates the Beta-Binomial collapsed likelihood. By integrating out Bernoulli parameters $θ=\{𝑝_𝐸,𝑝_𝑖\}$ under Beta priors, the function returns $logp(T,F|G)$, which is the model score for the MCMC algorithm.
+**What it does:** It calculates the collapsed posterior log-probability of a proposed network topology (T) and its Boolean functions (F) given the observed data (G). It parses the TRFUM into root and non-root nodes, predicts each node's value based on its Boolean rule, counts mismatches, and evaluates the Beta-Binomial collapsed likelihood. By integrating out Bernoulli parameters $θ=\{𝑝_𝐸,𝑝_𝑖\}$ under Beta priors, the function returns $logp(T,F|G)$, which is the model score for the MCMC algorithm.
 
 **Arguments:**
 - `TRFUM` - (matrix) Transition Function Matrix combining both the current network topology T and the specific Boolean logic functions F assigned to each node (integer codes 1-12).
@@ -73,7 +73,7 @@ What it does: It calculates the collapsed posterior log-probability of a propose
 
 ---
 ## `GenerateNetwork`
-What it does: Randomly generates an initial, legal DAG graph topology $T$ and assigns a corresponding Boolean transition function $F$ to each node, ensuring a maximum in-degree value of 2.
+**What it does:** Randomly generates an initial, legal DAG graph topology $T$ and assigns a corresponding Boolean transition function $F$ to each node, ensuring a maximum in-degree value of 2.
 
 **Arguments:**
 - `num.node` - (integer) Total number of genes/nodes in the network
@@ -89,7 +89,7 @@ What it does: Randomly generates an initial, legal DAG graph topology $T$ and as
 
 ---
 ## `GenerateSample`
-What it does: Simulate a time-series observation dataset $G$ by identifying root nodes to simulate independently, then topologically computing the remaining nodes from $t-1$ to time $t$ using their specified Boolean logic functions and an inverted noise parameter $e$.
+**What it does:** Simulate a time-series observation dataset $G$ by identifying root nodes to simulate independently, then topologically computing the remaining nodes from $t-1$ to time $t$ using their specified Boolean logic functions and an inverted noise parameter $e$.
 
 **Arguments:**
 - `trans_matrix` - (matrix) Square matrix combining network topology $T$ and integer coded Boolean logic functions $F$ assigned to each directed edge.
@@ -111,7 +111,7 @@ $Pr(g_{ij}=1)=p_i$.” Non‑root nodes follow the noisy Boolean update in Equat
 
 ---
 ## `BF1` through `BF14`
-What it does (combined): Each function (BF1-BF10) for two-input functions, BF11-BF14 for single-input) computes a Bayesian Information Criterion (BIC) score for a candidate Boolean function by counting state mismatches between predicted and observed outputs. Lower BIC means better fit. The function calculates this efficiently by compressing the raw data into compact 3-gene frequency count (truth table) and using it to instantly find matching patterns.
+**What it does (combined):** Each function (BF1-BF10) for two-input functions, BF11-BF14 for single-input) computes a Bayesian Information Criterion (BIC) score for a candidate Boolean function by counting state mismatches between predicted and observed outputs. Lower BIC means better fit. The function calculates this efficiently by compressing the raw data into compact 3-gene frequency count (truth table) and using it to instantly find matching patterns.
 
 **Arguments:**
 - `test.stat` - (integer vector) Frequency count vector [c000, c001, c010, c011, c100, c101, c110, c111] storing how many times each specific combination of parent and child states occurs together in the data
@@ -128,8 +128,27 @@ Numeric BIC value (or NA if mismatch count exceeds threshold). Used to rank cand
 "Prior Distributions" subsection, specifically where it explains the allowable Boolean update rules: "If $W(g_i)$ is the set {a}, $f_i(a)$ can be either a or $\overline{a}$; if $W(g_i)$ is the set {a, b}, $f_i(a,b)$ has 10 non-degenerative choices...". These 14 functions (10 two-input + 4 one-input) are the candidates evaluted by the BIC scorign functions BF1-BF14.
 
 **Function mappings:**
-- BF1-BF10: Two-input Boolean functions (AND, NAND, OR, NOR, OR-NOT, NOT-OR, AND-NOT, NOT-AND, XOR, NXOR)
-- BF11-BF12: Pairwise relations (identity, identity of second parent)
-- BF13-BF14: Negations (NOT of first, NOT of second)
+- `BF1-BF10`: Two-input Boolean functions (AND, NAND, OR, NOR, OR-NOT, NOT-OR, AND-NOT, NOT-AND, XOR, NXOR)
+- `BF11-BF12`: Pairwise relations (identity, identity of second parent)
+- `BF13-BF14`: Negations (NOT of first, NOT of second)
+
+**Status:** [x] Analyzed [ ] Cleaned [ ] Documented
+
+---
+## `ProposalConstruction`
+**What it does:** Pre-computes a weighted proposal distribution for the MCMC algorithm. It evaluates all possible 1-input and 2-input Boolean logic functions using BIC. The inverse BIC of the potential candidates are used as selection weights for the MCMC sampler.
+
+**Arguments:**
+- `GeneData` - (matrix) Observational gene expression data
+
+**Returns:** (list) Containing two matrices (Candidate[[1]] for 2-input triplets and Candidate[[2]] for 1-input pairs). These matrices store the candidate parent nodes, the best-fitting Boolean logic function, the raw miscounts, and the calculated proposal selection weights.
+
+**Hidden globals:**
+- SampleSize — (integer) Total number of time points. 
+**CRITICAL NOTE:** There is already a defined local variable sample.size <- ncol(gene.data) at the top of the function, but the global variable SampleSize is used instead inside the nested loop during subsetting: gene.data[i,1:(SampleSize-1)]. 
+- BF1 through BF14 — (functions) Fourteen external helper functions called in the inner loop to evaluate the BICS of the transition state counts (test.stat) and return the total data mismatches for each specific Boolean rule. (Note: Rules 11-14 in this script map to the 1-input rules for $g_i$, $g_j$, and their complements).
+
+**Paper reference:**
+"Prior Distributions" subsection, specifically where it explains the allowable Boolean update rules: "If $W(g_i)$ is the set {a}, $f_i(a)$ can be either a or $\overline{a}$; if $W(g_i)$ is the set {a, b}, $f_i(a,b)$ has 10 non-degenerative choices...". These 14 functions are the candidates being evaluated and weighted in this distribution construction step.
 
 **Status:** [x] Analyzed [ ] Cleaned [ ] Documented
