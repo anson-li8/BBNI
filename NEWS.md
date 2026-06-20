@@ -1,3 +1,3 @@
-# BBNI (development version)
+# BBNI 0.1.0
 
 * Initial CRAN submission.
