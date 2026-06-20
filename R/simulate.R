@@ -2,13 +2,20 @@
 #'
 #' Randomly generates an initial, legal directed acyclic graph (DAG) topology
 #' $T$ and assigns a corresponding Boolean transition function $F$ to each node.
-#' This ensures that the maximum in-degree for any node is bounded by 2, and
+#' This ensures that the maximum in-degree for any node is 2, and
 #' utilizes internal checks to guarantee the resulting structure contains no
 #' directed cyclic loops.
 #'
 #' @param num.node An integer representing the total number of genes/nodes in the network.
 #'
 #' @return A square transition function matrix combining both the initial DAG topology and the randomly assigned Boolean logic functions (represented by integer codes 1-12).
+#'
+#' @examples
+#' # Generate a true network topology and Boolean rules for 5 nodes
+#' set.seed(123)
+#' true_network <- GenerateNetwork(num.node = 5)
+#' print(true_network)
+#'
 #' @importFrom stats rbinom runif
 #' @export
 GenerateNetwork<-function(num.node)
@@ -58,6 +65,26 @@ GenerateNetwork<-function(num.node)
 #' @param error A pre-generated binary noise matrix applied to occasionally flip Boolean outputs, injecting natural noise.
 #'
 #' @return A simulated binary gene expression matrix $G$, where rows represent individual genes/nodes and columns represent sequential points in time.
+#'
+#' @examples
+#' # 1. Generate a 5-node network
+#' set.seed(123)
+#' num_nodes <- 5
+#' sample_size <- 10
+#' true_network <- GenerateNetwork(num.node = num_nodes)
+#'
+#' # 2. Set baseline probabilities and simulate zero-noise error matrix
+#' root_probs <- rep(0.5, num_nodes)
+#' error_matrix <- matrix(0, nrow = num_nodes, ncol = sample_size)
+#'
+#' # 3. Generate the synthetic time-series data
+#' dummy_data <- GenerateSample(trans_matrix = true_network,
+#'                              num.node = num_nodes,
+#'                              SampleSize = sample_size,
+#'                              para = root_probs,
+#'                              error = error_matrix)
+#' print(dummy_data)
+#'
 #' @importFrom bitops bitXor bitAnd bitOr
 #' @export
 GenerateSample<-function(trans_matrix, num.node, SampleSize, para, error)

@@ -41,3 +41,23 @@ removals, or swaps) among 14 candidate Boolean rules. Proposed states are
 verified to follow the directed acyclic graph (DAG) constraint and evaluated
 with a Metropolis-Hastings acceptance gate using the log-posterior ratios.
 }
+\examples{
+# 1. Generate a 5-node network
+set.seed(123)
+num_nodes <- 5
+sample_size <- 10
+true_network <- GenerateNetwork(num.node = num_nodes)
+
+# 2. Set baseline probabilities and simulate zero-noise error matrix
+root_probs <- rep(0.5, num_nodes)
+error_matrix <- matrix(0, nrow = num_nodes, ncol = sample_size)
+
+# 3. Generate the synthetic time-series data
+dummy_data <- GenerateSample(trans_matrix = true_network,
+                             num.node = num_nodes,
+                             SampleSize = sample_size,
+                             para = root_probs,
+                             error = error_matrix)
+print(dummy_data)
+
+}

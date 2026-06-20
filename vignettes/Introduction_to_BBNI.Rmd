@@ -16,9 +16,11 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The `BBNI` (Boolean Genetic Network Inference) package provides a Bayesian approach for inferring both the topology and the Boolean logic transition functions of genetic networks from time-series expression data. 
+The `BBNI` (Boolean Genetic Network Inference) package provides a Bayesian approach for inferring both the topology and the Boolean logic transition functions of genetic networks from time-series expression data.
 
 As described in Han et al. (2014), biological systems often exhibit noise and uncertainty. `BBNI` uses a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm to sample from the joint posterior distribution of valid Directed Acyclic Graph (DAG) topologies and their corresponding Boolean rules, specifically accounting for biological noise.
+
+This vignette walks through the full workflow on a simulated example: generate a known ("true") network, simulate noisy expression data from it, run the MCMC sampler, and check how well the sampler recovered the original network.
 
 ## Setup and Data Simulation
 
@@ -32,64 +34,230 @@ To test the MCMC sampler, we will use the package's built-in simulation function
 
 ```{r simulate-data}
 set.seed(235)
-num_nodes <- 10
-sample_size <- 50
+num_nodes <- 20
+sample_size <- 400
 
 # 1. Generate a true network topology (T) and Boolean rules (F)
 true_network <- GenerateNetwork(num.node = num_nodes)
 
-# 2. Setup parameters for data generation
-# Baseline success probabilities for root nodes
-root_probs <- rep(0.5, num_nodes) 
+# 2. Set up Beta priors for root-node probabilities and the noise rate.
+#    Root nodes get Beta(3, 3) priors (centered at 0.5, but with real
+#    node-to-node variation, rather than an identical fixed probability).
+#    The last row is the global noise parameter (requires beta1 < beta2).
+prior_para <- matrix(3, nrow = num_nodes + 1, ncol = 2)
+prior_para[num_nodes + 1, 1] <- 2
+prior_para[num_nodes + 1, 2] <- 100
 
-# Generate a binary noise matrix (e.g., 5% natural error rate)
-error_rate <- 0.05
-error_matrix <- matrix(rbinom(num_nodes * sample_size, 1, error_rate), 
-                       nrow = num_nodes, 
-                       ncol = sample_size)
+# Sample root-node probabilities from their priors...
+para <- numeric(num_nodes + 1)
+for (i in 1:(num_nodes + 1)) {
+  para[i] <- rbeta(1, prior_para[i, 1], prior_para[i, 2])
+}
+# ...but fix the noise rate explicitly at 10%, rather than using the raw
+# Beta(2, 100) draw, so the simulated noise level is known and controlled.
+para[num_nodes + 1] <- 0.1
 
-# 3. Simulate the time-series observational data (G)
+# 3. Generate the noise matrix and simulate observational data (G)
+error_matrix <- matrix(rbinom(num_nodes * sample_size, 1, para[num_nodes + 1]),
+                        nrow = num_nodes, ncol = sample_size)
+
 dummy_data <- GenerateSample(trans_matrix = true_network,
-                             num.node = num_nodes,
-                             SampleSize = sample_size,
-                             para = root_probs,
-                             error = error_matrix)
+                              num.node = num_nodes,
+                              SampleSize = sample_size,
+                              para = para,
+                              error = error_matrix)
 ```
+
+`true_network` is a `num_nodes` x `num_nodes` matrix encoding both the network's structure and its logic:
+
+- An entry of `0` at position `[i, j]` means node `j` is not a parent of node `i`.
+- A non-zero entry at `[i, j]` (an integer from 1 to 12) means node `j` *is* a parent of node `i`, and the value identifies which of the 12 candidate Boolean transition functions governs that edge.
+
+`dummy_data` is the simulated observational data ($G$): a `num_nodes` x `sample_size` binary matrix, where each row is a gene/node and each column is a simulated time point, produced by applying `true_network`'s logic starting from `root_probs` and corrupting the result with `error_matrix`.
+
+If you're applying `BBNI` to your own expression data rather than simulated data, your `GeneData` should follow this same shape: rows as genes/nodes, columns as time points, with binary (0/1) expression calls.
 
 ## Running the MCMC Sampler
 
-Now we apply the `run_bbni()` algorithm to our synthetic data to see if it can infer the underlying network. We must define a few hyperparameters, including the Beta priors ($\alpha, \beta$) for the root node probabilities and the global noise parameter $e$.
+Now we apply the `run_bbni()` algorithm to our synthetic data to see if it can infer the underlying network. We must define a few hyperparameters, including the Beta priors ($\alpha, \beta$) for the root node probabilities and the global noise parameter $e$:
+
+- `num_update` — total number of MCMC iterations to run.
+- `penalty` — the structural prior probability per edge; higher values penalize denser/more complex networks more heavily.
+- `prop.ratio` — the probability of drawing a proposed move from the empirical (data-informed) proposal distribution rather than a uniform random move.
+- `prior_para` — a matrix of Beta($\alpha,\beta$) hyperparameters: one row per node for the root-node success probabilities, plus a final row for the global noise parameter $e$ (which requires $\beta_1 < \beta_2$).
 
 ```{r run-model, results='hide'}
 # Define hyperparameters
-num_update <- 100       # Number of MCMC iterations (kept low for tutorial speed)
-penalty <- 0.1          # Structural prior penalty for network complexity
-prop_ratio <- 0.1       # Proposal threshold
+num_update <- 10000   # MCMC iterations -- enough for the chain to visibly
+                      # converge on a 20-node network (see trace plot below)
+penalty <- 0.1        # Structural prior penalty for network complexity
+prop_ratio <- 0.1     # Initial proposal-information weight (the sampler
+                      # internally raises this after the first 10% of
+                      # iterations, regardless of the value passed in)
 
-# Set Beta priors: 
-# The last row represents the global noise parameter 'e' (needs beta1 < beta2)
-prior_para <- matrix(3, nrow = num_nodes + 1, ncol = 2)
-prior_para[num_nodes + 1, 1] <- 2    
-prior_para[num_nodes + 1, 2] <- 100  
+run_start <- Sys.time()
+mcmc_results <- run_bbni(GeneData = dummy_data,
+                          num.node = num_nodes,
+                          SampleSize = sample_size,
+                          prior_para = prior_para,
+                          num_update = num_update,
+                          penalty = penalty,
+                          prop.ratio = prop_ratio)
+run_end <- Sys.time()
+```
 
-# Execute the sampler
-mcmc_results <- run_bbni(GeneData = dummy_data, 
-                         num.node = num_nodes, 
-                         SampleSize = sample_size, 
-                         prior_para = prior_para, 
-                         num_update = num_update, 
-                         penalty = penalty, 
-                         prop.ratio = prop_ratio)
+`run_bbni()` prints a progress line for every individual node update internally (`num.node` $\times$ `num_update` lines in total) — useful when running interactively, but far too noisy for a rendered vignette, so the chunk's raw output is suppressed above with `results='hide'`. Instead, here's a clean summary of the run:
+
+```{r run-summary}
+cat("Sampler completed", num_update, "iterations (", 
+    num_nodes * num_update, "node updates) in",
+    round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n")
 ```
 
 ## Analyzing the Output
 
-The `run_bbni()` function returns a list outlining the MCMC chain trajectory. We can now see the final sampled transition matrix and compare the log-posterior scores.
+`run_bbni()` returns a list containing the full trajectory of the MCMC chain:
+
+- `log_posterior` — a numeric vector of the log-posterior score logged after every individual node update. Each outer iteration sweeps through all `num.node` nodes once, so this vector has `num.node * num_update + 1` entries, not `num_update` — keep that in mind when interpreting its length or plotting it against iteration count.
+- `networks` — a list of the sampled transition function matrices, one per logged step, in the same format as `true_network` above.
+
+### Convergence: Trace Plot
+
+A trace plot of the log-posterior across the chain is the standard first check for whether a chain is behaving sensibly. As a benchmark, we can also compute the log-posterior of the *true* network itself (using the package's internal `Error_LLH()` function) and overlay it as a reference line — this tells us how close the chain's exploration gets to the network we know is correct:
+
+```{r trace-plot, fig.width=6, fig.height=4}
+# Internal helper, not exported, but useful here since we know the ground truth
+true_logpost_raw <- BBNI:::Error_LLH(TRFUM = true_network, GeneData = dummy_data,
+                                     SampleSize = sample_size, num.node = num_nodes,
+                                     prior_para = prior_para, penalty = penalty)
+# log_post_model is always the LAST element of the first result vector
+true_logpost <- true_logpost_raw[[1]][length(true_logpost_raw[[1]])]
+
+plot(mcmc_results$log_posterior, type = "l",
+     xlab = "MCMC Step (one per node update)", ylab = "Log-Posterior",
+     main = "MCMC Trace Plot",
+     ylim = range(c(mcmc_results$log_posterior, true_logpost)))
+abline(h = true_logpost, col = "firebrick", lty = 2, lwd = 2)
+legend("bottomright", legend = "True network log-posterior",
+       col = "firebrick", lty = 2, lwd = 2, bty = "n")
+```
+
+The x-axis here is in units of individual node updates, not outer iterations — see the note above on `log_posterior`'s length. The chain doesn't need to *cross* the reference line to be doing well; getting close to it is the goal, since the final sample is just one draw and won't exactly match the true network (see the edge-recovery comparison below).
+
+### The Final Sampled Network
+
+We can extract and view the network sampled at the final iteration of the chain:
 
 ```{r view-results}
-# View the log-posterior scores of the final 5 iterations
-tail(mcmc_results$log_posterior, 5)
-
-# The final sampled network topology and boolean functions
 final_network <- tail(mcmc_results$networks, 1)[[1]]
+final_network
+```
+
+### Did the Sampler Recover the True Network?
+
+Since we know the ground truth here, we can directly check how well the final sampled network recovered the true edges. We compare edge structure only (whether an edge is present), not which specific Boolean function was assigned to it:
+
+```{r compare-networks}
+true_edges  <- true_network  > 0
+final_edges <- final_network > 0
+
+true_positive  <- sum(true_edges & final_edges)   # correctly recovered edges
+false_positive <- sum(!true_edges & final_edges)  # spurious edges
+false_negative <- sum(true_edges & !final_edges)  # missed true edges
+
+cat("True edges in the network:       ", sum(true_edges), "\n")
+cat("Correctly recovered edges:       ", true_positive, "\n")
+cat("Spurious (false positive) edges: ", false_positive, "\n")
+cat("Missed (false negative) edges:   ", false_negative, "\n")
+```
+
+Some mismatch here is expected even from a well-behaved chain: the comparison above looks at a single sample from the end of the chain, not a proper posterior summary. A production analysis should average over many post-burn-in samples (Bayesian model averaging) rather than relying on one final draw — see `?run_bbni`.
+
+### A Better Estimate: Bayesian Model Averaging
+
+Rather than relying on one noisy draw, we can summarize the posterior properly: discard an initial burn-in period, thin the chain down to one network per full outer sweep (every `num.node` steps, since within a sweep only one node changes at a time and adjacent samples are highly correlated), and compute each edge's posterior inclusion probability as the fraction of retained samples where it's present:
+
+```{r model-averaging}
+# Discard the first 25% of steps as burn-in
+burnin_cutoff <- round(0.50 * length(mcmc_results$log_posterior))
+
+# Thin to one sample per full outer sweep
+keep_idx <- seq(burnin_cutoff + 1, length(mcmc_results$log_posterior), by = num_nodes)
+cat("Post-burn-in, thinned samples retained:", length(keep_idx), "\n")
+
+# Posterior edge-inclusion probability, averaged across retained samples
+edge_prob <- Reduce(`+`, lapply(mcmc_results$networks[keep_idx], function(m) (m > 0) * 1)) / length(keep_idx)
+bma_edges <- edge_prob > 0.5   # call an edge "present" if more likely than not
+
+bma_tp <- sum(true_edges & bma_edges)
+bma_fp <- sum(!true_edges & bma_edges)
+bma_fn <- sum(true_edges & !bma_edges)
+
+cat("Correctly recovered edges:       ", bma_tp, "\n")
+cat("Spurious (false positive) edges: ", bma_fp, "\n")
+cat("Missed (false negative) edges:   ", bma_fn, "\n")
+```
+
+Compare these counts to the single-final-sample numbers above. Model averaging typically trades a small amount of recall for a meaningful drop in false positives — a single sample can land on a spurious edge the proposal happened to be exploring at that exact step, while averaging across many post-burn-in samples washes that noise out. `edge_prob` itself is also useful beyond the 0.5 threshold: it's a direct measure of how confident the sampler is about each individual edge, and could be reported alongside the matrix instead of collapsing it to a single accept/reject call.
+
+### Visualizing the Networks
+
+A side-by-side view of the true network's edges, the single final sampled network, and the Bayesian model-averaged result:
+
+```{r visualize-network, fig.width=9, fig.height=4}
+par(mfrow = c(1, 3), mar = c(2, 2, 3, 1))
+image(true_edges * 1, col = c("white", "steelblue4"), breaks = c(-0.5, 0.5, 1.5),
+      axes = FALSE, main = "True Network")
+image(final_edges * 1, col = c("white", "steelblue4"), breaks = c(-0.5, 0.5, 1.5),
+      axes = FALSE, main = "Final Sample")
+image(bma_edges * 1, col = c("white", "steelblue4"), breaks = c(-0.5, 0.5, 1.5),
+      axes = FALSE, main = "Model-Averaged")
+par(mfrow = c(1, 1))
+```
+
+## Application to Real Biological Data (Optional)
+
+*This section is a placeholder. If you don't have real expression data
+to demonstrate, delete this entire section — nothing else in this
+vignette depends on it.*
+
+The simulation study above demonstrates that the sampler can recover a
+known network from noisy data, mirroring the simulation results in Han
+et al. (2014). The original paper also applied BIBN to real yeast
+cell-cycle expression data covering 14 key regulatory genes (`CDC14`,
+`CDC20`, `CDH1`, `CLB1`, `CLB2`, `CLB5`, `CLB6`, `CLN1`, `CLN2`, `CLN3`,
+`MCM1`, `PDS1`, `SIC1`, `SWI5`), recovering known biological
+relationships such as `CLB2` repressing `SWI5`.
+
+```{r real-data-placeholder}
+# Replace this block with the actual binarized yeast cell-cycle dataset,
+# formatted as a num.node x SampleSize binary matrix (rows = genes in the
+# order above, columns = time points).
+# yeast_data <- as.matrix(read.csv("yeast_cell_cycle_binary.csv", row.names = 1))
+#
+# yeast_results <- run_bbni(GeneData = yeast_data,
+#                            num.node = nrow(yeast_data),
+#                            SampleSize = ncol(yeast_data),
+#                            prior_para = <appropriate priors>,
+#                            num_update = <appropriate iterations>,
+#                            penalty = 0.1,
+#                            prop.ratio = 0.1)
+#
+# # Check whether known relations (e.g. CLB2 -| SWI5) are recovered with
+# # high posterior probability, the same way edge_prob was used above
+# # for the synthetic network.
+```
+
+## Next Steps
+
+This vignette covers the basic workflow on simulated data. From here:
+
+- See `?run_bbni`, `?GenerateNetwork`, and `?GenerateSample` for full parameter documentation.
+- This example already runs `r num_update` iterations on a 20-node network, enough to show clear convergence. Larger networks or higher accuracy targets will need proportionally more iterations and post-burn-in averaging across samples rather than relying on a single final network.
+- If you're applying `BBNI` to your own expression data, format `GeneData` as a binary `num.node` x `SampleSize` matrix, as described above.
+
+## Session Information
+
+```{r session-info}
+sessionInfo()
 ```

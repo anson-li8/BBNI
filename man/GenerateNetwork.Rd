@@ -19,3 +19,10 @@ This ensures that the maximum in-degree for any node is bounded by 2, and
 utilizes internal checks to guarantee the resulting structure contains no
 directed cyclic loops.
 }
+\examples{
+# Generate a true network topology and Boolean rules for 5 nodes
+set.seed(123)
+true_network <- GenerateNetwork(num.node = 5)
+print(true_network)
+
+}
