@@ -21,7 +21,7 @@ GenerateSample(trans_matrix, num.node, SampleSize, para, error)
 A simulated binary gene expression matrix $G$, where rows represent individual genes/nodes and columns represent sequential points in time.
 }
 \description{
-Simulates a time-series observation dataset ($G$) by identifying root nodes
+Simulates an artificial time-series observation dataset ($G$) by identifying root nodes
 to simulate independently via Bernoulli trials, then topologically computing
 the remaining non-root nodes from $t-1$ to time $t$. The non-root updates
 use their specified Boolean logic functions and incorporate a noise parameter.

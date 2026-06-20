@@ -1,14 +1,14 @@
 #' Generate Initial Network Topology
 #'
-#' Randomly generates an initial, legal directed acyclic graph (DAG) topology
+#' Randomly generates an valid directed acyclic graph (DAG) topology
 #' $T$ and assigns a corresponding Boolean transition function $F$ to each node.
-#' This ensures that the maximum in-degree for any node is 2, and
-#' utilizes internal checks to guarantee the resulting structure contains no
-#' directed cyclic loops.
+#' The algorithm samples parent set configurations subject to the constraint
+#' that the maximum in-degree for any node is 2, and further checks
+#' to guarantee the resulting structure contains no directed cyclic loops.
 #'
 #' @param num.node An integer representing the total number of genes/nodes in the network.
 #'
-#' @return A square transition function matrix combining both the initial DAG topology and the randomly assigned Boolean logic functions (represented by integer codes 1-12).
+#' @return A square transition function matrix combining the initial DAG topology with randomly assigned Boolean logic functions. Elements with a value of 0 indicate no directed edge, while positive integers indicate the presence of an edge and specify the defining Boolean function type (1-14).
 #'
 #' @examples
 #' # Generate a true network topology and Boolean rules for 5 nodes
@@ -54,7 +54,7 @@ GenerateNetwork <- function(num.node) {
 }
 #' Simulate Time-Series Observation Dataset
 #'
-#' Simulates a time-series observation dataset ($G$) by identifying root nodes
+#' Simulates an artificial time-series observation dataset ($G$) by identifying root nodes
 #' to simulate independently via Bernoulli trials, then topologically computing
 #' the remaining non-root nodes from $t-1$ to time $t$. The non-root updates
 #' use their specified Boolean logic functions and incorporate a noise parameter.

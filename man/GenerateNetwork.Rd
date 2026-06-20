@@ -10,14 +10,14 @@ GenerateNetwork(num.node)
 \item{num.node}{An integer representing the total number of genes/nodes in the network.}
 }
 \value{
-A square transition function matrix combining both the initial DAG topology and the randomly assigned Boolean logic functions (represented by integer codes 1-12).
+A square transition function matrix combining the initial DAG topology with randomly assigned Boolean logic functions. Elements with a value of 0 indicate no directed edge, while positive integers indicate the presence of an edge and specify the defining Boolean function type (1-14).
 }
 \description{
-Randomly generates an initial, legal directed acyclic graph (DAG) topology
+Randomly generates an valid directed acyclic graph (DAG) topology
 $T$ and assigns a corresponding Boolean transition function $F$ to each node.
-This ensures that the maximum in-degree for any node is 2, and
-utilizes internal checks to guarantee the resulting structure contains no
-directed cyclic loops.
+The algorithm samples parent set configurations subject to the constraint
+that the maximum in-degree for any node is 2, and further checks
+to guarantee the resulting structure contains no directed cyclic loops.
 }
 \examples{
 # Generate a true network topology and Boolean rules for 5 nodes

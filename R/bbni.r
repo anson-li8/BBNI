@@ -1,14 +1,14 @@
 #' Execute Metropolis-within-Gibbs MCMC Sampler for Boolean Networks
 #'
-#' Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm
-#' to sample from the joint posterior distribution of network topologies ($T$)
-#' and Boolean logic transition functions ($F$). The sampler loops through
-#' individual network nodes and proposes parent set mutations (additions,
-#' removals, or swaps) among 14 candidate Boolean rules. Proposed states are
-#' verified to follow the directed acyclic graph (DAG) constraint and evaluated
-#' with a Metropolis-Hastings acceptance gate using the log-posterior ratios.
-#'
-#' @param GeneData A matrix of the observational binary expression data ($G$).
+#' Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm to sample 
+#' from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies ($T$) and 
+#' Boolean logic transition functions ($F$). The algorithm loops through individual 
+#' network nodes and proposes parent set mutations (edge additions, removals, or swaps) 
+#' paired with transition function reassignments to one of 14 candidate Boolean rules. 
+#' Proposed states transitions are strictly verified to follow the DAG constraint and 
+#' evaluated with a Metropolis-Hastings acceptance gate using log-posterior values.
+#' 
+#' @param GeneData A binary empirical observation matrix of the observational binary expression data ($G$).
 #' @param num.node An integer representing the total number of network nodes.
 #' @param SampleSize An integer representing the total number of time points in the dataset.
 #' @param prior_para A matrix of Beta prior hyperparameters \eqn{\alpha} and \eqn{\beta} for root node probabilities and the global noise parameter e.
