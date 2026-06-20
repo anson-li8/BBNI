@@ -7,3 +7,4 @@
 ^\.github$
 ^LICENSE\.md$
 ^NOTES\.md$
+^vignettes/Introduction_to_BBNI\.Rmd\.orig$
