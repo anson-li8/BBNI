@@ -29,3 +29,25 @@ A pre-generated binary noise matrix is applied via a bitwise XOR operation
 to occasionally flip the Boolean output, injecting the natural biological
 noise expected by the model.
 }
+\examples{
+# 1. Generate a 5-node network
+set.seed(123)
+num_nodes <- 5
+sample_size <- 10
+true_network <- GenerateNetwork(num.node = num_nodes)
+
+# 2. Set baseline probabilities and simulate zero-noise error matrix
+root_probs <- rep(0.5, num_nodes)
+error_matrix <- matrix(0, nrow = num_nodes, ncol = sample_size)
+
+# 3. Generate the synthetic time-series data
+dummy_data <- GenerateSample(
+  trans_matrix = true_network,
+  num.node = num_nodes,
+  SampleSize = sample_size,
+  para = root_probs,
+  error = error_matrix
+)
+print(dummy_data)
+
+}

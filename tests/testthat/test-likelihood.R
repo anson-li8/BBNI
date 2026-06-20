@@ -4,18 +4,21 @@ test_that("Error_LLH handles an all-root-node network correctly", {
   num.node <- 4
   SampleSize <- 50
   GeneData <- matrix(rbinom(num.node * SampleSize, 1, 0.5),
-                     nrow = num.node, ncol = SampleSize)
+    nrow = num.node, ncol = SampleSize
+  )
   TRFUM <- matrix(0, nrow = num.node, ncol = num.node)
   prior_para <- matrix(3, nrow = num.node + 1, ncol = 2)
   prior_para[num.node + 1, 1] <- 2
   prior_para[num.node + 1, 2] <- 100
 
-  result <- Error_LLH(TRFUM = TRFUM, GeneData = GeneData, SampleSize = SampleSize,
-                      num.node = num.node, prior_para = prior_para, penalty = 0.1)
+  result <- Error_LLH(
+    TRFUM = TRFUM, GeneData = GeneData, SampleSize = SampleSize,
+    num.node = num.node, prior_para = prior_para, penalty = 0.1
+  )
 
-  expect_true(is.na(result[[1]][1]))             # ErrorFactor: NA, no non-root nodes
-  expect_true(is.na(result[[2]][num.node + 1]))  # mismatch: NA
-  expect_true(is.na(result[[2]][num.node + 2]))  # Perror: NA
+  expect_true(is.na(result[[1]][1])) # ErrorFactor: NA, no non-root nodes
+  expect_true(is.na(result[[2]][num.node + 1])) # mismatch: NA
+  expect_true(is.na(result[[2]][num.node + 2])) # Perror: NA
 
   log_post_model <- result[[1]][length(result[[1]])]
   expect_true(is.finite(log_post_model))

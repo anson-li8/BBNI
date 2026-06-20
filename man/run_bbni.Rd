@@ -42,22 +42,52 @@ verified to follow the directed acyclic graph (DAG) constraint and evaluated
 with a Metropolis-Hastings acceptance gate using the log-posterior ratios.
 }
 \examples{
-# 1. Generate a 5-node network
-set.seed(123)
-num_nodes <- 5
-sample_size <- 10
+\dontrun{
+# 1. Define network parameters
+set.seed(235)
+num_nodes <- 10
+sample_size <- 50
+
+# 2. Generate true network and simulate data
 true_network <- GenerateNetwork(num.node = num_nodes)
 
-# 2. Set baseline probabilities and simulate zero-noise error matrix
-root_probs <- rep(0.5, num_nodes)
-error_matrix <- matrix(0, nrow = num_nodes, ncol = sample_size)
+# Set up Beta priors for root-node probabilities and the noise rate
+prior_para <- matrix(3, nrow = num_nodes + 1, ncol = 2)
+prior_para[num_nodes + 1, 1] <- 2
+prior_para[num_nodes + 1, 2] <- 100
 
-# 3. Generate the synthetic time-series data
-dummy_data <- GenerateSample(trans_matrix = true_network,
-                             num.node = num_nodes,
-                             SampleSize = sample_size,
-                             para = root_probs,
-                             error = error_matrix)
-print(dummy_data)
+# Simulate parameters
+para <- numeric(num_nodes + 1)
+for (i in 1:(num_nodes + 1)) {
+  para[i] <- stats::rbeta(1, prior_para[i, 1], prior_para[i, 2])
+}
+para[num_nodes + 1] <- 0.1 # Fixed noise rate for simulation
+
+error_matrix <- matrix(stats::rbinom(num_nodes * sample_size, 1, para[num_nodes + 1]),
+  nrow = num_nodes, ncol = sample_size
+)
+
+dummy_data <- GenerateSample(
+  trans_matrix = true_network,
+  num.node = num_nodes,
+  SampleSize = sample_size,
+  para = para,
+  error = error_matrix
+)
+
+# 3. Run the MCMC sampler
+mcmc_results <- run_bbni(
+  GeneData = dummy_data,
+  num.node = num_nodes,
+  SampleSize = sample_size,
+  prior_para = prior_para,
+  num_update = 100, # Scaled down for example speed
+  penalty = 0.1,
+  prop.ratio = 0.1
+)
+
+# 4. Inspect results
+tail(mcmc_results$log_posterior)
+}
 
 }

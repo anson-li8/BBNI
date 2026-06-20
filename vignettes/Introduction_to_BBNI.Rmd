@@ -59,13 +59,16 @@ para[num_nodes + 1] <- 0.1
 
 # 3. Generate the noise matrix and simulate observational data (G)
 error_matrix <- matrix(rbinom(num_nodes * sample_size, 1, para[num_nodes + 1]),
-                        nrow = num_nodes, ncol = sample_size)
+  nrow = num_nodes, ncol = sample_size
+)
 
-dummy_data <- GenerateSample(trans_matrix = true_network,
-                              num.node = num_nodes,
-                              SampleSize = sample_size,
-                              para = para,
-                              error = error_matrix)
+dummy_data <- GenerateSample(
+  trans_matrix = true_network,
+  num.node = num_nodes,
+  SampleSize = sample_size,
+  para = para,
+  error = error_matrix
+)
 ```
 
 `true_network` is a `num_nodes` x `num_nodes` matrix encoding both the network's structure and its logic:
@@ -88,30 +91,34 @@ Now we apply the `run_bbni()` algorithm to our synthetic data to see if it can i
 
 ```{r run-model, results='hide'}
 # Define hyperparameters
-num_update <- 10000   # MCMC iterations -- enough for the chain to visibly
-                      # converge on a 20-node network (see trace plot below)
-penalty <- 0.1        # Structural prior penalty for network complexity
-prop_ratio <- 0.1     # Initial proposal-information weight (the sampler
-                      # internally raises this after the first 10% of
-                      # iterations, regardless of the value passed in)
+num_update <- 10000 # MCMC iterations -- enough for the chain to visibly
+# converge on a 20-node network (see trace plot below)
+penalty <- 0.1 # Structural prior penalty for network complexity
+prop_ratio <- 0.1 # Initial proposal-information weight (the sampler
+# internally raises this after the first 10% of
+# iterations, regardless of the value passed in)
 
 run_start <- Sys.time()
-mcmc_results <- run_bbni(GeneData = dummy_data,
-                          num.node = num_nodes,
-                          SampleSize = sample_size,
-                          prior_para = prior_para,
-                          num_update = num_update,
-                          penalty = penalty,
-                          prop.ratio = prop_ratio)
+mcmc_results <- run_bbni(
+  GeneData = dummy_data,
+  num.node = num_nodes,
+  SampleSize = sample_size,
+  prior_para = prior_para,
+  num_update = num_update,
+  penalty = penalty,
+  prop.ratio = prop_ratio
+)
 run_end <- Sys.time()
 ```
 
 `run_bbni()` prints a progress line for every individual node update internally (`num.node` $\times$ `num_update` lines in total) — useful when running interactively, but far too noisy for a rendered vignette, so the chunk's raw output is suppressed above with `results='hide'`. Instead, here's a clean summary of the run:
 
 ```{r run-summary}
-cat("Sampler completed", num_update, "iterations (", 
-    num_nodes * num_update, "node updates) in",
-    round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n")
+cat(
+  "Sampler completed", num_update, "iterations (",
+  num_nodes * num_update, "node updates) in",
+  round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
+)
 ```
 
 ## Analyzing the Output
@@ -127,19 +134,25 @@ A trace plot of the log-posterior across the chain is the standard first check f
 
 ```{r trace-plot, fig.width=6, fig.height=4}
 # Internal helper, not exported, but useful here since we know the ground truth
-true_logpost_raw <- BBNI:::Error_LLH(TRFUM = true_network, GeneData = dummy_data,
-                                     SampleSize = sample_size, num.node = num_nodes,
-                                     prior_para = prior_para, penalty = penalty)
+true_logpost_raw <- BBNI:::Error_LLH(
+  TRFUM = true_network, GeneData = dummy_data,
+  SampleSize = sample_size, num.node = num_nodes,
+  prior_para = prior_para, penalty = penalty
+)
 # log_post_model is always the LAST element of the first result vector
 true_logpost <- true_logpost_raw[[1]][length(true_logpost_raw[[1]])]
 
-plot(mcmc_results$log_posterior, type = "l",
-     xlab = "MCMC Step (one per node update)", ylab = "Log-Posterior",
-     main = "MCMC Trace Plot",
-     ylim = range(c(mcmc_results$log_posterior, true_logpost)))
+plot(mcmc_results$log_posterior,
+  type = "l",
+  xlab = "MCMC Step (one per node update)", ylab = "Log-Posterior",
+  main = "MCMC Trace Plot",
+  ylim = range(c(mcmc_results$log_posterior, true_logpost))
+)
 abline(h = true_logpost, col = "firebrick", lty = 2, lwd = 2)
-legend("bottomright", legend = "True network log-posterior",
-       col = "firebrick", lty = 2, lwd = 2, bty = "n")
+legend("bottomright",
+  legend = "True network log-posterior",
+  col = "firebrick", lty = 2, lwd = 2, bty = "n"
+)
 ```
 
 The x-axis here is in units of individual node updates, not outer iterations — see the note above on `log_posterior`'s length. The chain doesn't need to *cross* the reference line to be doing well; getting close to it is the goal, since the final sample is just one draw and won't exactly match the true network (see the edge-recovery comparison below).
@@ -158,12 +171,12 @@ final_network
 Since we know the ground truth here, we can directly check how well the final sampled network recovered the true edges. We compare edge structure only (whether an edge is present), not which specific Boolean function was assigned to it:
 
 ```{r compare-networks}
-true_edges  <- true_network  > 0
+true_edges <- true_network > 0
 final_edges <- final_network > 0
 
-true_positive  <- sum(true_edges & final_edges)   # correctly recovered edges
-false_positive <- sum(!true_edges & final_edges)  # spurious edges
-false_negative <- sum(true_edges & !final_edges)  # missed true edges
+true_positive <- sum(true_edges & final_edges) # correctly recovered edges
+false_positive <- sum(!true_edges & final_edges) # spurious edges
+false_negative <- sum(true_edges & !final_edges) # missed true edges
 
 cat("True edges in the network:       ", sum(true_edges), "\n")
 cat("Correctly recovered edges:       ", true_positive, "\n")
@@ -187,7 +200,7 @@ cat("Post-burn-in, thinned samples retained:", length(keep_idx), "\n")
 
 # Posterior edge-inclusion probability, averaged across retained samples
 edge_prob <- Reduce(`+`, lapply(mcmc_results$networks[keep_idx], function(m) (m > 0) * 1)) / length(keep_idx)
-bma_edges <- edge_prob > 0.5   # call an edge "present" if more likely than not
+bma_edges <- edge_prob > 0.5 # call an edge "present" if more likely than not
 
 bma_tp <- sum(true_edges & bma_edges)
 bma_fp <- sum(!true_edges & bma_edges)
@@ -206,12 +219,18 @@ A side-by-side view of the true network's edges, the single final sampled networ
 
 ```{r visualize-network, fig.width=9, fig.height=4}
 par(mfrow = c(1, 3), mar = c(2, 2, 3, 1))
-image(true_edges * 1, col = c("white", "steelblue4"), breaks = c(-0.5, 0.5, 1.5),
-      axes = FALSE, main = "True Network")
-image(final_edges * 1, col = c("white", "steelblue4"), breaks = c(-0.5, 0.5, 1.5),
-      axes = FALSE, main = "Final Sample")
-image(bma_edges * 1, col = c("white", "steelblue4"), breaks = c(-0.5, 0.5, 1.5),
-      axes = FALSE, main = "Model-Averaged")
+image(true_edges * 1,
+  col = c("white", "steelblue4"), breaks = c(-0.5, 0.5, 1.5),
+  axes = FALSE, main = "True Network"
+)
+image(final_edges * 1,
+  col = c("white", "steelblue4"), breaks = c(-0.5, 0.5, 1.5),
+  axes = FALSE, main = "Final Sample"
+)
+image(bma_edges * 1,
+  col = c("white", "steelblue4"), breaks = c(-0.5, 0.5, 1.5),
+  axes = FALSE, main = "Model-Averaged"
+)
 par(mfrow = c(1, 1))
 ```
 

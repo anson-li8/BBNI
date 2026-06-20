@@ -15,7 +15,7 @@ A square transition function matrix combining both the initial DAG topology and 
 \description{
 Randomly generates an initial, legal directed acyclic graph (DAG) topology
 $T$ and assigns a corresponding Boolean transition function $F$ to each node.
-This ensures that the maximum in-degree for any node is bounded by 2, and
+This ensures that the maximum in-degree for any node is 2, and
 utilizes internal checks to guarantee the resulting structure contains no
 directed cyclic loops.
 }
