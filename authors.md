@@ -7,15 +7,19 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/anson-li8/BBNI/blob/master/DESCRIPTION)
+[`inst/CITATION`](https://github.com/anson-li8/BBNI/blob/master/inst/CITATION)
 
-Last F (2026). *BBNI: What the Package Does (One Line, Title Case)*. R
-package version 0.0.0.9000, <https://anson-li8.github.io/BBNI>.
+Han S, Wong RKW, Lee TCM, Shen L, Li S-YR, Fan X (2014). A Full Bayesian
+Approach for Boolean Genetic Network Inference. PLoS ONE 9(12): e115806.
+doi:10.1371/journal.pone.0115806
 
-    @Manual{,
-      title = {BBNI: What the Package Does (One Line, Title Case)},
-      author = {First Last},
-      year = {2026},
-      note = {R package version 0.0.0.9000},
-      url = {https://anson-li8.github.io/BBNI},
+    @Article{,
+      title = {A Full Bayesian Approach for Boolean Genetic Network Inference},
+      author = {Shengtong Han and Raymond K. W. Wong and Thomas C. M. Lee and Linghao Shen and Shuo-Yen R. Li and Xiaodan Fan},
+      journal = {PLoS ONE},
+      year = {2014},
+      volume = {9},
+      number = {12},
+      pages = {e115806},
+      doi = {10.1371/journal.pone.0115806},
     }

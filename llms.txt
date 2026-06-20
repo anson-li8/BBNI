@@ -46,5 +46,20 @@ You can also embed plots, for example:
 In that case, don’t forget to commit and push the resulting figure
 files, so they display on GitHub and CRAN.
 
-# 
+# Package index
 
+## All functions
+
+- [`GenerateNetwork()`](https://anson-li8.github.io/BBNI/reference/GenerateNetwork.md)
+  : Generate Initial Network Topology
+- [`GenerateSample()`](https://anson-li8.github.io/BBNI/reference/GenerateSample.md)
+  : Simulate Time-Series Observation Dataset
+- [`run_bbni()`](https://anson-li8.github.io/BBNI/reference/run_bbni.md)
+  : Execute Metropolis-within-Gibbs MCMC Sampler for Boolean Networks
+
+# Articles
+
+### All vignettes
+
+- [Introduction to
+  BBNI](https://anson-li8.github.io/BBNI/articles/Introduction_to_BBNI.md):

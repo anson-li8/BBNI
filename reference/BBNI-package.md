@@ -6,7 +6,7 @@ What the package does (one paragraph).
 
 Useful links:
 
-- <https://anson-li8.github.io/BBNI>
+- <https://anson-li8.github.io/BBNI/>
 
 - Report bugs at <https://github.com/anson-li8/BBNI/issues>
 
