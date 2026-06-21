@@ -1,47 +1,73 @@
 # BBNI
 
-The goal of BBNI is to …
+BBNI implements a full Bayesian approach for inferring Boolean genetic
+networks from noisy gene expression data, based on the method in [Han et
+al. (2014)](https://doi.org/10.1371/journal.pone.0115806). Unlike
+methods that return a single best-fit topology (REVEAL & BFE, which are
+both found in [BoolNet](https://cran.r-project.org/package=BoolNet)),
+BBNI uses MCMC to sample the full joint posterior over network
+topologies and Boolean transition functions, explicitly accounting for
+biological noise and returning posterior edge probabilities rather than
+one point estimate.
 
 ## Installation
 
-You can install the development version of BBNI like so:
+BBNI is not yet on CRAN. Install the development version from GitHub:
 
 ``` r
 
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+# install.packages("devtools")
+devtools::install_github("anson-li8/BBNI")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+A minimal check that the package loads and runs:
 
 ``` r
 
-# library(BBNI)
-## basic example code
+library(BBNI)
+
+set.seed(1)
+true_network <- GenerateNetwork(num.node = 5)
+dummy_data <- GenerateSample(
+  trans_matrix = true_network,
+  num.node = 5,
+  SampleSize = 20,
+  para = rep(0.5, 5),
+  error = matrix(0, nrow = 5, ncol = 20)
+)
+dummy_data
+#>      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13] [,14]
+#> [1,]    0    0    0    0    0    1    1    1    0     0     1     1     1     0
+#> [2,]    0    0    0    0    0    0    0    1    0     0     0     0     1     0
+#> [3,]    0    1    1    1    1    1    0    0    0     1     1     0     0     0
+#> [4,]    0    0    0    0    0    1    1    0    0     0     1     1     0     0
+#> [5,]    1    1    1    1    0    0    1    1    1     0     0     1     1     0
+#>      [,15] [,16] [,17] [,18] [,19] [,20]
+#> [1,]     1     1     1     1     0     0
+#> [2,]     0     0     0     1     0     0
+#> [3,]     1     0     0     0     0     1
+#> [4,]     1     1     1     0     0     0
+#> [5,]     0     0     1     1     1     1
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+For a complete walkthrough running the MCMC sampler, checking
+convergence, and evaluating network recovery, please see the
+[Introduction to
+BBNI](https://anson-li8.github.io/BBNI/articles/Introduction_to_BBNI.html)
+vignette.
 
-``` r
+## Citation
 
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+``` R
+To cite package 'BBNI' in publications use:
+
+  Han S, Wong RKW, Lee TCM, Shen L, Li S-YR, Fan X (2014). A Full
+  Bayesian Approach for Boolean Genetic Network Inference. PLoS ONE
+  9(12): e115806. doi:10.1371/journal.pone.0115806
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
+## License
 
-You can also embed plots, for example:
-
-![](reference/figures/README-pressure-1.png)
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+MIT
