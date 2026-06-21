@@ -70,4 +70,4 @@ To cite package 'BBNI' in publications use:
 
 ## License
 
-MIT
+BSD-3-Clause

@@ -2,9 +2,9 @@
 
 ## Authors
 
-- **Anson Li**. Author, maintainer.
-
 - **Shengtong Han**. Author.
+
+- **Anson Li**. Author, maintainer.
 
 ## Citation
 
