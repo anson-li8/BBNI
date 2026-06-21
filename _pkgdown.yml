@@ -1,4 +1,11 @@
 url: https://anson-li8.github.io/BBNI/
 template:
   bootstrap: 5
-
+navbar:
+  structure:
+    left: [reference, tutorial, news]
+    right: [search, github]
+  components:
+    tutorial:
+      text: Tutorial
+      href: articles/Introduction_to_BBNI.html

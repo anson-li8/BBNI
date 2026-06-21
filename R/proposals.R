@@ -211,7 +211,7 @@ ProposalConstruction <- function(GeneData, SampleSize) {
 #' @param Candidate A list containing transition function selection weights for 2-input and 1-input node combinations.
 #' @param num.node An integer representing the total number of network nodes.
 #'
-#' @return A square transition function matrix representing the initial state of the network $T^{(0)}$ and its corresponding Boolean rules $F^{(0)}$, providing an optimal acyclic starting network for the MCMC.
+#' @return A square transition function matrix representing the initial state of the network \eqn{T^{(0)}} and its corresponding Boolean rules \eqn{F^{(0)}}, providing an optimal acyclic starting network for the MCMC.
 #' @importFrom stats runif
 #' @noRd
 ConstructInitial <- function(Candidate, num.node) {
@@ -350,8 +350,8 @@ ConstructInitial <- function(Candidate, num.node) {
 #' Boolean function used by the child node. The code range is based on parent
 #' count: codes 1<U+2013>10 correspond to ten non-degenerate two-input Boolean functions,
 #' while codes 11<U+2013>12 correspond to the unary functions of identity and negation.
-#' This maps each parent set $W(g_i)$ to its corresponding valid Boolean transition
-#' rule (e.g., $f_i(a)$ can be $a$ or $\overline{a}$).
+#' This maps each parent set \eqn{W(g_i)} to its corresponding valid Boolean transition
+#' rule (e.g., \eqn{f_i(a)} can be \eqn{a} or \eqn{\overline{a}}).
 #'
 #' @param prop_incid_matrix A proposed incidence matrix for the network topology.
 #'

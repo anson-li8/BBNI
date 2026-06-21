@@ -15,7 +15,7 @@ run_bbni(
 )
 }
 \arguments{
-\item{GeneData}{A binary empirical observation matrix of the observational binary expression data ($G$).}
+\item{GeneData}{A binary empirical observation matrix of the observational binary expression data (\eqn{G}).}
 
 \item{num.node}{An integer representing the total number of network nodes.}
 
@@ -25,17 +25,17 @@ run_bbni(
 
 \item{num_update}{An integer representing the total number of MCMC iterations to perform.}
 
-\item{penalty}{A numeric value representing the structural prior probability per edge used to penalize network complexity $P(T)$.}
+\item{penalty}{A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}.}
 
 \item{prop.ratio}{A numeric probability threshold used to decide whether to sample a move from the empirical proposal distribution or a uniform random distribution.}
 }
 \value{
-A list containing the full trajectory of the MCMC chain. Specifically, \code{networks} (a list of sampled transition function matrices) and \code{log_posterior} (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution $P(T,F|G)$ used for Bayesian model averaging.
+A list containing the full trajectory of the MCMC chain. Specifically, \code{networks} (a list of sampled transition function matrices) and \code{log_posterior} (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)} used for Bayesian model averaging.
 }
 \description{
 Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm to sample
-from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies ($T$) and
-Boolean logic transition functions ($F$). The algorithm loops through individual
+from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies (\eqn{T}) and
+Boolean logic transition functions (\eqn{F}). The algorithm loops through individual
 network nodes and proposes parent set mutations (edge additions, removals, or swaps)
 paired with transition function reassignments to one of 14 candidate Boolean rules.
 Proposed states transitions are strictly verified to follow the DAG constraint and

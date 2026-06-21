@@ -4,24 +4,26 @@
 \name{BBNI-package}
 \alias{BBNI}
 \alias{BBNI-package}
-\title{BBNI: What the Package Does (One Line, Title Case)}
+\title{BBNI: Bayesian Inference of Boolean Genetic Networks}
 \description{
-What the package does (one paragraph).
+Implements a fully Bayesian Markov chain Monte Carlo (MCMC) approach for inferring the topology and Boolean logic transition functions of gene regulatory networks from noisy, binary time-series expression data. Network structure and Boolean rules are sampled jointly from their posterior distribution, providing principled uncertainty quantification rather than a single point estimate. Method described in Han et al. (2014) \doi{10.1371/journal.pone.0115806}.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://anson-li8.github.io/BBNI/}
+  \item \url{https://github.com/anson-li8/BBNI}
   \item Report bugs at \url{https://github.com/anson-li8/BBNI/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com}
+\strong{Maintainer}: Anson Li \email{liyuanrui618@gmail.com}
 
 Authors:
 \itemize{
-  \item First Last \email{first.last@example.com}
+  \item Anson Li \email{liyuanrui618@gmail.com}
+  \item Shengtong Han \email{shengtong.han@marquette.edu}
 }
 
 }

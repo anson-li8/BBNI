@@ -1,7 +1,7 @@
 #' Generate Initial Network Topology
 #'
 #' Randomly generates an valid directed acyclic graph (DAG) topology
-#' $T$ and assigns a corresponding Boolean transition function $F$ to each node.
+#' \eqn{T} and assigns a corresponding Boolean transition function \eqn{F} to each node.
 #' The algorithm samples parent set configurations subject to the constraint
 #' that the maximum in-degree for any node is 2, and further checks
 #' to guarantee the resulting structure contains no directed cyclic loops.
@@ -54,21 +54,21 @@ GenerateNetwork <- function(num.node) {
 }
 #' Simulate Time-Series Observation Dataset
 #'
-#' Simulates an artificial time-series observation dataset ($G$) by identifying root nodes
+#' Simulates an artificial time-series observation dataset (\eqn{G}) by identifying root nodes
 #' to simulate independently via Bernoulli trials, then topologically computing
-#' the remaining non-root nodes from $t-1$ to time $t$. The non-root updates
+#' the remaining non-root nodes from \eqn{t-1} to time \eqn{t}. The non-root updates updates
 #' use their specified Boolean logic functions and incorporate a noise parameter.
 #' A pre-generated binary noise matrix is applied via a bitwise XOR operation
 #' to occasionally flip the Boolean output, injecting the natural biological
 #' noise expected by the model.
 #'
-#' @param trans_matrix A square matrix combining the network topology $T$ and integer-coded Boolean logic functions $F$ assigned to each directed edge.
+#' @param trans_matrix A square matrix combining the network topology \eqn{T} and integer-coded Boolean logic functions \eqn{F} assigned to each directed edge.
 #' @param num.node An integer representing the total number of network nodes.
 #' @param SampleSize An integer representing the total number of time points to simulate.
 #' @param para A numeric vector of baseline success probabilities (\eqn{\theta_i}) used to generate the expression states of root nodes via independent Bernoulli trials.
 #' @param error A pre-generated binary noise matrix applied to occasionally flip Boolean outputs, injecting natural noise.
 #'
-#' @return A simulated binary gene expression matrix $G$, where rows represent individual genes/nodes and columns represent sequential points in time.
+#' @return A simulated binary gene expression matrix \eqn{G}, where rows represent individual genes/nodes and columns represent sequential points in time.
 #'
 #' @examples
 #' # 1. Generate a 5-node network
