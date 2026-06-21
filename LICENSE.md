@@ -1,4 +1,6 @@
-Copyright (c) 2026, Anson Li and Shengtong Han
+# License
+
+Copyright (c) 2026, Shengtong Han and Anson Li
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
