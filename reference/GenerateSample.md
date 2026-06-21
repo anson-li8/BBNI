@@ -1,13 +1,13 @@
 # Simulate Time-Series Observation Dataset
 
-Simulates an artificial time-series observation dataset (\$G\$) by
+Simulates an artificial time-series observation dataset (\\G\\) by
 identifying root nodes to simulate independently via Bernoulli trials,
-then topologically computing the remaining non-root nodes from \$t-1\$
-to time \$t\$. The non-root updates use their specified Boolean logic
-functions and incorporate a noise parameter. A pre-generated binary
-noise matrix is applied via a bitwise XOR operation to occasionally flip
-the Boolean output, injecting the natural biological noise expected by
-the model.
+then topologically computing the remaining non-root nodes from \\t-1\\
+to time \\t\\. The non-root updates updates use their specified Boolean
+logic functions and incorporate a noise parameter. A pre-generated
+binary noise matrix is applied via a bitwise XOR operation to
+occasionally flip the Boolean output, injecting the natural biological
+noise expected by the model.
 
 ## Usage
 
@@ -19,8 +19,8 @@ GenerateSample(trans_matrix, num.node, SampleSize, para, error)
 
 - trans_matrix:
 
-  A square matrix combining the network topology \$T\$ and integer-coded
-  Boolean logic functions \$F\$ assigned to each directed edge.
+  A square matrix combining the network topology \\T\\ and integer-coded
+  Boolean logic functions \\F\\ assigned to each directed edge.
 
 - num.node:
 
@@ -43,7 +43,7 @@ GenerateSample(trans_matrix, num.node, SampleSize, para, error)
 
 ## Value
 
-A simulated binary gene expression matrix \$G\$, where rows represent
+A simulated binary gene expression matrix \\G\\, where rows represent
 individual genes/nodes and columns represent sequential points in time.
 
 ## Examples

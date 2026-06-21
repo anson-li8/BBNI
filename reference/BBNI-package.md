@@ -1,6 +1,14 @@
-# BBNI: What the Package Does (One Line, Title Case)
+# BBNI: Bayesian Inference of Boolean Genetic Networks
 
-What the package does (one paragraph).
+Implements a fully Bayesian Markov chain Monte Carlo (MCMC) approach for
+inferring the topology and Boolean logic transition functions of gene
+regulatory networks from noisy, binary time-series expression data.
+Network structure and Boolean rules are sampled jointly from their
+posterior distribution, providing principled uncertainty quantification
+rather than a single point estimate. Method described in Han et al.
+(2014)
+[doi:10.1371/journal.pone.0115806](https://doi.org/10.1371/journal.pone.0115806)
+.
 
 ## See also
 
@@ -8,12 +16,16 @@ Useful links:
 
 - <https://anson-li8.github.io/BBNI/>
 
+- <https://github.com/anson-li8/BBNI>
+
 - Report bugs at <https://github.com/anson-li8/BBNI/issues>
 
 ## Author
 
-**Maintainer**: First Last <first.last@example.com>
+**Maintainer**: Anson Li <liyuanrui618@gmail.com>
 
 Authors:
 
-- First Last <first.last@example.com>
+- Anson Li <liyuanrui618@gmail.com>
+
+- Shengtong Han <shengtong.han@marquette.edu>

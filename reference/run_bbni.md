@@ -2,8 +2,8 @@
 
 Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC)
 algorithm to sample from the joint posterior distribution of Directed
-Acyclic Graph (DAG) topologies (\$T\$) and Boolean logic transition
-functions (\$F\$). The algorithm loops through individual network nodes
+Acyclic Graph (DAG) topologies (\\T\\) and Boolean logic transition
+functions (\\F\\). The algorithm loops through individual network nodes
 and proposes parent set mutations (edge additions, removals, or swaps)
 paired with transition function reassignments to one of 14 candidate
 Boolean rules. Proposed states transitions are strictly verified to
@@ -29,7 +29,7 @@ run_bbni(
 - GeneData:
 
   A binary empirical observation matrix of the observational binary
-  expression data (\$G\$).
+  expression data (\\G\\).
 
 - num.node:
 
@@ -53,7 +53,7 @@ run_bbni(
 - penalty:
 
   A numeric value representing the structural prior probability per edge
-  used to penalize network complexity \$P(T)\$.
+  used to penalize network complexity \\P(T)\\.
 
 - prop.ratio:
 
@@ -67,7 +67,7 @@ A list containing the full trajectory of the MCMC chain. Specifically,
 `networks` (a list of sampled transition function matrices) and
 `log_posterior` (a numeric vector of log-posterior scores for each
 iteration). These represent samples drawn from the marginal posterior
-distribution \$P(T,F\|G)\$ used for Bayesian model averaging.
+distribution \\P(T,F\|G)\\ used for Bayesian model averaging.
 
 ## Examples
 
