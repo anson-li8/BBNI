@@ -2,12 +2,12 @@ Package: BBNI
 Title: Bayesian Inference of Boolean Genetic Networks
 Version: 0.1.0
 Authors@R: c(
-    person(given = "Anson", family = "Li", 
-           email = "liyuanrui618@gmail.com", 
-           role = c("aut", "cre")),
     person(given = "Shengtong", family = "Han", 
            email = "shengtong.han@marquette.edu", 
-           role = "aut")
+           role = "aut"),
+    person(given = "Anson", family = "Li", 
+           email = "liyuanrui618@gmail.com", 
+           role = c("aut", "cre"))
     )
 Description: Implements a fully Bayesian Markov chain Monte Carlo (MCMC) 
     approach for inferring the topology and Boolean logic transition 

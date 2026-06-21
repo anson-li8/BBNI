@@ -59,4 +59,4 @@ print(citation("BBNI"), bibtex = FALSE)
 
 ## License
 
-MIT
+BSD-3-Clause
