@@ -1,4 +1,4 @@
-# License
+# BSD 3-Clause License
 
 Copyright (c) 2026, Shengtong Han and Anson Li
 All rights reserved.
