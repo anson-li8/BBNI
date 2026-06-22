@@ -35,7 +35,7 @@ To evaluate the MCMC sampler, we will use the package's built-in simulation func
 ```{r simulate-data}
 set.seed(303)
 num_nodes <- 20
-sample_size <- 90
+sample_size <- 80
 
 # 1. Generate true DAG topology (T) and associated Boolean transition functions (F)
 true_network <- GenerateNetwork(num.node = num_nodes)
