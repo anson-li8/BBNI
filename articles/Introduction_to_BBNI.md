@@ -36,9 +36,9 @@ network.
 
 ``` r
 
-set.seed(235)
+set.seed(303)
 num_nodes <- 20
-sample_size <- 400
+sample_size <- 90
 
 # 1. Generate true DAG topology (T) and associated Boolean transition functions (F)
 true_network <- GenerateNetwork(num.node = num_nodes)
@@ -56,9 +56,9 @@ para <- numeric(num_nodes + 1)
 for (i in 1:(num_nodes + 1)) {
   para[i] <- rbeta(1, prior_para[i, 1], prior_para[i, 2])
 }
-# but fix the noise rate explicitly at 10%, bypassing the raw
+# but fix the noise rate explicitly at 25%, bypassing the raw
 # Beta(2, 100) draw to create a clear baseline for validation
-para[num_nodes + 1] <- 0.1
+para[num_nodes + 1] <- 0.25
 
 # 3. Generate the noise matrix and simulate the observational dataset (G)
 error_matrix <- matrix(rbinom(num_nodes * sample_size, 1, para[num_nodes + 1]),
@@ -123,7 +123,7 @@ parameter $`e`$:
 ``` r
 
 # Define hyperparameters config
-num_update <- 10000 # Total MCMC iterations
+num_update <- 4000 # Total MCMC iterations
 penalty <- 0.1 # Structural prior penalty for network complexity
 prop_ratio <- 0.1 # Initial proposal mixture coefficient
 
@@ -155,7 +155,7 @@ cat(
   num_nodes * num_update, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
-#> Sampler completed 10000 iterations ( 2e+05 node updates) in 63.25 minutes
+#> Sampler completed 4000 iterations ( 80000 node updates) in 33.72 minutes
 ```
 
 ## Analyzing the Output
@@ -181,7 +181,7 @@ the chain’s execution gets to true network:
 
 ``` r
 
-# Evaluate the log-posterior value of the true network 
+# Evaluate the log-posterior value of the true network
 # Calls an unexported pakage function to compute the exact target value baseline given the data
 true_logpost_raw <- BBNI:::Error_LLH(
   TRFUM = true_network, GeneData = dummy_data,
@@ -228,27 +228,48 @@ the Markov chain:
 
 final_network <- tail(mcmc_results$networks, 1)[[1]]
 final_network
-#>       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13] [,14] [,15] [,16] [,17] [,18] [,19] [,20]
-#>  [1,]    0    0    0    0    0    0    0    0    0     0     0     0     0     6     0     0     0     0     0     6
-#>  [2,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0    11     0     0     0
-#>  [3,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0     0     0
-#>  [4,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0     0     0
-#>  [5,]   12    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0     0     0
-#>  [6,]    0    0    0    0    0    0    0    6    0     0     6     0     0     0     0     0     0     0     0     0
-#>  [7,]    0    0    0    0    0    0    0    0    0     0     0     3     0     0     0     0     0     0     3     0
-#>  [8,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0    11     0     0     0
-#>  [9,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0     0     0
-#> [10,]    0    0    0    0    0    0    0    3    0     0     0     0     0     0     0     0     0     3     0     0
-#> [11,]    2    0    2    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0     0     0
-#> [12,]    0    0    0    0    0    0    0    0    0    11     0     0     0     0     0     0     0     0     0     0
-#> [13,]    0    0    0    0    1    1    0    0    0     0     0     0     0     0     0     0     0     0     0     0
-#> [14,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0    11     0     0
-#> [15,]    0    0    9    0    0    0    0    0    9     0     0     0     0     0     0     0     0     0     0     0
-#> [16,]    0    0    0    0   12    0    0    0    0     0     0     0     0     0     0     0     0     0     0     0
-#> [17,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0    11     0     0
-#> [18,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0     0     0
-#> [19,]    0    0    8    0    0    0    0    0    0     0     8     0     0     0     0     0     0     0     0     0
-#> [20,]    0    0    0    0    0    0    0    0    0     0     0     0     0     7     7     0     0     0     0     0
+#>       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13] [,14] [,15] [,16] [,17] [,18]
+#>  [1,]    0    0    0    0    0    0    0    0    0    11     0     0     0     0     0     0     0     0
+#>  [2,]    0    0    0    0    0    0    0    6    0     0     0     0     0     0     6     0     0     0
+#>  [3,]    0    0    0    7    0    0    0    7    0     0     0     0     0     0     0     0     0     0
+#>  [4,]    0    0    0    0    0    0   12    0    0     0     0     0     0     0     0     0     0     0
+#>  [5,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0
+#>  [6,]    0   12    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0
+#>  [7,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     3     0     0
+#>  [8,]    0    0    0    0    0    0    0    0    4     0     0     0     0     0     0     0     0     0
+#>  [9,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0    12     0
+#> [10,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0
+#> [11,]    0    0    0    0    0    0    3    3    0     0     0     0     0     0     0     0     0     0
+#> [12,]    0    0    0    0    0    4    0    0    0     0     0     0     4     0     0     0     0     0
+#> [13,]    5    0    0    0    0    0    0    0    0     0     0     0     0     0     5     0     0     0
+#> [14,]   12    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0
+#> [15,]    0    0    0    0    0    0    0    1    0     1     0     0     0     0     0     0     0     0
+#> [16,]    0    0    0    0    0    0    0    0    0     0     0     2     2     0     0     0     0     0
+#> [17,]    0    0    0    0    0    0    0    0    0     0     0     0     0     0     0     0     0     0
+#> [18,]    0    0    0    0    0    0    0    0    0     0     2     0     0     0     0     0     2     0
+#> [19,]    0    0    0    0    0    0    0    0    0     0     0     0     0    12     0     0     0     0
+#> [20,]    0    0    0    0    0    0    0   11    0     0     0     0     0     0     0     0     0     0
+#>       [,19] [,20]
+#>  [1,]     0     0
+#>  [2,]     0     0
+#>  [3,]     0     0
+#>  [4,]     0     0
+#>  [5,]     0    12
+#>  [6,]     0     0
+#>  [7,]     0     3
+#>  [8,]     4     0
+#>  [9,]     0     0
+#> [10,]     0     0
+#> [11,]     0     0
+#> [12,]     0     0
+#> [13,]     0     0
+#> [14,]     0     0
+#> [15,]     0     0
+#> [16,]     0     0
+#> [17,]     0     0
+#> [18,]     0     0
+#> [19,]     0     0
+#> [20,]     0     0
 ```
 
 ### Did the Sampler Recover the True Network?
@@ -267,19 +288,19 @@ false_positive <- sum(!true_edges & final_edges) # spurious edges
 false_negative <- sum(true_edges & !final_edges) # missed true edges
 
 cat("True edges in the network:       ", sum(true_edges), "\n")
-#> True edges in the network:        25
+#> True edges in the network:        29
 cat("Correctly recovered edges:       ", true_positive, "\n")
-#> Correctly recovered edges:        25
+#> Correctly recovered edges:        23
 cat("Spurious (false positive) edges: ", false_positive, "\n")
-#> Spurious (false positive) edges:  0
+#> Spurious (false positive) edges:  5
 cat("Missed (false negative) edges:   ", false_negative, "\n")
-#> Missed (false negative) edges:    0
+#> Missed (false negative) edges:    6
 
 # Among the correctly-recovered edges, how many also got the right
 # Boolean function?
 correct_function_final <- sum(true_edges & final_edges & (true_network == final_network))
 cat("...of which function also correct: ", correct_function_final, "out of", true_positive, "\n")
-#> ...of which function also correct:  25 out of 25
+#> ...of which function also correct:  21 out of 23
 ```
 
 Some mismatch here is expected. This comparison only uses a single
@@ -288,25 +309,32 @@ The next section will address that.
 
 ### A Better Estimate: Bayesian Model Averaging
 
-Rather than relying a single sample prone to noise, we can approximate
-the posterior properly via Bayesian Model Averaging over the sampled
-network space. First, we discard an initial burn-in period to eliminate
-transient bias from the arbitrary initial structure. Then, we strip the
-chain down to just one network per outer iteration (every `num.node`
-steps). This is to avoid dependent samples from samples in the same
-iteration being highly correlated. Using this pruned combination of
-independent samples, we can compute each directed edge’s posterior
-inclusion probability as the fraction of samples where it’s present:
+Rather than relying a single sample prone to noise and picking up
+spurious edges, we can approximate the posterior properly via Bayesian
+Model Averaging (BMA) over the sampled network space. In a wet-lab
+setting, false positive edges may lead to wasted efforts to validate
+data, while BMA naturally regulates against this. Although it may drop a
+weak true edge, it effectively filters out false positive noise to
+reduce to overall toplogical error.
+
+To do this, we first discard an initial burn-in period (75% of chain) to
+eliminate transient bias from the arbitrary initial structure. Then, we
+strip the chain down to just one network per outer iteration (every
+`num.node` steps). This is to avoid dependent samples from samples in
+the same iteration being highly correlated. Using this pruned
+combination of independent samples, we can compute each directed edge’s
+posterior inclusion probability as the fraction of samples where it’s
+present:
 
 ``` r
 
-# Burn-in set at 70%, from empirical visual observation of the trace plot (see above)
-burnin_cutoff <- round(0.70 * length(mcmc_results$log_posterior))
+# Burn-in set at 75%, from empirical visual observation of the trace plot (see above)
+burnin_cutoff <- round(0.75 * length(mcmc_results$log_posterior))
 
 # Prune to one sample per full outer iteration
 keep_idx <- seq(burnin_cutoff + 1, length(mcmc_results$log_posterior), by = num_nodes)
 cat("Post-burn-in, pruned samples retained:", length(keep_idx), "\n")
-#> Post-burn-in, pruned samples retained: 3000
+#> Post-burn-in, pruned samples retained: 1000
 
 # Posterior edge-inclusion probability, averaged across retained samples
 edge_prob <- Reduce(`+`, lapply(mcmc_results$networks[keep_idx], function(m) (m > 0) * 1)) / length(keep_idx)
@@ -317,11 +345,11 @@ bma_fp <- sum(!true_edges & bma_edges)
 bma_fn <- sum(true_edges & !bma_edges)
 
 cat("Correctly recovered edges:       ", bma_tp, "\n")
-#> Correctly recovered edges:        25
+#> Correctly recovered edges:        22
 cat("Spurious (false positive) edges: ", bma_fp, "\n")
-#> Spurious (false positive) edges:  0
+#> Spurious (false positive) edges:  1
 cat("Missed (false negative) edges:   ", bma_fn, "\n")
-#> Missed (false negative) edges:    0
+#> Missed (false negative) edges:    7
 
 # to evaluate Boolean function accuracy, take the posterior mode (most frequently sampled
 # function code) for each matrix coordinate across the retained samples, then build a full
@@ -340,7 +368,15 @@ bma_network[bma_edges] <- bma_function[bma_edges]
 
 correct_function_bma <- sum(true_edges & bma_edges & (true_network == bma_network))
 cat("...of which Boolean function also correct: ", correct_function_bma, "out of", bma_tp, "\n")
-#> ...of which Boolean function also correct:  25 out of 25
+#> ...of which Boolean function also correct:  19 out of 22
+
+missed_edge_idx <- which(true_edges & !final_edges)
+fp_edge_idx <- which(!true_edges & final_edges)
+
+cat("Posterior probability of the missed true edge:", edge_prob[missed_edge_idx], "\n")
+#> Posterior probability of the missed true edge: 0 0.083 0.016 0 0.308 0.081
+cat("Posterior probability of the false-positive edge:", edge_prob[fp_edge_idx], "\n")
+#> Posterior probability of the false-positive edge: 1 0.011 0.046 0.012 0.071
 ```
 
 ### Visualizing the Networks
@@ -404,7 +440,7 @@ This vignette covers the basic workflow on simulated data. From here:
   and
   [`?GenerateSample`](https://anson-li8.github.io/BBNI/reference/GenerateSample.md)
   for full parameter documentation.
-- This example already runs 10⁴ iterations on a 20-node network, enough
+- This example already runs 4000 iterations on a 20-node network, enough
   to show clear convergence. Larger networks or higher accuracy will
   need proportionally more iterations.
 - If you’re applying `BBNI` to your own expression data, format
@@ -424,8 +460,9 @@ sessionInfo()
 #>   LAPACK version 3.12.1
 #> 
 #> locale:
-#> [1] LC_COLLATE=Spanish_Latin America.utf8  LC_CTYPE=Spanish_Latin America.utf8    LC_MONETARY=Spanish_Latin America.utf8
-#> [4] LC_NUMERIC=C                           LC_TIME=Spanish_Latin America.utf8    
+#> [1] LC_COLLATE=Spanish_Latin America.utf8  LC_CTYPE=C                            
+#> [3] LC_MONETARY=Spanish_Latin America.utf8 LC_NUMERIC=C                          
+#> [5] LC_TIME=Spanish_Latin America.utf8    
 #> 
 #> time zone: America/Chicago
 #> tzcode source: internal
@@ -437,7 +474,7 @@ sessionInfo()
 #> [1] BBNI_0.0.0.9000
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] compiler_4.6.0    fastmap_1.2.0     cli_3.6.6         htmltools_0.5.9   tools_4.6.0       otel_0.2.0        rstudioapi_0.18.0
-#>  [8] yaml_2.3.12       rmarkdown_2.31    knitr_1.51        xfun_0.58         digest_0.6.39     rlang_1.2.0       bitops_1.0-9     
-#> [15] evaluate_1.0.5
+#>  [1] compiler_4.6.0    fastmap_1.2.0     cli_3.6.6         htmltools_0.5.9   tools_4.6.0      
+#>  [6] otel_0.2.0        rstudioapi_0.18.0 yaml_2.3.12       rmarkdown_2.31    knitr_1.51       
+#> [11] xfun_0.58         digest_0.6.39     bitops_1.0-9      rlang_1.2.0       evaluate_1.0.5
 ```
