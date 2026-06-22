@@ -33,9 +33,9 @@ library(BBNI)
 To evaluate the MCMC sampler, we will use the package's built-in simulation functions to generate a artificial true network topology and simulate its corresponding noisy time-series data. This acts as a baseline to quantify the algorithm's success in recovery the original network.
 
 ```{r simulate-data}
-set.seed(235)
+set.seed(303)
 num_nodes <- 20
-sample_size <- 400
+sample_size <- 90
 
 # 1. Generate true DAG topology (T) and associated Boolean transition functions (F)
 true_network <- GenerateNetwork(num.node = num_nodes)
@@ -53,9 +53,9 @@ para <- numeric(num_nodes + 1)
 for (i in 1:(num_nodes + 1)) {
   para[i] <- rbeta(1, prior_para[i, 1], prior_para[i, 2])
 }
-# but fix the noise rate explicitly at 10%, bypassing the raw
+# but fix the noise rate explicitly at 25%, bypassing the raw
 # Beta(2, 100) draw to create a clear baseline for validation
-para[num_nodes + 1] <- 0.1
+para[num_nodes + 1] <- 0.25
 
 # 3. Generate the noise matrix and simulate the observational dataset (G)
 error_matrix <- matrix(rbinom(num_nodes * sample_size, 1, para[num_nodes + 1]),
@@ -91,7 +91,7 @@ Now we apply the `run_bbni()` algorithm to our synthetic data to evaluate its in
 
 ```{r run-model, results='hide'}
 # Define hyperparameters config
-num_update <- 10000 # Total MCMC iterations
+num_update <- 4000 # Total MCMC iterations
 penalty <- 0.1 # Structural prior penalty for network complexity
 prop_ratio <- 0.1 # Initial proposal mixture coefficient
 
@@ -195,11 +195,13 @@ Some mismatch here is expected. This comparison only uses a single sample from t
 
 ### A Better Estimate: Bayesian Model Averaging
 
-Rather than relying a single sample prone to noise, we can approximate the posterior properly via Bayesian Model Averaging over the sampled network space. First, we discard an initial burn-in period to eliminate transient bias from the arbitrary initial structure. Then, we strip the chain down to just one network per outer iteration (every `num.node` steps). This is to avoid dependent samples from samples in the same iteration being highly correlated. Using this pruned combination of independent samples, we can compute each directed edge's posterior inclusion probability as the fraction of samples where it's present:
+Rather than relying a single sample prone to noise and picking up spurious edges, we can approximate the posterior properly via Bayesian Model Averaging (BMA) over the sampled network space. In a wet-lab setting, false positive edges may lead to wasted efforts to validate data, while BMA naturally regulates against this. Although it may drop a weak true edge, it effectively filters out false positive noise to reduce to overall toplogical error.
+
+To do this, we first discard an initial burn-in period (75% of chain) to eliminate transient bias from the arbitrary initial structure. Then, we strip the chain down to just one network per outer iteration (every `num.node` steps). This is to avoid dependent samples from samples in the same iteration being highly correlated. Using this pruned combination of independent samples, we can compute each directed edge's posterior inclusion probability as the fraction of samples where it's present:
 
 ```{r model-averaging}
-# Burn-in set at 70%, from empirical visual observation of the trace plot (see above)
-burnin_cutoff <- round(0.70 * length(mcmc_results$log_posterior))
+# Burn-in set at 75%, from empirical visual observation of the trace plot (see above)
+burnin_cutoff <- round(0.75 * length(mcmc_results$log_posterior))
 
 # Prune to one sample per full outer iteration
 keep_idx <- seq(burnin_cutoff + 1, length(mcmc_results$log_posterior), by = num_nodes)
@@ -234,6 +236,12 @@ bma_network[bma_edges] <- bma_function[bma_edges]
 
 correct_function_bma <- sum(true_edges & bma_edges & (true_network == bma_network))
 cat("...of which Boolean function also correct: ", correct_function_bma, "out of", bma_tp, "\n")
+
+missed_edge_idx <- which(true_edges & !final_edges)
+fp_edge_idx <- which(!true_edges & final_edges)
+
+cat("Posterior probability of the missed true edge:", edge_prob[missed_edge_idx], "\n")
+cat("Posterior probability of the false-positive edge:", edge_prob[fp_edge_idx], "\n")
 ```
 
 ### Visualizing the Networks
