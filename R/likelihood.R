@@ -1,21 +1,21 @@
 #' Calculate Collapsed Posterior Log-Probability
 #'
 #' Calculates the collapsed posterior log-probability of a proposed network
-#' topology (\eqn{T}) and its Boolean functions (\eqn{F}) given the observed data (\eqn{G}).
+#' topology (\eqn{T}{T}) and its Boolean functions (\eqn{F}{F}) given the observed data (\eqn{G}{G}).
 #' It parses the transition function matrix (TRFUM) into root and non-root nodes,
 #' predicts each node's value based on its Boolean rule, counts mismatches, and
 #' evaluates the Beta-Binomial collapsed likelihood. By integrating out Bernoulli
-#' parameters \eqn{\theta = \{p_E, p_i\}} under Beta priors, the function computes
-#' \eqn{\log p(T, F \mid G)}, the model score for the MCMC algorithm.
+#' parameters \eqn{\theta = \{p_E, p_i\}}{\theta = {p_E, p_i}} under Beta priors, the function computes
+#' \eqn{\log p(T, F \mid G)}{\log p(T, F | G)}, the model score for the MCMC algorithm.
 #'
 #' @param TRFUM A matrix combining the current network topology and the specific Boolean logic functions assigned to each node (integer codes 1-12).
 #' @param GeneData A matrix of the observed binary gene expression time-series dataset (rows = nodes, columns = time points).
 #' @param SampleSize An integer representing the total number of time points/samples in `GeneData`.
 #' @param num.node An integer representing the total number of genes/nodes in the network.
-#' @param prior_para A matrix of Beta distribution hyperparameters (\eqn{\alpha, \beta}) for root nodes and the global noise parameter \eqn{e}.
-#' @param penalty A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}.
+#' @param prior_para A matrix of Beta distribution hyperparameters (\eqn{\alpha, \beta}{\alpha, \beta}) for root nodes and the global noise parameter \eqn{e}{e}.
+#' @param penalty A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}{P(T)}.
 #'
-#' @return A list of two vectors evaluating model fit. `results[[1]]` contains `[ErrorFactor, RootFactor, likelihood, post_para, log_post_model]`, where `log_post_model` is the collapsed posterior metric \eqn{\log p(T, F \mid G)}. `results[[2]]` contains `[para_sample, mismatch, Perror]`, providing point estimates of the root ON-probabilities, total mismatches, and estimated noise error rate \eqn{e}.
+#' @return A list of two vectors evaluating model fit. `results[[1]]` contains `[ErrorFactor, RootFactor, likelihood, post_para, log_post_model]`, where `log_post_model` is the collapsed posterior metric \eqn{\log p(T, F \mid G)}{\log p(T, F | G)}. `results[[2]]` contains `[para_sample, mismatch, Perror]`, providing point estimates of the root ON-probabilities, total mismatches, and estimated noise error rate \eqn{e}{e}.
 #' @noRd
 Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty) # compute error-likelihood, this function depends on the TRansition FUnction Matrix
 { # error_prior is a vector not a matrix

@@ -7,26 +7,25 @@
 GenerateSample(trans_matrix, num.node, SampleSize, para, error)
 }
 \arguments{
-\item{trans_matrix}{A square matrix combining the network topology \eqn{T} and integer-coded Boolean logic functions \eqn{F} assigned to each directed edge.}
+\item{trans_matrix}{A square matrix combining the network topology \eqn{T}{T} and integer-coded Boolean logic functions \eqn{F}{F} assigned to each directed edge.}
 
 \item{num.node}{An integer representing the total number of network nodes.}
 
 \item{SampleSize}{An integer representing the total number of time points to simulate.}
 
-\item{para}{A numeric vector of baseline success probabilities (\eqn{\theta_i}) used to generate the expression states of root nodes via independent Bernoulli trials.}
+\item{para}{A numeric vector of baseline success probabilities (\eqn{\theta_i}{\theta_i}) used to generate the expression states of root nodes via independent Bernoulli trials.}
 
 \item{error}{A pre-generated binary noise matrix applied to occasionally flip Boolean outputs, injecting natural noise.}
 }
 \value{
-A simulated binary gene expression matrix \eqn{G}, where rows represent individual genes/nodes and columns represent sequential points in time.
+A simulated binary gene expression matrix \eqn{G}{G}, where rows represent individual genes/nodes and columns represent sequential points in time.
 }
 \description{
-Simulates an artificial time-series observation dataset (\eqn{G}) by identifying root nodes
-to simulate independently via Bernoulli trials, then topologically computing
-the remaining non-root nodes from \eqn{t-1} to time \eqn{t}. The non-root updates updates
-use their specified Boolean logic functions and incorporate a noise parameter.
+Simulates a synthetic time-series observation dataset (\eqn{G}{G}).
+It starts by running independent Bernoulli trials on root nodes.
+The remaining non-root nodes are calculated from time \eqn{t-1}{t-1} to time \eqn{t}{t} using their assigned Boolean logic functions.
 A pre-generated binary noise matrix is applied via a bitwise XOR operation
-to occasionally flip the Boolean output, injecting the natural biological
+to occasionally flip the Boolean outputs, injecting natural biological
 noise expected by the model.
 }
 \examples{

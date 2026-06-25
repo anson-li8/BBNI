@@ -1,10 +1,10 @@
 #' Generate Initial Network Topology
 #'
 #' Randomly generates an valid directed acyclic graph (DAG) topology
-#' \eqn{T} and assigns a corresponding Boolean transition function \eqn{F} to each node.
-#' The algorithm samples parent set configurations subject to the constraint
-#' that the maximum in-degree for any node is 2, and further checks
-#' to guarantee the resulting structure contains no directed cyclic loops.
+#' \eqn{T}{T} and assigns a corresponding Boolean transition function \eqn{F}{F} to each node.
+#' The algorithm samples parent set configurations, keeping the constraint
+#' that the maximum in-degree for any node is 2, and further ensures
+#' the resulting structure does not contain directed cyclic loops.
 #'
 #' @param num.node An integer representing the total number of genes/nodes in the network.
 #'
@@ -54,21 +54,20 @@ GenerateNetwork <- function(num.node) {
 }
 #' Simulate Time-Series Observation Dataset
 #'
-#' Simulates an artificial time-series observation dataset (\eqn{G}) by identifying root nodes
-#' to simulate independently via Bernoulli trials, then topologically computing
-#' the remaining non-root nodes from \eqn{t-1} to time \eqn{t}. The non-root updates updates
-#' use their specified Boolean logic functions and incorporate a noise parameter.
+#' Simulates a synthetic time-series observation dataset (\eqn{G}{G}).
+#' It starts by running independent Bernoulli trials on root nodes.
+#' The remaining non-root nodes are calculated from time \eqn{t-1}{t-1} to time \eqn{t}{t} using their assigned Boolean logic functions.
 #' A pre-generated binary noise matrix is applied via a bitwise XOR operation
-#' to occasionally flip the Boolean output, injecting the natural biological
+#' to occasionally flip the Boolean outputs, injecting natural biological
 #' noise expected by the model.
 #'
-#' @param trans_matrix A square matrix combining the network topology \eqn{T} and integer-coded Boolean logic functions \eqn{F} assigned to each directed edge.
+#' @param trans_matrix A square matrix combining the network topology \eqn{T}{T} and integer-coded Boolean logic functions \eqn{F}{F} assigned to each directed edge.
 #' @param num.node An integer representing the total number of network nodes.
 #' @param SampleSize An integer representing the total number of time points to simulate.
-#' @param para A numeric vector of baseline success probabilities (\eqn{\theta_i}) used to generate the expression states of root nodes via independent Bernoulli trials.
+#' @param para A numeric vector of baseline success probabilities (\eqn{\theta_i}{\theta_i}) used to generate the expression states of root nodes via independent Bernoulli trials.
 #' @param error A pre-generated binary noise matrix applied to occasionally flip Boolean outputs, injecting natural noise.
 #'
-#' @return A simulated binary gene expression matrix \eqn{G}, where rows represent individual genes/nodes and columns represent sequential points in time.
+#' @return A simulated binary gene expression matrix \eqn{G}{G}, where rows represent individual genes/nodes and columns represent sequential points in time.
 #'
 #' @examples
 #' # 1. Generate a 5-node network

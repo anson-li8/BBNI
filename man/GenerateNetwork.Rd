@@ -14,10 +14,10 @@ A square transition function matrix combining the initial DAG topology with rand
 }
 \description{
 Randomly generates an valid directed acyclic graph (DAG) topology
-\eqn{T} and assigns a corresponding Boolean transition function \eqn{F} to each node.
-The algorithm samples parent set configurations subject to the constraint
-that the maximum in-degree for any node is 2, and further checks
-to guarantee the resulting structure contains no directed cyclic loops.
+\eqn{T}{T} and assigns a corresponding Boolean transition function \eqn{F}{F} to each node.
+The algorithm samples parent set configurations, keeping the constraint
+that the maximum in-degree for any node is 2, and further ensures
+the resulting structure does not contain directed cyclic loops.
 }
 \examples{
 # Generate a true network topology and Boolean rules for 5 nodes

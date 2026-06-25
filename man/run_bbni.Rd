@@ -35,7 +35,7 @@ A list containing the full trajectory of the MCMC chain. Specifically, \code{net
 \description{
 Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm to sample
 from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies (\eqn{T}{T}) and
-Boolean logic transition functions (\eqn{F}{F}). The algorithm loops through individual
+Boolean logic transition functions (\eqn{F}{F}). The algorithm iterates through individual
 network nodes and proposes parent set mutations (edge additions, removals, or swaps)
 paired with transition function reassignments to one of 14 candidate Boolean rules.
 Proposed states transitions are strictly verified to follow the DAG constraint and
