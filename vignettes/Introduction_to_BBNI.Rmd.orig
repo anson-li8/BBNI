@@ -18,51 +18,49 @@ knitr::opts_chunk$set(
 
 The `BBNI` (Bayesian Boolean Network Inference) package implements the Bayesian Boolean network inference algorithm of Han et al. (2014) on binary gene-expression data. The package computes both the directed network topology (including root and non-root nodes) and the Boolean transition functions corresponding to each defined node.
 
-This approach explicitly adjusts for biological noise and model uncertainty, two central objectives stated in Han et al. (2014). `BBNI` employs a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) sampler for estimating the posterior distribution of valid directed acyclic graph (DAG) topologies and their corresponding Boolean logic functions.
+This approach deliberately attempts to compensate for biological noise and model uncertainty, two central priorities stated in Han et al. (2014). Employing a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) process, the `BBNI`sampler is able to estimate the posterior distribution of valid directed acyclic graph (DAG) topologies and their corresponding Boolean logic functions.
 
-This vignette outlines the full workflow on a simulated example: generating a known network, simulating noisy binary expression data from it, running the MCMC sampler, and evaluating how well posterior samples recover the original topology and Boolean functions.
+This vignette presents an example simulated workflow utilizing the package. That is, simulating a noisy time-series dataset from an initial topology and transitions functions; running the implemented MCMC sampler; and lastly, running various evaluation tests to determine how well the algorithm recovered the original topology and Boolean functions.
 
-## Setup and data simulation
+## Setup and simulation
 
-First, load the package:
+First, we load the package:
 
 ```{r setup}
 library(BBNI)
 ```
 
-To evaluate the sampler in a controlled setting, we use the package's simulation functions to generate a known network topology and its associated noisy binary observations. This provides a ground-truth benchmark for assessing recovery of both the edge structure and the Boolean transition functions.
+After setup, we will use the package's simulation functions `GenerateNetwork` and `GenerateSample` (both exported). These will initialize a random, known network topology and the associated transition functions, then subsequently take a simulated time-series sample from it, respectively. Keeping a stored reference point allows for assessment of final recovery of both the edge structure and the Boolean transition functions.
 
 ```{r simulate-data}
 set.seed(303)
 num_nodes <- 20
 sample_size <- 80
 
-# 1. Generate a true DAG topology (T) and associated Boolean transition functions (F)
+# 1. Generate random DAG topology (T) and associated Boolean transition functions (F)
 true_network <- GenerateNetwork(num.node = num_nodes)
 
-# 2. Define Beta prior hyperparameters for root-node activation probabilities
-#    and the global noise parameter. Root nodes use Beta(3, 3), giving a prior
-#    mean of 0.5 while allowing node-specific variation. The final row specifies
+# 2. Set Beta prior hyperparameters. Root nodes use Beta(3, 3), defining a prior
+#    mean of 0.5 while also permitting node-specific variation. Final row specifies
 #    hyperparameters for the global noise parameter and satisfies beta1 < beta2.
 prior_para <- matrix(3, nrow = num_nodes + 1, ncol = 2)
 prior_para[num_nodes + 1, 1] <- 2
 prior_para[num_nodes + 1, 2] <- 100
 
-# Sample independent root-node activation probabilities from their Beta priors
+# Sample independent root node expression probabilities from Beta priors
 para <- numeric(num_nodes + 1)
 for (i in 1:(num_nodes + 1)) {
   para[i] <- rbeta(1, prior_para[i, 1], prior_para[i, 2])
 }
-# For the simulation, fix the noise rate at 25% instead of using the raw
-# Beta(2, 100) draw. This creates a clear benchmark for validation.
+# For simulation, fix the noise rate at 25% instead of the raw
+# Beta(2, 100) draw so we have clear benchmark for validation.
 para[num_nodes + 1] <- 0.25
 
-# 3. Generate the noise matrix and simulate the observational dataset (G)
+# 3. Generate noise matrix and simulate observational dataset (G)
 error_matrix <- matrix(rbinom(num_nodes * sample_size, 1, para[num_nodes + 1]),
   nrow = num_nodes, ncol = sample_size
 )
-
-dummy_data <- GenerateSample(
+simulated_data <- GenerateSample(
   trans_matrix = true_network,
   num.node = num_nodes,
   SampleSize = sample_size,
@@ -71,14 +69,14 @@ dummy_data <- GenerateSample(
 )
 ```
 
-`true_network` is a `num_nodes` x `num_nodes` matrix that encodes both the DAG topology and the Boolean transition functions:
+`true_network` is a `num_nodes` x `num_nodes` matrix encoding both the DAG topology and the Boolean transition functions (the one we generated with `GenerateNetwork`):
 
-- An entry of `0` at position `[i, j]` indicates that node `j` is not a parent of node `i`.
-- A nonzero entry at `[i, j]` indicates that node `j` is a parent of node `i`; the integer value identifies the Boolean transition function associated with that parent relation.
+- An entry of `0` at position `[i, j]` signifies that node `j` is not a parent of node `i`.
+- A nonzero entry at `[i, j]` signifies that node `j` is a parent of node `i`; the integer value corresponds to the Boolean transition function defining that parent relation.
 
-`dummy_data` is the simulated data matrix ($G$): a `num_nodes` x `sample_size` binary matrix in which each row represents a gene or node and each column represents an observation. The matrix is generated from the Boolean logic encoded in `true_network` and then perturbed using the simulated noise matrix (`error_matrix`).
+`simulated_data` is the simulated observed data matrix ($G$): a `num_nodes` x `sample_size` binary matrix in which each row represents a gene/node and each column represents an observation. The matrix is simulated from the Boolean logic defined in `true_network` and then distorted using the simulated noise matrix (`error_matrix`).
 
-For empirical applications, `GeneData` must use the same format: an `n` x `m` binary matrix with rows corresponding to nodes, such as genes, and columns corresponding to observations or synchronized time points. All entries must be coded as 0/1 expression states.
+For real-world usage, `GeneData` must use the same format: an `n` x `m` binary matrix with rows corresponding to nodes, like genes, and columns corresponding to observations or sequenced time points. All entries must be recorded as binary (0/1) expression states.
 
 ## Running the MCMC sampler
 
