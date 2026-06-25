@@ -1,6 +1,7 @@
 url: https://anson-li8.github.io/BBNI/
 template:
   bootstrap: 5
+  math-rendering: mathjax
 navbar:
   structure:
     left: [reference, tutorial, news]
