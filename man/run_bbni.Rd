@@ -15,34 +15,34 @@ run_bbni(
 )
 }
 \arguments{
-\item{GeneData}{A binary empirical observation matrix of the observational binary expression data (\eqn{G}).}
+\item{GeneData}{A binary empirical observation matrix of the binary expression data (\eqn{G}{G}).}
 
 \item{num.node}{An integer representing the total number of network nodes.}
 
 \item{SampleSize}{An integer representing the total number of time points in the dataset.}
 
-\item{prior_para}{A matrix of Beta prior hyperparameters \eqn{\alpha} and \eqn{\beta} for root node probabilities and the global noise parameter e.}
+\item{prior_para}{A matrix of Beta prior hyperparameters \eqn{\alpha}{\alpha} and \eqn{\beta}{\beta} for root node probabilities and the global noise parameter \eqn{e}{e}.}
 
 \item{num_update}{An integer representing the total number of MCMC iterations to perform.}
 
-\item{penalty}{A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}.}
+\item{penalty}{A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}{P(T)}.}
 
 \item{prop.ratio}{A numeric probability threshold used to decide whether to sample a move from the empirical proposal distribution or a uniform random distribution.}
 }
 \value{
-A list containing the full trajectory of the MCMC chain. Specifically, \code{networks} (a list of sampled transition function matrices) and \code{log_posterior} (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)} used for Bayesian model averaging.
+A list containing the full trajectory of the MCMC chain. Specifically, \code{networks} (a list of sampled transition function matrices) and \code{log_posterior} (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)}{P(T,F|G)} used for Bayesian model averaging.
 }
 \description{
 Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm to sample
-from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies (\eqn{T}) and
-Boolean logic transition functions (\eqn{F}). The algorithm loops through individual
+from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies (\eqn{T}{T}) and
+Boolean logic transition functions (\eqn{F}{F}). The algorithm loops through individual
 network nodes and proposes parent set mutations (edge additions, removals, or swaps)
 paired with transition function reassignments to one of 14 candidate Boolean rules.
 Proposed states transitions are strictly verified to follow the DAG constraint and
-evaluated with a Metropolis-Hastings acceptance gate using log-posterior values.
+evaluated with a Metropolis-Hastings acceptance threshold using log-posterior values.
 }
 \examples{
-\dontrun{
+if (FALSE) {
 # 1. Define network parameters
 set.seed(235)
 num_nodes <- 10

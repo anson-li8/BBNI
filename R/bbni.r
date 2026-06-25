@@ -1,25 +1,25 @@
 #' Execute Metropolis-within-Gibbs MCMC Sampler for Boolean Networks
 #'
 #' Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm to sample
-#' from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies (\eqn{T}) and
-#' Boolean logic transition functions (\eqn{F}). The algorithm loops through individual
+#' from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies (\eqn{T}{T}) and
+#' Boolean logic transition functions (\eqn{F}{F}). The algorithm iterates through individual
 #' network nodes and proposes parent set mutations (edge additions, removals, or swaps)
 #' paired with transition function reassignments to one of 14 candidate Boolean rules.
 #' Proposed states transitions are strictly verified to follow the DAG constraint and
-#' evaluated with a Metropolis-Hastings acceptance gate using log-posterior values.
+#' evaluated with a Metropolis-Hastings acceptance threshold using log-posterior values.
 #'
-#' @param GeneData A binary empirical observation matrix of the observational binary expression data (\eqn{G}).
+#' @param GeneData A binary empirical observation matrix of the binary expression data (\eqn{G}{G}).
 #' @param num.node An integer representing the total number of network nodes.
 #' @param SampleSize An integer representing the total number of time points in the dataset.
-#' @param prior_para A matrix of Beta prior hyperparameters \eqn{\alpha} and \eqn{\beta} for root node probabilities and the global noise parameter e.
+#' @param prior_para A matrix of Beta prior hyperparameters \eqn{\alpha}{\alpha} and \eqn{\beta}{\beta} for root node probabilities and the global noise parameter \eqn{e}{e}.
 #' @param num_update An integer representing the total number of MCMC iterations to perform.
-#' @param penalty A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}.
+#' @param penalty A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}{P(T)}.
 #' @param prop.ratio A numeric probability threshold used to decide whether to sample a move from the empirical proposal distribution or a uniform random distribution.
 #'
-#' @return A list containing the full trajectory of the MCMC chain. Specifically, `networks` (a list of sampled transition function matrices) and `log_posterior` (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)} used for Bayesian model averaging.
+#' @return A list containing the full trajectory of the MCMC chain. Specifically, `networks` (a list of sampled transition function matrices) and `log_posterior` (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)}{P(T,F|G)} used for Bayesian model averaging.
 #'
 #' @examples
-#' \dontrun{
+#' if (FALSE) {
 #' # 1. Define network parameters
 #' set.seed(235)
 #' num_nodes <- 10
