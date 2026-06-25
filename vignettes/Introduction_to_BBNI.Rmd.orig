@@ -20,7 +20,7 @@ The `BBNI` (Bayesian Boolean Network Inference) package implements the Bayesian 
 
 This approach deliberately attempts to compensate for biological noise and model uncertainty, two central priorities stated in Han et al. (2014). Employing a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) process, the `BBNI`sampler is able to estimate the posterior distribution of valid directed acyclic graph (DAG) topologies and their corresponding Boolean logic functions.
 
-This vignette presents an example simulated workflow utilizing the package. That is, simulating a noisy time-series dataset from an initial topology and transitions functions; running the implemented MCMC sampler; and lastly, running various evaluation tests to determine how well the algorithm recovered the original topology and Boolean functions.
+This vignette presents an example simulated workflow utilizing the package. That is, simulating a noisy time-series dataset from an initial topology and transition functions; running the implemented MCMC sampler; and lastly, running various evaluation tests to determine how well the algorithm recovered the original topology and Boolean functions.
 
 ## Setup and simulation
 
@@ -195,7 +195,7 @@ Once again, some deviation is reasonable because this comparison uses only one s
 
 Instead of relying on a single sampled network, we can summarize the posterior distribution by Bayesian model averaging (BMA) over several retained network samples. This allows calculation of posterior edge-inclusion probabilities, which are often more informative than a single end sample. In biological applications, reducing false-positive edges is particularly important, as each predicted interaction may warrant costly experimental validation.
 
-We first discard an initial burn-in period, here set to the first 75% of the recorded chain. This is to reduce the impact of unpredicability of the arbitrary starting structure. We then retain one network per outer iteration (every `num.node` node-level updates) to account for the strong statistical dependence of within-iteration samples. For each directed edge, the posterior inclusion probability is calculated as the fraction of retained samples in which that edge appears:
+We first discard an initial burn-in period, here set to the first 75% of the recorded chain. This is to reduce the impact of unpredictability of the arbitrary starting structure. We then retain one network per outer iteration (every `num.node` node-level updates) to account for the strong statistical dependence of within-iteration samples. For each directed edge, the posterior inclusion probability is calculated as the fraction of retained samples in which that edge appears:
 
 ```{r model-averaging}
 # Set burn-in to 75%, determined by visual inspection of the trace plot above.
@@ -283,7 +283,7 @@ legend("center", legend = match_labels, fill = match_cols[2:5], horiz = TRUE, bt
 
 ## Application to real-world biological data
 
-The workflow above uses simulated data so that the inferred network can be compared with a known ground truth. For empirical biological data, the same inference procedure can be appplied with a expression matrixthat is both binary and in the required `num.node` x `SampleSize` format. Since true topology is generally unknown in real applications, posterior edge-inclusion probabilities, convergence assessment, and biological plausibility should be emphasized over direct recovery metrics.
+The workflow above uses simulated data so that the inferred network can be compared with a known ground truth. For empirical biological data, the same inference procedure can be applied with an expression matrix that is both binary and in the required `num.node` x `SampleSize` format. Since true topology is generally unknown in real applications, posterior edge-inclusion probabilities, convergence assessment, and biological plausibility should be emphasized over direct recovery metrics.
 
 The original study by Han et al. (2014) applied the Bayesian Boolean network framework to yeast cell-cycle expression data and compared the inferred relationships with a reference cell-cycle network. A package-level empirical example can follow the same structure: load a binary expression matrix, run `run_bbni()`, examine trace behavior, summarize posterior edge probabilities, and interpret high-probability interactions in relation to existing biological knowledge.
 
