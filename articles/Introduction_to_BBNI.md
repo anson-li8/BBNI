@@ -3,17 +3,19 @@
 ## Overview
 
 The `BBNI` (Bayesian Boolean Network Inference) package implements the
-Bayesian Boolean network inference algorithm of Han et al. (2014) on
-binary gene-expression data. The package computes both the directed
-network topology (including root and non-root nodes) and the Boolean
-transition functions corresponding to each defined node.
+Bayesian Boolean network inference algorithm of [Han et
+al. (2014)](https://doi.org/10.1371/journal.pone.0115806) on binary
+gene-expression data. The package computes both the directed network
+topology (including root and non-root nodes) and the Boolean transition
+functions corresponding to each defined node.
 
 This approach deliberately attempts to compensate for biological noise
-and model uncertainty, two central priorities stated in Han et
-al. (2014). Employing a Metropolis-within-Gibbs Markov chain Monte Carlo
-(MCMC) process, the `BBNI`sampler is able to estimate the posterior
-distribution of valid directed acyclic graph (DAG) topologies and their
-corresponding Boolean logic functions.
+and model uncertainty, two central priorities stated in [Han et
+al. (2014)](https://doi.org/10.1371/journal.pone.0115806). Employing a
+Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) process, the
+`BBNI`sampler is able to estimate the posterior distribution of valid
+directed acyclic graph (DAG) topologies and their corresponding Boolean
+logic functions.
 
 This vignette presents an example simulated workflow utilizing the
 package. That is, simulating a noisy time-series dataset from an initial
@@ -399,11 +401,12 @@ posterior edge-inclusion probabilities, convergence assessment, and
 biological plausibility should be emphasized over direct recovery
 metrics.
 
-The original study by Han et al. (2014) applied the Bayesian Boolean
-network framework to yeast cell-cycle expression data and compared the
-inferred relationships with a reference cell-cycle network. A
-package-level empirical example can follow the same structure: load a
-binary expression matrix, run
+The original study by [Han et
+al. (2014)](https://doi.org/10.1371/journal.pone.0115806) applied the
+Bayesian Boolean network framework to yeast cell-cycle expression data
+and compared the inferred relationships with a reference cell-cycle
+network. A package-level empirical example can follow the same
+structure: load a binary expression matrix, run
 [`run_bbni()`](https://anson-li8.github.io/BBNI/reference/run_bbni.md),
 examine trace behavior, summarize posterior edge probabilities, and
 interpret high-probability interactions in relation to existing
