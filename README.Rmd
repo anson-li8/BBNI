@@ -19,11 +19,11 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/anson-li8/BBNI/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/anson-li8/BBNI/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-BBNI implements a full Bayesian approach for inferring Boolean genetic networks from noisy gene expression data, based on the method in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806). Unlike methods that return a single best-fit topology (REVEAL & BFE, which are both found in [BoolNet](https://cran.r-project.org/package=BoolNet)), BBNI uses MCMC to sample the full joint posterior over network topologies and Boolean transition functions, explicitly accounting for biological noise and returning posterior edge probabilities rather than one point estimate.
+BBNI is a Bayesian approach to Boolean gene regulatory network inference from noisy gene expression data. The method is discussed in more detail in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806). Unlike methods that return a single best-fit network topology, such as REVEAL and BFE, found in [BoolNet](https://cran.r-project.org/package=BoolNet), BBNI uses Markov chain Monte Carlo (MCMC) to sample from a joint posterior distribution of network topologies and Boolean transition functions. BBNI deliberately takes biological noise into account and allows for summarization (such as Bayesian model averaging, or BMA) that stabilizes results through posterior edge probabilities rather than a single point estimate.
 
 ## Installation
 
-BBNI is not yet on CRAN. Install the development version from GitHub:
+BBNI is not currently available on CRAN. The development version can be installed from GitHub:
 
 ``` r
 # install.packages("devtools")
@@ -32,7 +32,7 @@ devtools::install_github("anson-li8/BBNI")
 
 ## Example
 
-A minimal check that the package loads and runs:
+The following example provides a minimal check that the package loads successfully and can generate simulated data:
 
 ```{r example}
 library(BBNI)
@@ -49,7 +49,7 @@ dummy_data <- GenerateSample(
 dummy_data
 ```
 
-For a complete walkthrough running the MCMC sampler, checking convergence, and evaluating network recovery, please see the [Introduction to BBNI](https://anson-li8.github.io/BBNI/articles/Introduction_to_BBNI.html) vignette.
+For a complete demonstration running the MCMC sampler and evaluating final convergence and overall network recovery, see the [Introduction to BBNI](https://anson-li8.github.io/BBNI/articles/Introduction_to_BBNI.html) vignette.
 
 ## Citation
 
