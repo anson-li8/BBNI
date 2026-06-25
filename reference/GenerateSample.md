@@ -1,13 +1,12 @@
 # Simulate Time-Series Observation Dataset
 
-Simulates an artificial time-series observation dataset (\\G\\) by
-identifying root nodes to simulate independently via Bernoulli trials,
-then topologically computing the remaining non-root nodes from \\t-1\\
-to time \\t\\. The non-root updates updates use their specified Boolean
-logic functions and incorporate a noise parameter. A pre-generated
-binary noise matrix is applied via a bitwise XOR operation to
-occasionally flip the Boolean output, injecting the natural biological
-noise expected by the model.
+Simulates a synthetic time-series observation dataset (\\G\\). It starts
+by running independent Bernoulli trials on root nodes. The remaining
+non-root nodes are calculated from time \\t-1\\ to time \\t\\ using
+their assigned Boolean logic functions. A pre-generated binary noise
+matrix is applied via a bitwise XOR operation to occasionally flip the
+Boolean outputs, injecting natural biological noise expected by the
+model.
 
 ## Usage
 

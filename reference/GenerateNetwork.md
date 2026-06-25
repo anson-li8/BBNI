@@ -2,10 +2,9 @@
 
 Randomly generates an valid directed acyclic graph (DAG) topology \\T\\
 and assigns a corresponding Boolean transition function \\F\\ to each
-node. The algorithm samples parent set configurations subject to the
+node. The algorithm samples parent set configurations, keeping the
 constraint that the maximum in-degree for any node is 2, and further
-checks to guarantee the resulting structure contains no directed cyclic
-loops.
+ensures the resulting structure does not contain directed cyclic loops.
 
 ## Usage
 

@@ -3,12 +3,12 @@
 Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC)
 algorithm to sample from the joint posterior distribution of Directed
 Acyclic Graph (DAG) topologies (\\T\\) and Boolean logic transition
-functions (\\F\\). The algorithm loops through individual network nodes
-and proposes parent set mutations (edge additions, removals, or swaps)
-paired with transition function reassignments to one of 14 candidate
-Boolean rules. Proposed states transitions are strictly verified to
-follow the DAG constraint and evaluated with a Metropolis-Hastings
-acceptance gate using log-posterior values.
+functions (\\F\\). The algorithm iterates through individual network
+nodes and proposes parent set mutations (edge additions, removals, or
+swaps) paired with transition function reassignments to one of 14
+candidate Boolean rules. Proposed states transitions are strictly
+verified to follow the DAG constraint and evaluated with a
+Metropolis-Hastings acceptance threshold using log-posterior values.
 
 ## Usage
 
@@ -28,8 +28,8 @@ run_bbni(
 
 - GeneData:
 
-  A binary empirical observation matrix of the observational binary
-  expression data (\\G\\).
+  A binary empirical observation matrix of the binary expression data
+  (\\G\\).
 
 - num.node:
 
@@ -43,7 +43,7 @@ run_bbni(
 - prior_para:
 
   A matrix of Beta prior hyperparameters \\\alpha\\ and \\\beta\\ for
-  root node probabilities and the global noise parameter e.
+  root node probabilities and the global noise parameter \\e\\.
 
 - num_update:
 
@@ -72,7 +72,7 @@ distribution \\P(T,F\|G)\\ used for Bayesian model averaging.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+if (FALSE) {
 # 1. Define network parameters
 set.seed(235)
 num_nodes <- 10
@@ -118,5 +118,5 @@ mcmc_results <- run_bbni(
 
 # 4. Inspect results
 tail(mcmc_results$log_posterior)
-} # }
+}
 ```
