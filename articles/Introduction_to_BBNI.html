@@ -6,7 +6,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Bayesian Boolean Network Inference with BBNI • BBNI</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -140,12 +146,12 @@ corresponds to the Boolean transition function defining that parent
 relation.</li>
 </ul>
 <p><code>simulated_data</code> is the simulated observed data matrix
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>):
-a <code>num_nodes</code> x <code>sample_size</code> binary matrix in
-which each row represents a gene/node and each column represents an
-observation. The matrix is simulated from the Boolean logic defined in
-<code>true_network</code> and then distorted using the simulated noise
-matrix (<code>error_matrix</code>).</p>
+(<span class="math inline">\(G\)</span>): a <code>num_nodes</code> x
+<code>sample_size</code> binary matrix in which each row represents a
+gene/node and each column represents an observation. The matrix is
+simulated from the Boolean logic defined in <code>true_network</code>
+and then distorted using the simulated noise matrix
+(<code>error_matrix</code>).</p>
 <p>For real-world usage, <code>GeneData</code> must use the same format:
 an <code>n</code> x <code>m</code> binary matrix with rows corresponding
 to nodes, like genes, and columns corresponding to observations or
@@ -172,10 +178,9 @@ proposal rather than a uniform random move.</li>
 <code>prior_para</code> - hyperparameter matrix in which the first
 <code>n</code> rows define Beta prior parameters for root-node Bernoulli
 activation probabilities; row <code>n+1</code> sets the prior parameters
-for the global noise rate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>e</mi><annotation encoding="application/x-tex">e</annotation></semantics></math>,
-with the required constraint
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>β</mi><mn>1</mn></msub><mo>&lt;</mo><msub><mi>β</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\beta_1 &lt; \beta_2</annotation></semantics></math>.</li>
+for the global noise rate <span class="math inline">\(e\)</span>, with
+the required constraint <span class="math inline">\(\beta_1 &lt;
+\beta_2\)</span>.</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define MCMC and prior hyperparameters</span></span>
@@ -195,9 +200,8 @@ with the required constraint
 <span><span class="op">)</span></span>
 <span><span class="va">run_end</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="../reference/run_bbni.html">run_bbni()</a></code> prints a diagnostic log for each node-level
-update, resulting in <code>num.node</code>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>×</mi><annotation encoding="application/x-tex">\times</annotation></semantics></math><code>num_update</code> lines in total. The summary with the essential
-values is printed below:</p>
+update, resulting in <code>num.node</code> <span class="math inline">\(\times\)</span> <code>num_update</code> lines in
+total. The summary with the essential values is printed below:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Sampler completed"</span>, <span class="va">num_update</span>, <span class="st">"iterations ("</span>,</span>
