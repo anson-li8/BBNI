@@ -1,0 +1,8 @@
+linters: linters_with_tags(
+    tags = "best_practices",
+    line_length_linter = NULL,
+    object_name_linter = NULL,
+    commented_code_linter = commented_code_linter(),
+    implicit_integer_linter = NULL,
+    cyclocomp_linter = NULL
+  )

@@ -182,24 +182,20 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
 
           prop.prob <- runif(1)
           aa <- 0
-          if (prop.prob >= prop.ratio) { # proposal information is used with probability 1-prop.ratio
-            if (length(prop.legal.overlap) >= 1 && nrow(pairwise.prior.set) > 0) {
-              aa <- aa + 1
-              candidate.pare.set <- pairwise.prior.set[pairwise.prior.set[, 1] %in% prop.legal.overlap, ]
-              if (is.numeric(candidate.pare.set)) {
-                add_parent <- candidate.pare.set
-              }
-              if (is.matrix(candidate.pare.set)) {
-                add_parent <- candidate.pare.set[candidate.pare.set[, 4] == max(candidate.pare.set[, 4]), ]
-              } # use the most likely one
-              if (is.matrix(add_parent)) {
-                if (nrow(add_parent) > 1) {
-                  add_parent <- add_parent[sample.int(nrow(add_parent), 1), ]
-                }
-              }
-
-              add_one_parent <- add_parent[1]
+          if (prop.prob >= prop.ratio && length(prop.legal.overlap) >= 1 && nrow(pairwise.prior.set) > 0) { # proposal information is used with probability 1-prop.ratio
+            aa <- aa + 1
+            candidate.pare.set <- pairwise.prior.set[pairwise.prior.set[, 1] %in% prop.legal.overlap, ]
+            if (is.numeric(candidate.pare.set)) {
+              add_parent <- candidate.pare.set
             }
+            if (is.matrix(candidate.pare.set)) {
+              add_parent <- candidate.pare.set[candidate.pare.set[, 4] == max(candidate.pare.set[, 4]), ]
+            } # use the most likely one
+            if (is.matrix(add_parent) && nrow(add_parent) > 1) {
+              add_parent <- add_parent[sample.int(nrow(add_parent), 1), ]
+            }
+
+            add_one_parent <- add_parent[1]
           }
           if (prop.prob < prop.ratio || aa == 0) {
             sample_node <- sample.int(length(legal_parent), 1, replace = FALSE)
@@ -262,37 +258,33 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
         if (num_legal_parent > 1 && uu < pairwise.ratio) { # add two parents one time
           prop.prob <- runif(1)
           aa <- 0
-          if (prop.prob >= prop.ratio) {
-            if (nrow(triplet.prior.set) >= 1) {
-              candidate.pare.set <- list()
-              for (jj in seq_len(nrow(triplet.prior.set))) {
-                if (length(intersect(triplet.prior.set[jj, 1:2], legal_parent)) == 2) {
-                  aa <- aa + 1
-                  candidate.pare.set[[aa]] <- triplet.prior.set[jj, ]
-                }
+          if (prop.prob >= prop.ratio && nrow(triplet.prior.set) >= 1) {
+            candidate.pare.set <- list()
+            for (jj in seq_len(nrow(triplet.prior.set))) {
+              if (length(intersect(triplet.prior.set[jj, 1:2], legal_parent)) == 2) {
+                aa <- aa + 1
+                candidate.pare.set[[aa]] <- triplet.prior.set[jj, ]
               }
-              if (length(candidate.pare.set) > 0) {
-                score <- numeric()
-                for (jj in seq_along(candidate.pare.set)) {
-                  score[jj] <- candidate.pare.set[[jj]][5]
-                }
-                bbb <- matrix(nrow = length(candidate.pare.set), ncol = 6)
-                for (jjj in seq_along(candidate.pare.set)) {
-                  bbb[jjj, ] <- candidate.pare.set[[jjj]]
-                }
-
-                max.score.candidate <- bbb[bbb[, 5] == max(score), ]
-                if (is.numeric(max.score.candidate)) {
-                  add_parent <- max.score.candidate
-                }
-                if (is.matrix(max.score.candidate)) {
-                  if (nrow(max.score.candidate) > 1) {
-                    add_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
-                  }
-                }
-
-                add_two_parent <- c(add_parent[1], add_parent[2])
+            }
+            if (length(candidate.pare.set) > 0) {
+              score <- numeric()
+              for (jj in seq_along(candidate.pare.set)) {
+                score[jj] <- candidate.pare.set[[jj]][5]
               }
+              bbb <- matrix(nrow = length(candidate.pare.set), ncol = 6)
+              for (jjj in seq_along(candidate.pare.set)) {
+                bbb[jjj, ] <- candidate.pare.set[[jjj]]
+              }
+
+              max.score.candidate <- bbb[bbb[, 5] == max(score), ]
+              if (is.numeric(max.score.candidate)) {
+                add_parent <- max.score.candidate
+              }
+              if (is.matrix(max.score.candidate) && nrow(max.score.candidate) > 1) {
+                add_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
+              }
+
+              add_two_parent <- c(add_parent[1], add_parent[2])
             }
           }
           if (prop.prob < prop.ratio || aa == 0) {
@@ -361,39 +353,33 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
         if (length(legal_parent) > 0 && uu < one.parent.ratio) {
           prop.prob <- runif(1)
           aa <- 0
-          if (prop.prob >= prop.ratio) {
-            if (nrow(triplet.prior.set) >= 1 && ncol(triplet.prior.set) > 1) {
-              candidate.pare.set <- list()
-              for (jj in seq_len(nrow(triplet.prior.set))) {
-                if (length(intersect(parent_of_update, triplet.prior.pare[jj, ])) == 1) {
-                  if (parent_of_update %in% triplet.prior.pare[jj, ] && setdiff(triplet.prior.pare[jj, ], parent_of_update) %in% legal_parent) {
-                    aa <- aa + 1
-                    candidate.pare.set[[aa]] <- triplet.prior.set[jj, ]
-                  }
-                }
+          if (prop.prob >= prop.ratio && nrow(triplet.prior.set) >= 1 && ncol(triplet.prior.set) > 1) {
+            candidate.pare.set <- list()
+            for (jj in seq_len(nrow(triplet.prior.set))) {
+              if (length(intersect(parent_of_update, triplet.prior.pare[jj, ])) == 1 && parent_of_update %in% triplet.prior.pare[jj, ] && setdiff(triplet.prior.pare[jj, ], parent_of_update) %in% legal_parent) {
+                aa <- aa + 1
+                candidate.pare.set[[aa]] <- triplet.prior.set[jj, ]
               }
-              if (length(candidate.pare.set) > 0) {
-                score <- numeric()
-                for (jj in seq_along(candidate.pare.set)) {
-                  score[jj] <- candidate.pare.set[[jj]][5]
-                }
-                bbb <- matrix(nrow = length(candidate.pare.set), ncol = 6)
-                for (jjj in seq_along(candidate.pare.set)) {
-                  bbb[jjj, ] <- candidate.pare.set[[jjj]]
-                }
-
-                max.score.candidate <- bbb[bbb[, 5] == max(score), ]
-                if (is.numeric(max.score.candidate)) {
-                  add_parent <- max.score.candidate
-                }
-                if (is.matrix(max.score.candidate)) {
-                  if (nrow(max.score.candidate) > 1) {
-                    add_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
-                  }
-                }
-
-                add_one_parent <- setdiff(add_parent[1:2], parent_of_update)
+            }
+            if (length(candidate.pare.set) > 0) {
+              score <- numeric()
+              for (jj in seq_along(candidate.pare.set)) {
+                score[jj] <- candidate.pare.set[[jj]][5]
               }
+              bbb <- matrix(nrow = length(candidate.pare.set), ncol = 6)
+              for (jjj in seq_along(candidate.pare.set)) {
+                bbb[jjj, ] <- candidate.pare.set[[jjj]]
+              }
+
+              max.score.candidate <- bbb[bbb[, 5] == max(score), ]
+              if (is.numeric(max.score.candidate)) {
+                add_parent <- max.score.candidate
+              }
+              if (is.matrix(max.score.candidate) && nrow(max.score.candidate) > 1) {
+                add_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
+              }
+
+              add_one_parent <- setdiff(add_parent[1:2], parent_of_update)
             }
           }
           if (prop.prob < prop.ratio || aa == 0) {
@@ -463,24 +449,20 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
           swap.prior.overlap <- intersect(swap_candi, pairwise.prior.pare)
           prop.prob <- runif(1)
           aa <- 0
-          if (prop.prob > prop.ratio) {
-            if (length(swap.prior.overlap) > 0 && nrow(pairwise.prior.set) > 0) {
-              aa <- aa + 1
-              swap.candidate <- pairwise.prior.set[pairwise.prior.set[, 1] %in% swap.prior.overlap, ]
-              if (is.numeric(swap.candidate)) { # i.e. swap.candidate has one row
-                swap_parent <- swap.candidate
-              }
-              if (is.matrix(swap.candidate)) {
-                swap_parent <- swap.candidate[swap.candidate[, 4] == max(swap.candidate[, 4]), ]
-              } # multiple rows may have same weight
-
-              if (is.matrix(swap_parent)) {
-                if (nrow(swap_parent) > 1) {
-                  swap_parent <- swap_parent[sample.int(nrow(swap_parent), 1), ]
-                }
-              } # every candidate has equal chance
-              swap_one_node <- swap_parent[1]
+          if (prop.prob > prop.ratio && length(swap.prior.overlap) > 0 && nrow(pairwise.prior.set) > 0) {
+            aa <- aa + 1
+            swap.candidate <- pairwise.prior.set[pairwise.prior.set[, 1] %in% swap.prior.overlap, ]
+            if (is.numeric(swap.candidate)) { # i.e. swap.candidate has one row
+              swap_parent <- swap.candidate
             }
+            if (is.matrix(swap.candidate)) {
+              swap_parent <- swap.candidate[swap.candidate[, 4] == max(swap.candidate[, 4]), ]
+            } # multiple rows may have same weight
+
+            if (is.matrix(swap_parent) && nrow(swap_parent) > 1) {
+              swap_parent <- swap_parent[sample.int(nrow(swap_parent), 1), ]
+            } # every candidate has equal chance
+            swap_one_node <- swap_parent[1]
           }
           if (prop.prob < prop.ratio || aa == 0) {
             sample_node <- sample.int(length(swap_candi), 1, replace = FALSE)
@@ -708,10 +690,8 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               if (is.numeric(max.score.candidate)) {
                 swap_parent <- max.score.candidate
               }
-              if (is.matrix(max.score.candidate)) {
-                if (nrow(max.score.candidate) > 1) {
-                  swap_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
-                }
+              if (is.matrix(max.score.candidate) && nrow(max.score.candidate) > 1) {
+                swap_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
               }
               swap_two_parent <- swap_parent[1:2]
             }
@@ -789,23 +769,19 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
           pare.prior.overlap <- intersect(parent_of_update, pairwise.prior.pare)
           prop.prob <- runif(1)
           aa <- 0
-          if (prop.prob >= prop.ratio) {
-            if (length(pare.prior.overlap) == 1 && nrow(pairwise.prior.set) > 0) {
-              aa <- aa + 1
-              remove_one_node <- setdiff(parent_of_update, pairwise.prior.pare)
-              remove_pare <- pairwise.prior.set[pairwise.prior.set[, 1] == setdiff(parent_of_update, remove_one_node), ]
-              if (is.numeric(remove_pare)) {
-                func_order <- remove_pare[3]
-              }
-              if (is.matrix(remove_pare)) {
-                Remove_Pare <- remove_pare[remove_pare[, 4] == max(remove_pare[, 4]), ]
-                if (is.matrix(Remove_Pare)) {
-                  if (nrow(Remove_Pare) > 1) {
-                    Remove_Pare <- Remove_Pare[sample.int(nrow(Remove_Pare), 1), ]
-                  }
-                } # each candidate has equal chance
-                func_order <- Remove_Pare[3]
-              }
+          if (prop.prob >= prop.ratio && length(pare.prior.overlap) == 1 && nrow(pairwise.prior.set) > 0) {
+            aa <- aa + 1
+            remove_one_node <- setdiff(parent_of_update, pairwise.prior.pare)
+            remove_pare <- pairwise.prior.set[pairwise.prior.set[, 1] == setdiff(parent_of_update, remove_one_node), ]
+            if (is.numeric(remove_pare)) {
+              func_order <- remove_pare[3]
+            }
+            if (is.matrix(remove_pare)) {
+              Remove_Pare <- remove_pare[remove_pare[, 4] == max(remove_pare[, 4]), ]
+              if (is.matrix(Remove_Pare) && nrow(Remove_Pare) > 1) {
+                Remove_Pare <- Remove_Pare[sample.int(nrow(Remove_Pare), 1), ]
+              } # each candidate has equal chance
+              func_order <- Remove_Pare[3]
             }
           }
           if (prop.prob < prop.ratio || aa == 0) {
@@ -941,10 +917,8 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               if (is.numeric(max.score.candidate)) {
                 swap_parent <- max.score.candidate
               }
-              if (is.matrix(max.score.candidate)) {
-                if (nrow(max.score.candidate) > 1) {
-                  swap_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
-                }
+              if (is.matrix(max.score.candidate) && nrow(max.score.candidate) > 1) {
+                swap_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
               }
               swap_one_node <- setdiff(swap_parent[1:2], parent_of_update)
               sample_one_parent <- setdiff(parent_of_update, swap_parent[1:2])
@@ -1047,10 +1021,8 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
               if (is.numeric(max.score.candidate)) {
                 swap_parent <- max.score.candidate
               }
-              if (is.matrix(max.score.candidate)) {
-                if (nrow(max.score.candidate) > 1) {
-                  swap_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
-                }
+              if (is.matrix(max.score.candidate) && nrow(max.score.candidate) > 1) {
+                swap_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
               }
               swap_two_parent <- swap_parent[1:2]
             }
@@ -1226,34 +1198,30 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
         if (uu >= 6 / 7) {
           prop.prob <- runif(1)
           aa <- 0
-          if (prop.prob >= prop.ratio) {
-            if (nrow(triplet.prior.set) >= 1 && ncol(triplet.prior.set) > 1) {
-              candidate.pare.set <- list()
-              for (jj in seq_len(nrow(triplet.prior.set))) {
-                if (length(intersect(parent_of_update, triplet.prior.pare[jj, ])) == 2) {
-                  aa <- aa + 1
-                  candidate.pare.set[[aa]] <- triplet.prior.set[jj, ]
-                }
+          if (prop.prob >= prop.ratio && nrow(triplet.prior.set) >= 1 && ncol(triplet.prior.set) > 1) {
+            candidate.pare.set <- list()
+            for (jj in seq_len(nrow(triplet.prior.set))) {
+              if (length(intersect(parent_of_update, triplet.prior.pare[jj, ])) == 2) {
+                aa <- aa + 1
+                candidate.pare.set[[aa]] <- triplet.prior.set[jj, ]
               }
-              if (length(candidate.pare.set) > 0) {
-                score <- numeric()
-                for (jj in seq_along(candidate.pare.set)) {
-                  score[jj] <- candidate.pare.set[[jj]][5]
-                }
-                bbb <- matrix(nrow = length(candidate.pare.set), ncol = 6)
-                for (jjj in seq_along(candidate.pare.set)) {
-                  bbb[jjj, ] <- candidate.pare.set[[jjj]]
-                }
+            }
+            if (length(candidate.pare.set) > 0) {
+              score <- numeric()
+              for (jj in seq_along(candidate.pare.set)) {
+                score[jj] <- candidate.pare.set[[jj]][5]
+              }
+              bbb <- matrix(nrow = length(candidate.pare.set), ncol = 6)
+              for (jjj in seq_along(candidate.pare.set)) {
+                bbb[jjj, ] <- candidate.pare.set[[jjj]]
+              }
 
-                max.score.candidate <- bbb[bbb[, 5] == max(score), ]
-                if (is.numeric(max.score.candidate)) {
-                  add_parent <- max.score.candidate
-                }
-                if (is.matrix(max.score.candidate)) {
-                  if (nrow(max.score.candidate) > 1) {
-                    add_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
-                  }
-                }
+              max.score.candidate <- bbb[bbb[, 5] == max(score), ]
+              if (is.numeric(max.score.candidate)) {
+                add_parent <- max.score.candidate
+              }
+              if (is.matrix(max.score.candidate) && nrow(max.score.candidate) > 1) {
+                add_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
               }
             }
           }

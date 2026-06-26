@@ -254,10 +254,8 @@ ConstructInitial <- function(Candidate, num.node) {
           if (is.numeric(max.score.candidate)) {
             add_parent <- max.score.candidate
           }
-          if (is.matrix(max.score.candidate)) {
-            if (nrow(max.score.candidate) > 1) {
-              add_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
-            }
+          if (is.matrix(max.score.candidate) && nrow(max.score.candidate) > 1) {
+            add_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
           }
 
           add_two_parent <- c(add_parent[1], add_parent[2])
@@ -281,37 +279,33 @@ ConstructInitial <- function(Candidate, num.node) {
         }
       }
     }
-    if (prop_prob < ratio) { # consider one parent
-      if (nrow(pairwise.prior.set) > 0) {
-        candidate.pare.set <- pairwise.prior.set
-        if (is.numeric(candidate.pare.set)) {
-          add_parent <- candidate.pare.set
-        }
-        if (is.matrix(candidate.pare.set)) {
-          add_parent <- candidate.pare.set[candidate.pare.set[, 4] == max(candidate.pare.set[, 4]), ]
-        }
-        if (is.matrix(add_parent)) {
-          if (nrow(add_parent) > 1) {
-            add_parent <- add_parent[sample.int(nrow(add_parent), 1), ]
+    if (prop_prob < ratio && nrow(pairwise.prior.set) > 0) { # consider one parent
+      candidate.pare.set <- pairwise.prior.set
+      if (is.numeric(candidate.pare.set)) {
+        add_parent <- candidate.pare.set
+      }
+      if (is.matrix(candidate.pare.set)) {
+        add_parent <- candidate.pare.set[candidate.pare.set[, 4] == max(candidate.pare.set[, 4]), ]
+      }
+      if (is.matrix(add_parent) && nrow(add_parent) > 1) {
+        add_parent <- add_parent[sample.int(nrow(add_parent), 1), ]
+      }
+
+      add_one_parent <- add_parent[1]
+
+      func_order <- add_parent[3]
+      prop_trans_func_matrix[i, add_one_parent] <- func_order
+      for (ii in seq_len(nrow(prop_trans_func_matrix))) {
+        for (jj in seq_len(ncol(prop_trans_func_matrix))) {
+          if (prop_trans_func_matrix[ii, jj] > 0) {
+            prop_incid_matrix[ii, jj] <- 1
           }
         }
-
-        add_one_parent <- add_parent[1]
-
-        func_order <- add_parent[3]
-        prop_trans_func_matrix[i, add_one_parent] <- func_order
-        for (ii in seq_len(nrow(prop_trans_func_matrix))) {
-          for (jj in seq_len(ncol(prop_trans_func_matrix))) {
-            if (prop_trans_func_matrix[ii, jj] > 0) {
-              prop_incid_matrix[ii, jj] <- 1
-            }
-          }
-        }
-        prop_ances_matrix <- update_ancestor_matrix(prop_incid_matrix)
-        if (check_ances_matrix(prop_ances_matrix) == 0) {
-          trans_func_matrix[i, ] <- prop_trans_func_matrix[i, ]
-          incid_matrix[i, ] <- prop_incid_matrix[i, ]
-        }
+      }
+      prop_ances_matrix <- update_ancestor_matrix(prop_incid_matrix)
+      if (check_ances_matrix(prop_ances_matrix) == 0) {
+        trans_func_matrix[i, ] <- prop_trans_func_matrix[i, ]
+        incid_matrix[i, ] <- prop_incid_matrix[i, ]
       }
     }
   }
