@@ -1,5 +1,12 @@
 # Changelog
 
+## BBNI 0.1.1
+
+- Rewrote documentation, vignette, and README for clarity
+- Reformatted code for readability
+- Removed unused/dead code/comments
+- Fixed spelling and minor typos
+
 ## BBNI 0.1.0
 
 - Initial development version.
