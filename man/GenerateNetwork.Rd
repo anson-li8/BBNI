@@ -13,7 +13,7 @@ GenerateNetwork(num.node)
 A square transition function matrix combining the initial DAG topology with randomly assigned Boolean logic functions. Elements with a value of 0 indicate no directed edge, while positive integers indicate the presence of an edge and specify the defining Boolean function type (1-14).
 }
 \description{
-Randomly generates an valid directed acyclic graph (DAG) topology
+Randomly generates a valid directed acyclic graph (DAG) topology
 \eqn{T}{T} and assigns a corresponding Boolean transition function \eqn{F}{F} to each node.
 The algorithm samples parent set configurations, keeping the constraint
 that the maximum in-degree for any node is 2, and further ensures

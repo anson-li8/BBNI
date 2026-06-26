@@ -1,6 +1,6 @@
 #' Generate Initial Network Topology
 #'
-#' Randomly generates an valid directed acyclic graph (DAG) topology
+#' Randomly generates a valid directed acyclic graph (DAG) topology
 #' \eqn{T}{T} and assigns a corresponding Boolean transition function \eqn{F}{F} to each node.
 #' The algorithm samples parent set configurations, keeping the constraint
 #' that the maximum in-degree for any node is 2, and further ensures
@@ -21,7 +21,7 @@
 GenerateNetwork <- function(num.node) {
   loop <- 1
   while (loop != 0) {
-    tent_incid_matrix <- matrix(0, nrow = num.node, ncol = num.node) # define random incidence matrix, ancestor matrix, transition matrix
+    tent_incid_matrix <- matrix(0, nrow = num.node, ncol = num.node)
     tent_trans_matrix <- matrix(0, nrow = num.node, ncol = num.node)
     for (i in 1:num.node)
     {
