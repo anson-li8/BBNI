@@ -1,6 +1,6 @@
 Package: BBNI
 Title: Bayesian Inference of Boolean Genetic Networks
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person(given = "Shengtong", family = "Han", 
            email = "shengtong.han@marquette.edu", 
