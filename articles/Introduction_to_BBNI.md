@@ -13,7 +13,7 @@ This approach deliberately attempts to compensate for biological noise
 and model uncertainty, two central priorities stated in [Han et
 al. (2014)](https://doi.org/10.1371/journal.pone.0115806). Employing a
 Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) process, the
-`BBNI`sampler is able to estimate the posterior distribution of valid
+`BBNI` sampler is able to estimate the posterior distribution of valid
 directed acyclic graph (DAG) topologies and their corresponding Boolean
 logic functions.
 
