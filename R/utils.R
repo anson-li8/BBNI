@@ -8,16 +8,15 @@
 #'
 #' @returns A binary matrix of the same dimensions as `incid_matrix`. An entry of 1 at (i, k) indicates that node i is an ancestor of node k through one or more directed edges.
 #' @noRd
-update_ancestor_matrix <- function(incid_matrix) #  for a given incidence matrix, generate corresponding ancestor matrix
+update_ancestor_matrix <- function(incid_matrix)
 {
-  ances_matrix <- matrix(0, nrow = nrow(incid_matrix), ncol = ncol(incid_matrix)) # important! every time before updating, ancestor matrix should be cleared.
   ances_matrix <- incid_matrix
   for (ii in 1:nrow(ances_matrix))
   {
     for (i in 1:nrow(ances_matrix)) {
       for (j in 1:ncol(ances_matrix)) {
         for (k in 1:nrow(ances_matrix)) {
-          if (ances_matrix[i, j] == 1 && ances_matrix[j, k] == 1) { # it should be updated num.node times
+          if (ances_matrix[i, j] == 1 && ances_matrix[j, k] == 1) {
             ances_matrix[i, k] <- 1
           }
         }
@@ -38,7 +37,7 @@ update_ancestor_matrix <- function(incid_matrix) #  for a given incidence matrix
 #'
 #' @return An integer count of the number of nodes that are ancestors of themselves. A value greater than 0 indicates the proposed topology has cyclic loops and must be rejected.
 #' @noRd
-check_ances_matrix <- function(ances_matrix) # check whether there are loops in the whole network by checking ancestor matrix
+check_ances_matrix <- function(ances_matrix)
 {
   loop <- 0
   for (i in 1:nrow(ances_matrix)) {
