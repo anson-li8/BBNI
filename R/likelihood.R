@@ -180,9 +180,7 @@ BF1 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i 
   false.count <- sum(test.stat[2], test.stat[4], test.stat[6], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -207,9 +205,7 @@ BF2 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=comp
   false.count <- sum(test.stat[1], test.stat[3], test.stat[5], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -234,9 +230,7 @@ BF3 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=(g_i
   false.count <- sum(test.stat[2], test.stat[3], test.stat[5], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -261,9 +255,7 @@ BF4 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=comp
   false.count <- sum(test.stat[1], test.stat[4], test.stat[6], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -288,9 +280,7 @@ BF5 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=comp
   false.count <- sum(test.stat[1], test.stat[3], test.stat[6], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -315,9 +305,7 @@ BF6 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i 
   false.count <- sum(test.stat[1], test.stat[4], test.stat[5], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -342,9 +330,7 @@ BF7 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=comp
   false.count <- sum(test.stat[2], test.stat[3], test.stat[6], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -369,9 +355,7 @@ BF8 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i 
   false.count <- sum(test.stat[2], test.stat[4], test.stat[5], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -396,9 +380,7 @@ BF9 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i 
   false.count <- sum(test.stat[2], test.stat[3], test.stat[5], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -423,9 +405,7 @@ BF10 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=com
   false.count <- sum(test.stat[1], test.stat[4], test.stat[6], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -450,9 +430,7 @@ BF11 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i
   false.count <- sum(test.stat[2], test.stat[4], test.stat[5], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -477,9 +455,7 @@ BF12 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_j
   false.count <- sum(test.stat[2], test.stat[3], test.stat[6], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -504,9 +480,7 @@ BF13 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=com
   false.count <- sum(test.stat[1], test.stat[3], test.stat[6], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
@@ -531,9 +505,7 @@ BF14 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=com
   false.count <- sum(test.stat[1], test.stat[4], test.stat[5], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
   BIC.value <- -2 * (false.count * log(error.estimate) + (SampleSize + pseudo.count * 8 - false.count) * log(1 - error.estimate)) + 2 * log(SampleSize)
-  post.data <- exp(-0.5 * BIC.value)
   if (false.count <= threshold) {
-    # return(false.count)
     return(BIC.value)
   }
 }
