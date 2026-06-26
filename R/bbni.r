@@ -125,7 +125,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
       current_incid_matrix <- Incidence_Matrix[[iter]]
       current_ances_matrix <- Ancestor_Matrix[[iter]]
       current_trans_func_matrix <- Trans_Func_Matrix[[iter]]
-      current_post <- all_logpost[iter] # here current_post is a scale
+      current_post <- all_logpost[iter]
 
       parent_of_update <- numeric()
       j <- 1 # find the parent for node update_order[k]
@@ -193,7 +193,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 if (is.numeric(candidate.pare.set)) {
                   add_parent <- candidate.pare.set
                 }
-                if (is.matrix(candidate.pare.set)) { # should modify to use multinomial distribution
+                if (is.matrix(candidate.pare.set)) {
                   add_parent <- candidate.pare.set[candidate.pare.set[, 4] == max(candidate.pare.set[, 4]), ]
                 } # use the most likely one
                 if (is.matrix(add_parent)) {
@@ -792,7 +792,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
       }
       # case3: two parents
       if (length(parent_of_update) == 2) {
-        uu <- runif(1) # two.parent.ratio=2/7*(1/BIC.pairwise/(1/BIC.pairwise+1/BIC.standalone))
+        uu <- runif(1)
         two.parent.ratio <- 1 / 7
         # proposal move 1: remove one parent
         if (uu < two.parent.ratio) {
@@ -1195,7 +1195,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 {
                   prop_trans_func_matrix <- current_trans_func_matrix
                   prop_trans_func_matrix[update_order[k], reverse_pare] <- 0
-                  prop_trans_func_matrix[update_order[k], remain_pare] <- 10 + sample.int(2, 1) # try no use prior
+                  prop_trans_func_matrix[update_order[k], remain_pare] <- 10 + sample.int(2, 1)
                   prop_trans_func_matrix[reverse_pare, update_order[k]] <- 10 + sample.int(2, 1)
                   xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
                   prop_sample <- xxx[[2]]
@@ -1220,7 +1220,7 @@ run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
                 {
                   prop_trans_func_matrix <- current_trans_func_matrix
                   prop_trans_func_matrix[update_order[k], reverse_pare] <- 0
-                  prop_trans_func_matrix[update_order[k], remain_pare] <- 10 + sample.int(2, 1) # no use prior
+                  prop_trans_func_matrix[update_order[k], remain_pare] <- 10 + sample.int(2, 1)
                   func_order <- sample.int(10, 1)
                   prop_trans_func_matrix[reverse_pare, update_order[k]] <- func_order
                   prop_trans_func_matrix[reverse_pare, reverse_node_pare] <- func_order
