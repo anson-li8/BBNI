@@ -115,51 +115,51 @@ evaluated with a Metropolis-Hastings acceptance threshold using log-posterior va
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="co"># 1. Define network parameters</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">235</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">num_nodes</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></span>
-<span class="r-in"><span><span class="va">sample_size</span> <span class="op">&lt;-</span> <span class="fl">50</span></span></span>
+<span class="r-in"><span>  <span class="co"># 1. Define network parameters</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">235</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">num_nodes</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></span>
+<span class="r-in"><span>  <span class="va">sample_size</span> <span class="op">&lt;-</span> <span class="fl">50</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># 2. Generate true network and simulate data</span></span></span>
-<span class="r-in"><span><span class="va">true_network</span> <span class="op">&lt;-</span> <span class="fu"><a href="GenerateNetwork.html">GenerateNetwork</a></span><span class="op">(</span>num.node <span class="op">=</span> <span class="va">num_nodes</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># 2. Generate true network and simulate data</span></span></span>
+<span class="r-in"><span>  <span class="va">true_network</span> <span class="op">&lt;-</span> <span class="fu"><a href="GenerateNetwork.html">GenerateNetwork</a></span><span class="op">(</span>num.node <span class="op">=</span> <span class="va">num_nodes</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Set up Beta priors for root-node probabilities and the noise rate</span></span></span>
-<span class="r-in"><span><span class="va">prior_para</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">3</span>, nrow <span class="op">=</span> <span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">prior_para</span><span class="op">[</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
-<span class="r-in"><span><span class="va">prior_para</span><span class="op">[</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
+<span class="r-in"><span>  <span class="co"># Set up Beta priors for root-node probabilities and the noise rate</span></span></span>
+<span class="r-in"><span>  <span class="va">prior_para</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">3</span>, nrow <span class="op">=</span> <span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">prior_para</span><span class="op">[</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span>  <span class="va">prior_para</span><span class="op">[</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Simulate parameters</span></span></span>
-<span class="r-in"><span><span class="va">para</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">para</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Beta.html" class="external-link">rbeta</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">prior_para</span><span class="op">[</span><span class="va">i</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">prior_para</span><span class="op">[</span><span class="va">i</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="va">para</span><span class="op">[</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0.1</span> <span class="co"># Fixed noise rate for simulation</span></span></span>
+<span class="r-in"><span>  <span class="co"># Simulate parameters</span></span></span>
+<span class="r-in"><span>  <span class="va">para</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="va">para</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Beta.html" class="external-link">rbeta</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">prior_para</span><span class="op">[</span><span class="va">i</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">prior_para</span><span class="op">[</span><span class="va">i</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span></span></span>
+<span class="r-in"><span>  <span class="va">para</span><span class="op">[</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0.1</span> <span class="co"># Fixed noise rate for simulation</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">error_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">num_nodes</span> <span class="op">*</span> <span class="va">sample_size</span>, <span class="fl">1</span>, <span class="va">para</span><span class="op">[</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span><span class="op">]</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  nrow <span class="op">=</span> <span class="va">num_nodes</span>, ncol <span class="op">=</span> <span class="va">sample_size</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">error_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">num_nodes</span> <span class="op">*</span> <span class="va">sample_size</span>, <span class="fl">1</span>, <span class="va">para</span><span class="op">[</span><span class="va">num_nodes</span> <span class="op">+</span> <span class="fl">1</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    nrow <span class="op">=</span> <span class="va">num_nodes</span>, ncol <span class="op">=</span> <span class="va">sample_size</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">dummy_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="GenerateSample.html">GenerateSample</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  trans_matrix <span class="op">=</span> <span class="va">true_network</span>,</span></span>
-<span class="r-in"><span>  num.node <span class="op">=</span> <span class="va">num_nodes</span>,</span></span>
-<span class="r-in"><span>  SampleSize <span class="op">=</span> <span class="va">sample_size</span>,</span></span>
-<span class="r-in"><span>  para <span class="op">=</span> <span class="va">para</span>,</span></span>
-<span class="r-in"><span>  error <span class="op">=</span> <span class="va">error_matrix</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">dummy_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="GenerateSample.html">GenerateSample</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    trans_matrix <span class="op">=</span> <span class="va">true_network</span>,</span></span>
+<span class="r-in"><span>    num.node <span class="op">=</span> <span class="va">num_nodes</span>,</span></span>
+<span class="r-in"><span>    SampleSize <span class="op">=</span> <span class="va">sample_size</span>,</span></span>
+<span class="r-in"><span>    para <span class="op">=</span> <span class="va">para</span>,</span></span>
+<span class="r-in"><span>    error <span class="op">=</span> <span class="va">error_matrix</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># 3. Run the MCMC sampler</span></span></span>
-<span class="r-in"><span><span class="va">mcmc_results</span> <span class="op">&lt;-</span> <span class="fu">run_bbni</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  GeneData <span class="op">=</span> <span class="va">dummy_data</span>,</span></span>
-<span class="r-in"><span>  num.node <span class="op">=</span> <span class="va">num_nodes</span>,</span></span>
-<span class="r-in"><span>  SampleSize <span class="op">=</span> <span class="va">sample_size</span>,</span></span>
-<span class="r-in"><span>  prior_para <span class="op">=</span> <span class="va">prior_para</span>,</span></span>
-<span class="r-in"><span>  num_update <span class="op">=</span> <span class="fl">100</span>, <span class="co"># Scaled down for example speed</span></span></span>
-<span class="r-in"><span>  penalty <span class="op">=</span> <span class="fl">0.1</span>,</span></span>
-<span class="r-in"><span>  prop.ratio <span class="op">=</span> <span class="fl">0.1</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># 3. Run the MCMC sampler</span></span></span>
+<span class="r-in"><span>  <span class="va">mcmc_results</span> <span class="op">&lt;-</span> <span class="fu">run_bbni</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    GeneData <span class="op">=</span> <span class="va">dummy_data</span>,</span></span>
+<span class="r-in"><span>    num.node <span class="op">=</span> <span class="va">num_nodes</span>,</span></span>
+<span class="r-in"><span>    SampleSize <span class="op">=</span> <span class="va">sample_size</span>,</span></span>
+<span class="r-in"><span>    prior_para <span class="op">=</span> <span class="va">prior_para</span>,</span></span>
+<span class="r-in"><span>    num_update <span class="op">=</span> <span class="fl">100</span>, <span class="co"># Scaled down for example speed</span></span></span>
+<span class="r-in"><span>    penalty <span class="op">=</span> <span class="fl">0.1</span>,</span></span>
+<span class="r-in"><span>    prop.ratio <span class="op">=</span> <span class="fl">0.1</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># 4. Inspect results</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">mcmc_results</span><span class="op">$</span><span class="va">log_posterior</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># 4. Inspect results</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">mcmc_results</span><span class="op">$</span><span class="va">log_posterior</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

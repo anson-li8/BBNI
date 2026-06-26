@@ -147,7 +147,7 @@ cat(
   num_nodes * num_update, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
-#> Sampler completed 4000 iterations ( 80000 node updates) in 28.07 minutes
+#> Sampler completed 4000 iterations ( 80000 node updates) in 30.51 minutes
 ```
 
 ## Analyzing the output
@@ -444,9 +444,8 @@ sessionInfo()
 #>   LAPACK version 3.12.1
 #> 
 #> locale:
-#> [1] LC_COLLATE=Spanish_Latin America.utf8  LC_CTYPE=C                             LC_MONETARY=Spanish_Latin America.utf8 LC_NUMERIC=C                          
-#> [5] LC_TIME=Spanish_Latin America.utf8    
-#> system code page: 65001
+#> [1] LC_COLLATE=Spanish_Latin America.utf8  LC_CTYPE=Spanish_Latin America.utf8    LC_MONETARY=Spanish_Latin America.utf8
+#> [4] LC_NUMERIC=C                           LC_TIME=Spanish_Latin America.utf8    
 #> 
 #> time zone: America/Chicago
 #> tzcode source: internal
@@ -458,10 +457,14 @@ sessionInfo()
 #> [1] BBNI_0.1.0
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] compiler_4.6.0    brio_1.1.5        xml2_1.5.2        rcmdcheck_1.4.0   bitops_1.0-9      callr_3.7.6       yaml_2.3.12       fastmap_1.2.0    
-#>  [9] R6_2.6.1          commonmark_2.0.0  curl_7.1.0        knitr_1.51        tibble_3.3.1      desc_1.4.3        rprojroot_2.1.1   pillar_1.11.1    
-#> [17] rlang_1.2.0       testthat_3.3.2    cachem_1.1.0      roxygen2_8.0.0    xfun_0.58         fs_2.1.0          pkgload_1.5.2     otel_0.2.0       
-#> [25] memoise_2.0.1     cli_3.6.6         withr_3.0.2       magrittr_2.0.5    processx_3.9.0    digest_0.6.39     rstudioapi_0.18.0 devtools_2.5.2   
-#> [33] lifecycle_1.0.5   prettyunits_1.2.0 vctrs_0.7.3       evaluate_1.0.5    glue_1.8.1        xopen_1.0.1       sessioninfo_1.2.4 pkgbuild_1.4.8   
-#> [41] rmarkdown_2.31    purrr_1.2.2       tools_4.6.0       usethis_3.2.1     pkgconfig_2.0.3   ellipsis_0.3.3    htmltools_0.5.9
+#>  [1] styler_1.11.0      bitops_1.0-9       xml2_1.5.2         digest_0.6.39      magrittr_2.0.5     evaluate_1.0.5    
+#>  [7] pkgload_1.5.2      fastmap_1.2.0      R.oo_1.27.1        R.cache_0.17.0     rprojroot_2.1.1    processx_3.9.0    
+#> [13] R.utils_2.13.0     pkgbuild_1.4.8     sessioninfo_1.2.4  backports_1.5.1    brio_1.1.5         rcmdcheck_1.4.0   
+#> [19] purrr_1.2.2        lintr_3.3.0-1      codetools_0.2-20   cli_3.6.6          rlang_1.2.0        crayon_1.5.3      
+#> [25] R.methodsS3_1.8.2  ellipsis_0.3.3     commonmark_2.0.0   remotes_2.5.0      withr_3.0.2        cachem_1.1.0      
+#> [31] devtools_2.5.2     otel_0.2.0         hunspell_3.0.6     tools_4.6.0        memoise_2.0.1      curl_7.1.0        
+#> [37] vctrs_0.7.3        cyclocomp_1.1.2    R6_2.6.1           lifecycle_1.0.5    fs_2.1.0           xopen_1.0.1       
+#> [43] usethis_3.2.1      pkgconfig_2.0.3    desc_1.4.3         callr_3.7.6        rex_1.2.2          pillar_1.11.1     
+#> [49] Rcpp_1.1.1-1.1     glue_1.8.1         xfun_0.58          tibble_3.3.1       rstudioapi_0.18.0  knitr_1.51        
+#> [55] spelling_2.3.2     testthat_3.3.2     compiler_4.6.0     prettyunits_1.2.0  roxygen2_8.0.0     xmlparsedata_1.0.5
 ```
