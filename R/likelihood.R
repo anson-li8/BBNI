@@ -17,20 +17,18 @@
 #'
 #' @return A list of two vectors evaluating model fit. `results[[1]]` contains `[ErrorFactor, RootFactor, likelihood, post_para, log_post_model]`, where `log_post_model` is the collapsed posterior metric \eqn{\log p(T, F \mid G)}{\log p(T, F | G)}. `results[[2]]` contains `[para_sample, mismatch, Perror]`, providing point estimates of the root ON-probabilities, total mismatches, and estimated noise error rate \eqn{e}{e}.
 #' @noRd
-Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty)
-{
+Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty) {
   InOutPair <- list()
   ii <- 0
   root_node <- numeric()
   root <- 0
-  for (i in 1:nrow(TRFUM)) #  i row   find each input output combination
-  {
+  for (i in seq_len(nrow(TRFUM))) { #  i row   find each input output combination
     if (sum(TRFUM[i, ]) > 0) {
       ii <- ii + 1
       p <- numeric()
       k <- 1
       jj <- numeric()
-      for (j in 1:nrow(TRFUM)) { # j column
+      for (j in seq_len(nrow(TRFUM))) { # j column
         if (TRFUM[i, j] != 0) {
           p[k] <- TRFUM[i, j]
           jj[k] <- j
@@ -46,8 +44,7 @@ Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty
   }
   mismatch <- 0
   if (length(InOutPair) > 0) {
-    for (i in 1:length(InOutPair))
-    {
+    for (i in seq_along(InOutPair)) {
       if (InOutPair[[i]][length(InOutPair[[i]])] <= 10) {
         in_node <- c(InOutPair[[i]][2], InOutPair[[i]][3])
         out_node <- InOutPair[[i]][1]
@@ -103,53 +100,48 @@ Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty
   RootPrior <- numeric()
   succ_count <- numeric()
   succ_prob <- numeric()
-  for (i in 1:length(root_node))
-  {
+  for (i in seq_along(root_node)) {
     succ_count[i] <- sum(GeneData[root_node[i], ]) + pseudo_count
     succ_prob[i] <- succ_count[i] / (SampleSize + pseudo_count)
     RootFactor[i] <- succ_count[i] * log(succ_prob[i]) + (SampleSize + pseudo_count - succ_count[i]) * log(1 - succ_prob[i])
 
     RootPrior[i] <- (prior_para[root_node[i], 1] - 1) * log(succ_prob[i]) + (prior_para[root_node[i], 2] - 1) * log(1 - succ_prob[i])
   }
-  if (length(InOutPair) == 0) # all nodes are root nodes
-    {
-      likelihood <- sum(RootFactor)
-      post_para <- sum(RootFactor) + sum(RootPrior)
-      log_post_model <- 0
-      for (i in 1:nrow(TRFUM))
-      {
-        nume <- lbeta(prior_para[i, 1] + sum(GeneData[i, ]), prior_para[i, 2] + SampleSize - sum(GeneData[i, ]))
-        deno <- lbeta(prior_para[i, 1], prior_para[i, 2])
-        log_post_model <- log_post_model + nume - deno
-      }
-      log_post_model <- log_post_model + length(TRFUM[TRFUM > 0]) * log(penalty)
-      ErrorFactor <- NA
-      Perror <- NA
-      mismatch <- NA
+  if (length(InOutPair) == 0) { # all nodes are root nodes
+    likelihood <- sum(RootFactor)
+    post_para <- sum(RootFactor) + sum(RootPrior)
+    log_post_model <- 0
+    for (i in seq_len(nrow(TRFUM))) {
+      nume <- lbeta(prior_para[i, 1] + sum(GeneData[i, ]), prior_para[i, 2] + SampleSize - sum(GeneData[i, ]))
+      deno <- lbeta(prior_para[i, 1], prior_para[i, 2])
+      log_post_model <- log_post_model + nume - deno
     }
-  if (length(InOutPair) > 0) # exist non root nodes
-    {
-      likelihood <- ErrorFactor + sum(RootFactor)
-      post_para <- ErrorFactor + sum(RootFactor) + sum(RootPrior) + ErrorPrior
-      log_post_model <- 0
-      for (i in 1:length(root_node))
-      {
-        index <- root_node[i]
-        nume <- lbeta(prior_para[index, 1] + sum(GeneData[index, ]), prior_para[index, 2] + SampleSize - sum(GeneData[index, ]))
-        deno <- lbeta(prior_para[index, 1], prior_para[index, 2])
-        log_post_model <- log_post_model + nume - deno
-      }
-      noise_nume <- lbeta(mismatch + prior_para[num.node + 1, 1], length(InOutPair) * SampleSize - mismatch + prior_para[num.node + 1, 2])
-      noise_deno <- lbeta(prior_para[num.node + 1, 1], prior_para[num.node + 1, 2])
-      log_post_model <- log_post_model + noise_nume - noise_deno
-      log_post_model <- log_post_model + length(TRFUM[TRFUM > 0]) * log(penalty)
+    log_post_model <- log_post_model + length(TRFUM[TRFUM > 0]) * log(penalty)
+    ErrorFactor <- NA
+    Perror <- NA
+    mismatch <- NA
+  }
+  if (length(InOutPair) > 0) { # exist non root nodes
+    likelihood <- ErrorFactor + sum(RootFactor)
+    post_para <- ErrorFactor + sum(RootFactor) + sum(RootPrior) + ErrorPrior
+    log_post_model <- 0
+    for (i in seq_along(root_node)) {
+      index <- root_node[i]
+      nume <- lbeta(prior_para[index, 1] + sum(GeneData[index, ]), prior_para[index, 2] + SampleSize - sum(GeneData[index, ]))
+      deno <- lbeta(prior_para[index, 1], prior_para[index, 2])
+      log_post_model <- log_post_model + nume - deno
     }
+    noise_nume <- lbeta(mismatch + prior_para[num.node + 1, 1], length(InOutPair) * SampleSize - mismatch + prior_para[num.node + 1, 2])
+    noise_deno <- lbeta(prior_para[num.node + 1, 1], prior_para[num.node + 1, 2])
+    log_post_model <- log_post_model + noise_nume - noise_deno
+    log_post_model <- log_post_model + length(TRFUM[TRFUM > 0]) * log(penalty)
+  }
   result <- list()
   result[[1]] <- c(ErrorFactor, RootFactor, likelihood, post_para, log_post_model)
   para_sample <- rep(NA, num.node)
   for (i in 1:num.node) {
     if (i %in% root_node) {
-      for (j in 1:length(root_node)) {
+      for (j in seq_along(root_node)) {
         if (i == root_node[j]) {
           para_sample[i] <- succ_prob[j]
         }
@@ -174,8 +166,7 @@ Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF1 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i and g_j
-{
+BF1 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=g_i and g_j
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[2], test.stat[4], test.stat[6], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -199,8 +190,7 @@ BF1 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i 
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF2 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=complement(g_i and g_j)
-{
+BF2 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=complement(g_i and g_j)
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[1], test.stat[3], test.stat[5], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -224,8 +214,7 @@ BF2 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=comp
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF3 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=(g_i or g_j)
-{
+BF3 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=(g_i or g_j)
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[2], test.stat[3], test.stat[5], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -249,8 +238,7 @@ BF3 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=(g_i
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF4 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=complement(g_i or g_j)
-{
+BF4 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=complement(g_i or g_j)
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[1], test.stat[4], test.stat[6], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -274,8 +262,7 @@ BF4 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=comp
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF5 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=complement(g_i) or g_j
-{
+BF5 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=complement(g_i) or g_j
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[1], test.stat[3], test.stat[6], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -299,8 +286,7 @@ BF5 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=comp
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF6 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i or complement(g_j)
-{
+BF6 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=g_i or complement(g_j)
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[1], test.stat[4], test.stat[5], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -324,8 +310,7 @@ BF6 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i 
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF7 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=complement(g_i) and g_j
-{
+BF7 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=complement(g_i) and g_j
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[2], test.stat[3], test.stat[6], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -349,8 +334,7 @@ BF7 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=comp
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF8 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i and complement(g_j)
-{
+BF8 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=g_i and complement(g_j)
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[2], test.stat[4], test.stat[5], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -374,8 +358,7 @@ BF8 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i 
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF9 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i xor g_j
-{
+BF9 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=g_i xor g_j
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[2], test.stat[3], test.stat[5], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -399,8 +382,7 @@ BF9 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i 
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF10 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=complement(g_i xor g_j)
-{
+BF10 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=complement(g_i xor g_j)
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[1], test.stat[4], test.stat[6], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -424,8 +406,7 @@ BF10 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=com
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF11 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i
-{
+BF11 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=g_i
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[2], test.stat[4], test.stat[5], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -449,8 +430,7 @@ BF11 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_i
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF12 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_j
-{
+BF12 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=g_j
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[2], test.stat[3], test.stat[6], test.stat[7])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -474,8 +454,7 @@ BF12 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=g_j
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF13 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=complement(g_i)
-{
+BF13 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=complement(g_i)
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[1], test.stat[3], test.stat[6], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)
@@ -499,8 +478,7 @@ BF13 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=com
 #'
 #' @return A numeric BIC value, or `NULL` if the mismatch count exceeds the threshold.
 #' @noRd
-BF14 <- function(test.stat, pseudo.count, SampleSize, threshold) # model g_k=complement(g_j)
-{
+BF14 <- function(test.stat, pseudo.count, SampleSize, threshold) { # model g_k=complement(g_j)
   test.stat <- test.stat + pseudo.count
   false.count <- sum(test.stat[1], test.stat[4], test.stat[5], test.stat[8])
   error.estimate <- false.count / (SampleSize + pseudo.count * 8)

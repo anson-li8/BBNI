@@ -23,8 +23,7 @@ GenerateNetwork <- function(num.node) {
   while (loop != 0) {
     tent_incid_matrix <- matrix(0, nrow = num.node, ncol = num.node)
     tent_trans_matrix <- matrix(0, nrow = num.node, ncol = num.node)
-    for (i in 1:num.node)
-    {
+    for (i in 1:num.node) {
       u1 <- runif(1)
       uu <- 4
       if (u1 > 1 / 10 && u1 <= uu / 10) {
@@ -96,29 +95,27 @@ GenerateSample <- function(trans_matrix, num.node, SampleSize, para, error) {
   node_ances <- matrix(nrow = num.node, ncol = 2)
   GeneData <- matrix(0, nrow = num.node, ncol = SampleSize)
   incid_matrix <- trans_matrix
-  for (i in 1:nrow(trans_matrix)) {
-    for (j in 1:ncol(trans_matrix)) {
+  for (i in seq_len(nrow(trans_matrix))) {
+    for (j in seq_len(ncol(trans_matrix))) {
       if (trans_matrix[i, j] > 0) {
         incid_matrix[i, j] <- 1
       }
     }
   }
   ances_matrix <- update_ancestor_matrix(incid_matrix)
-  for (i in 1:num.node)
-  {
+  for (i in 1:num.node) {
     node_ances[i, 1] <- i
     node_ances[i, 2] <- sum(ances_matrix[i, ])
   }
   node_ances <- node_ances[order(node_ances[, 2]), ]
-  for (i in 1:nrow(node_ances))
-  {
+  for (i in seq_len(nrow(node_ances))) {
     if (node_ances[i, 2] == 0) {
       GeneData[node_ances[i, 1], ] <- rbinom(SampleSize, 1, prob = para[node_ances[i, 1]])
     }
     if (node_ances[i, 2] != 0) {
       parent <- numeric()
       ii <- 1
-      for (j in 1:ncol(incid_matrix)) {
+      for (j in seq_len(ncol(incid_matrix))) {
         if (incid_matrix[node_ances[i, 1], j] != 0) {
           parent[ii] <- j
           ii <- ii + 1

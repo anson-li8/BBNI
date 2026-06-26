@@ -18,10 +18,10 @@ ProposalConstruction <- function(GeneData, SampleSize) {
   threshold <- SampleSize * error.prop
   candidate.prior <- list()
   kk <- 1
-  for (i in 1:nrow(gene.data)) {
-    for (j in 1:nrow(gene.data)) {
+  for (i in seq_len(nrow(gene.data))) {
+    for (j in seq_len(nrow(gene.data))) {
       if (j != i) {
-        for (k in 1:nrow(gene.data)) {
+        for (k in seq_len(nrow(gene.data))) {
           if (k != i && k != j) {
             test.result <- list()
             gene.triplet <- rbind(rbind(gene.data[i, 1:(SampleSize - 1)], gene.data[j, 1:(SampleSize - 1)]), gene.data[k, 2:SampleSize])
@@ -33,8 +33,7 @@ ProposalConstruction <- function(GeneData, SampleSize) {
             c101 <- 0
             c110 <- 0
             c111 <- 0
-            for (ii in 1:(ncol(gene.triplet) - 1)) # counts in each cell
-            {
+            for (ii in 1:(ncol(gene.triplet) - 1)) { # counts in each cell
               if (gene.triplet[1, ii] == 0 && gene.triplet[2, ii] == 0 && gene.triplet[3, (ii + 1)] == 0) {
                 c000 <- c000 + 1
               }
@@ -77,7 +76,7 @@ ProposalConstruction <- function(GeneData, SampleSize) {
             test.result[[14]] <- c(i, j, k, 14, BF14(test.stat, pseudo.count, SampleSize, threshold)) # model g_k=complement(g_j)
             miscount <- numeric()
             jj <- 1
-            for (ii in 1:length(test.result)) {
+            for (ii in seq_along(test.result)) {
               if (length(test.result[[ii]]) == 5) {
                 miscount[jj] <- test.result[[ii]][5]
                 jj <- jj + 1
@@ -86,7 +85,7 @@ ProposalConstruction <- function(GeneData, SampleSize) {
 
             if (length(miscount) > 0) {
               min.miscount <- min(miscount)
-              for (ii in 1:length(test.result)) {
+              for (ii in seq_along(test.result)) {
                 if (length(test.result[[ii]]) == 5 && test.result[[ii]][5] == min.miscount) {
                   candidate.prior[[kk]] <- test.result[[ii]]
                   kk <- kk + 1
@@ -99,7 +98,7 @@ ProposalConstruction <- function(GeneData, SampleSize) {
     }
   }
   candidate <- matrix(nrow = length(candidate.prior), ncol = length(candidate.prior[[1]]))
-  for (i in 1:length(candidate.prior)) {
+  for (i in seq_along(candidate.prior)) {
     candidate[i, ] <- candidate.prior[[i]]
   }
   order.candidate <- candidate[order(candidate[, 3]), ] # order by output variables
@@ -108,8 +107,7 @@ ProposalConstruction <- function(GeneData, SampleSize) {
   j1 <- 1
   pairwise <- list()
   j2 <- 1
-  for (j in 1:nrow(order.candidate))
-  {
+  for (j in seq_len(nrow(order.candidate))) {
     if (order.candidate[j, 4] <= 10) {
       triplet[[j1]] <- order.candidate[j, ]
       j1 <- j1 + 1
@@ -136,15 +134,14 @@ ProposalConstruction <- function(GeneData, SampleSize) {
   candidate.triplet <- matrix(nrow = length(triplet), ncol = 5)
   weighted.triplet <- matrix(nrow = length(triplet), ncol = 6)
   candidate.pairwise <- matrix(nrow = length(pairwise), ncol = 4)
-  for (i in 1:length(triplet))
-  {
+  for (i in seq_along(triplet)) {
     candidate.triplet[i, ] <- triplet[[i]]
     for (j in 1:5) {
       weighted.triplet[i, j] <- candidate.triplet[i, j]
     }
     weighted.triplet[i, 6] <- candidate.triplet[i, 5]
   }
-  for (i in 1:length(pairwise)) {
+  for (i in seq_along(pairwise)) {
     candidate.pairwise[i, ] <- pairwise[[i]]
   }
   unique.pairwise <- unique(candidate.pairwise)
@@ -153,7 +150,7 @@ ProposalConstruction <- function(GeneData, SampleSize) {
   constant <- 0.001
   for (i in 1:num.node) {
     if (i %in% candidate.triplet[, 3]) {
-      for (j in 1:nrow(candidate.triplet)) {
+      for (j in seq_len(nrow(candidate.triplet))) {
         if (candidate.triplet[j, 3] == i) {
           trip.matrix <- candidate.triplet[candidate.triplet[, 3] == i, 1:5]
           trip.matrix <- data.matrix(trip.matrix)
@@ -171,7 +168,7 @@ ProposalConstruction <- function(GeneData, SampleSize) {
 
   for (i in 1:num.node) {
     if (i %in% unique.pairwise[, 2]) {
-      for (j in 1:nrow(unique.pairwise)) {
+      for (j in seq_len(nrow(unique.pairwise))) {
         if (unique.pairwise[j, 2] == i) {
           pair.matrix <- unique.pairwise[unique.pairwise[, 2] == i, 1:4]
           pair.matrix <- data.matrix(pair.matrix)
@@ -216,8 +213,7 @@ ConstructInitial <- function(Candidate, num.node) {
   prop_incid_matrix <- matrix(0, nrow = num.node, ncol = num.node)
   incid_matrix <- matrix(0, nrow = num.node, ncol = num.node)
   ratio <- 0.5
-  for (i in 1:num.node)
-  {
+  for (i in 1:num.node) {
     prop_trans_func_matrix <- trans_func_matrix
     prop_incid_matrix <- incid_matrix
     pairwise.prior.set <- matrix()
@@ -235,57 +231,56 @@ ConstructInitial <- function(Candidate, num.node) {
     }
     prop_prob <- runif(1)
     aa <- 0
-    if (prop_prob >= ratio) # consider two parents
-      {
-        if (nrow(triplet.prior.set) >= 1) {
-          candidate.pare.set <- list()
-          for (jj in 1:nrow(triplet.prior.set)) {
-            if (length(triplet.prior.set[jj, 1:2]) == 2) {
-              aa <- aa + 1
-              candidate.pare.set[[aa]] <- triplet.prior.set[jj, ]
-            }
-          }
-          if (length(candidate.pare.set) > 0) {
-            score <- numeric()
-            for (jj in 1:length(candidate.pare.set)) {
-              score[jj] <- candidate.pare.set[[jj]][5]
-            }
-            bbb <- matrix(nrow = length(candidate.pare.set), ncol = 6)
-            for (jjj in 1:length(candidate.pare.set)) {
-              bbb[jjj, ] <- candidate.pare.set[[jjj]]
-            }
-
-            max.score.candidate <- bbb[bbb[, 5] == max(score), ]
-            if (is.numeric(max.score.candidate)) {
-              add_parent <- max.score.candidate
-            }
-            if (is.matrix(max.score.candidate)) {
-              if (nrow(max.score.candidate) > 1) {
-                add_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
-              }
-            }
-
-            add_two_parent <- c(add_parent[1], add_parent[2])
+    if (prop_prob >= ratio) { # consider two parents
+      if (nrow(triplet.prior.set) >= 1) {
+        candidate.pare.set <- list()
+        for (jj in seq_len(nrow(triplet.prior.set))) {
+          if (length(triplet.prior.set[jj, 1:2]) == 2) {
+            aa <- aa + 1
+            candidate.pare.set[[aa]] <- triplet.prior.set[jj, ]
           }
         }
-        if (aa > 0) {
-          func_order <- add_parent[4]
-          prop_trans_func_matrix[i, add_two_parent[1]] <- func_order
-          prop_trans_func_matrix[i, add_two_parent[2]] <- func_order
-          for (ii in 1:nrow(prop_trans_func_matrix)) {
-            for (jj in 1:ncol(prop_trans_func_matrix)) {
-              if (prop_trans_func_matrix[ii, jj] > 0) {
-                prop_incid_matrix[ii, jj] <- 1
-              }
+        if (length(candidate.pare.set) > 0) {
+          score <- numeric()
+          for (jj in seq_along(candidate.pare.set)) {
+            score[jj] <- candidate.pare.set[[jj]][5]
+          }
+          bbb <- matrix(nrow = length(candidate.pare.set), ncol = 6)
+          for (jjj in seq_along(candidate.pare.set)) {
+            bbb[jjj, ] <- candidate.pare.set[[jjj]]
+          }
+
+          max.score.candidate <- bbb[bbb[, 5] == max(score), ]
+          if (is.numeric(max.score.candidate)) {
+            add_parent <- max.score.candidate
+          }
+          if (is.matrix(max.score.candidate)) {
+            if (nrow(max.score.candidate) > 1) {
+              add_parent <- max.score.candidate[sample.int(nrow(max.score.candidate), 1), ]
             }
           }
-          prop_ances_matrix <- update_ancestor_matrix(prop_incid_matrix)
-          if (check_ances_matrix(prop_ances_matrix) == 0) {
-            trans_func_matrix[i, ] <- prop_trans_func_matrix[i, ]
-            incid_matrix[i, ] <- prop_incid_matrix[i, ]
-          }
+
+          add_two_parent <- c(add_parent[1], add_parent[2])
         }
       }
+      if (aa > 0) {
+        func_order <- add_parent[4]
+        prop_trans_func_matrix[i, add_two_parent[1]] <- func_order
+        prop_trans_func_matrix[i, add_two_parent[2]] <- func_order
+        for (ii in seq_len(nrow(prop_trans_func_matrix))) {
+          for (jj in seq_len(ncol(prop_trans_func_matrix))) {
+            if (prop_trans_func_matrix[ii, jj] > 0) {
+              prop_incid_matrix[ii, jj] <- 1
+            }
+          }
+        }
+        prop_ances_matrix <- update_ancestor_matrix(prop_incid_matrix)
+        if (check_ances_matrix(prop_ances_matrix) == 0) {
+          trans_func_matrix[i, ] <- prop_trans_func_matrix[i, ]
+          incid_matrix[i, ] <- prop_incid_matrix[i, ]
+        }
+      }
+    }
     if (prop_prob < ratio) { # consider one parent
       if (nrow(pairwise.prior.set) > 0) {
         candidate.pare.set <- pairwise.prior.set
@@ -305,8 +300,8 @@ ConstructInitial <- function(Candidate, num.node) {
 
         func_order <- add_parent[3]
         prop_trans_func_matrix[i, add_one_parent] <- func_order
-        for (ii in 1:nrow(prop_trans_func_matrix)) {
-          for (jj in 1:ncol(prop_trans_func_matrix)) {
+        for (ii in seq_len(nrow(prop_trans_func_matrix))) {
+          for (jj in seq_len(ncol(prop_trans_func_matrix))) {
             if (prop_trans_func_matrix[ii, jj] > 0) {
               prop_incid_matrix[ii, jj] <- 1
             }
@@ -337,32 +332,29 @@ ConstructInitial <- function(Candidate, num.node) {
 #'
 #' @return A transition-function matrix with the same dimensions as the input. A 0 indicates no incoming edge. Non-zero entries contain a code from 1-12 identifying which Boolean operation each gene utilizes for calculation of the input of its parent(s).
 #' @noRd
-Prop_Trans_Func_Matrix <- function(prop_incid_matrix)
-{
+Prop_Trans_Func_Matrix <- function(prop_incid_matrix) {
   prop_trans_func_matrix <- prop_incid_matrix
   jj <- numeric()
-  for (i in 1:nrow(prop_incid_matrix))
-  {
+  for (i in seq_len(nrow(prop_incid_matrix))) {
     if (sum(prop_incid_matrix[i, ]) == 1) { # pairwise relation
-      for (j in 1:nrow(prop_incid_matrix)) {
+      for (j in seq_len(nrow(prop_incid_matrix))) {
         if (prop_incid_matrix[i, j] == 1) {
           prop_trans_func_matrix[i, j] <- 10 + sample.int(2, 1, replace = FALSE)
         }
       }
     }
 
-    if (sum(prop_incid_matrix[i, ]) == 2) # triplet relation
-      {
-        j1 <- 1
-        for (j in 1:ncol(prop_incid_matrix)) {
-          if (prop_incid_matrix[i, j] == 1) {
-            jj[j1] <- j
-            j1 <- j1 + 1
-          }
+    if (sum(prop_incid_matrix[i, ]) == 2) { # triplet relation
+      j1 <- 1
+      for (j in seq_len(ncol(prop_incid_matrix))) {
+        if (prop_incid_matrix[i, j] == 1) {
+          jj[j1] <- j
+          j1 <- j1 + 1
         }
-        prop_trans_func_matrix[i, jj[1]] <- sample.int(10, 1, replace = FALSE)
-        prop_trans_func_matrix[i, jj[2]] <- prop_trans_func_matrix[i, jj[1]]
       }
+      prop_trans_func_matrix[i, jj[1]] <- sample.int(10, 1, replace = FALSE)
+      prop_trans_func_matrix[i, jj[2]] <- prop_trans_func_matrix[i, jj[1]]
+    }
   }
   return(prop_trans_func_matrix)
 }
