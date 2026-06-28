@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # BBNI
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/anson-li8/BBNI/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/anson-li8/BBNI/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/han16/BBNI/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/han16/BBNI/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 BBNI is a Bayesian approach to Boolean gene regulatory network inference from noisy gene expression data. The method is discussed in more detail in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806). Unlike methods that return a single best-fit network topology, such as REVEAL and BFE, found in [BoolNet](https://cran.r-project.org/package=BoolNet), BBNI uses Markov chain Monte Carlo (MCMC) to sample from a joint posterior distribution of network topologies and Boolean transition functions. BBNI deliberately takes biological noise into account and allows for summarization (such as Bayesian model averaging, or BMA) that stabilizes results through posterior edge probabilities rather than a single point estimate.
@@ -27,7 +27,7 @@ BBNI is not currently available on CRAN. The development version can be installe
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("anson-li8/BBNI")
+devtools::install_github("han16/BBNI")
 ```
 
 ## Example
@@ -49,7 +49,7 @@ dummy_data <- GenerateSample(
 dummy_data
 ```
 
-For a complete demonstration running the MCMC sampler and evaluating final convergence and overall network recovery, see the [Introduction to BBNI](https://anson-li8.github.io/BBNI/articles/Introduction_to_BBNI.html) vignette.
+For a complete demonstration running the MCMC sampler and evaluating final convergence and overall network recovery, see the [Introduction to BBNI](https://han16.github.io/BBNI/articles/Introduction_to_BBNI.html) vignette.
 
 ## Citation
 
