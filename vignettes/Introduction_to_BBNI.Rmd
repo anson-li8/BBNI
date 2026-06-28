@@ -1,8 +1,8 @@
 ---
 title: "Bayesian Boolean Network Inference with BBNI"
 output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Bayesian Boolean Network Inference with BBNI}Bayesian
+vignette:
+  %\VignetteIndexEntry{Bayesian Boolean Network Inference with BBNI}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
