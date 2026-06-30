@@ -19,7 +19,7 @@
 #' @return A list containing the full trajectory of the MCMC chain. Specifically, `networks` (a list of sampled transition function matrices) and `log_posterior` (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)}{P(T,F|G)} used for Bayesian model averaging.
 #'
 #' @examples
-#' if (FALSE) {
+#' \donttest{
 #'   # 1. Define network parameters
 #'   set.seed(235)
 #'   num_nodes <- 10
@@ -52,16 +52,18 @@
 #'     error = error_matrix
 #'   )
 #'
-#'   # 3. Run the MCMC sampler
-#'   mcmc_results <- run_bbni(
-#'     GeneData = dummy_data,
-#'     num.node = num_nodes,
-#'     SampleSize = sample_size,
-#'     prior_para = prior_para,
-#'     num_update = 100, # Scaled down for example speed
-#'     penalty = 0.1,
-#'     prop.ratio = 0.1
-#'   )
+#'   # 3. Run the MCMC sampler (silently)
+#'   invisible(capture.output(
+#'     mcmc_results <- run_bbni(
+#'       GeneData = dummy_data,
+#'       num.node = num_nodes,
+#'      SampleSize = sample_size,
+#'       prior_para = prior_para,
+#'       num_update = 100, # Scaled down for example speed
+#'       penalty = 0.1,
+#'       prop.ratio = 0.1
+#'     )
+#'   ))
 #'
 #'   # 4. Inspect results
 #'   tail(mcmc_results$log_posterior)
