@@ -19,7 +19,7 @@
 #' @return A list containing the full trajectory of the MCMC chain. Specifically, `networks` (a list of sampled transition function matrices) and `log_posterior` (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)}{P(T,F|G)} used for Bayesian model averaging.
 #'
 #' @examples
-#' if (FALSE) {
+#' \donttest{
 #'   # 1. Define network parameters
 #'   set.seed(235)
 #'   num_nodes <- 10

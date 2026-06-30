@@ -42,7 +42,7 @@ Proposed states transitions are strictly verified to follow the DAG constraint a
 evaluated with a Metropolis-Hastings acceptance threshold using log-posterior values.
 }
 \examples{
-if (FALSE) {
+\donttest{
   # 1. Define network parameters
   set.seed(235)
   num_nodes <- 10
