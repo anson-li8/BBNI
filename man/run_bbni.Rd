@@ -75,16 +75,18 @@ evaluated with a Metropolis-Hastings acceptance threshold using log-posterior va
     error = error_matrix
   )
 
-  # 3. Run the MCMC sampler
-  mcmc_results <- run_bbni(
-    GeneData = dummy_data,
-    num.node = num_nodes,
-    SampleSize = sample_size,
-    prior_para = prior_para,
-    num_update = 100, # Scaled down for example speed
-    penalty = 0.1,
-    prop.ratio = 0.1
-  )
+  # 3. Run the MCMC sampler (silently)
+  invisible(capture.output(
+    mcmc_results <- run_bbni(
+      GeneData = dummy_data,
+      num.node = num_nodes,
+     SampleSize = sample_size,
+      prior_para = prior_para,
+      num_update = 100, # Scaled down for example speed
+      penalty = 0.1,
+      prop.ratio = 0.1
+    )
+  ))
 
   # 4. Inspect results
   tail(mcmc_results$log_posterior)
