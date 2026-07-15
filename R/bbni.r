@@ -113,7 +113,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
   jump_point[1] <- 1 # parameters for each chain
   if (verbose) {
     # initialize progress bar
-    cat("Running BBMI MCMC Sampling...\n")
+    cat("Running BBNI MCMC Sampling...\n")
     pb <- txtProgressBar(min = 0, max = num_update, style = 3)
   }
   for (ii in 1:num_update) { # run ii full rounds, with each round of num.node times
@@ -1287,7 +1287,20 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
   } # end of num_update
   if (verbose) {
     close(pb)
-    cat("MCMC Sampling Complete.\n")
+    # how many edges have >50% posterior probability?
+    res <- Reduce(`+`, lapply(Trans_Func_Matrix, function(m) (m > 0) * 1)) / length(Trans_Func_Matrix)
+    strong_edges <- sum(res > 0.5)
+    # print a clean summary block
+    cat("\n")
+    cat("=========================================\n")
+    cat("          BBNI Analysis Summary          \n")
+    cat("=========================================\n")
+    cat(sprintf("Nodes Analyzed:          %d\n", num.node))
+    cat(sprintf("Samples Processed:       %d\n", SampleSize))
+    cat(sprintf("MCMC Iterations:         %d\n", num_update))
+    cat(sprintf("Final Log-Posterior:     %.3f\n", all_logpost[num_update]))
+    cat(sprintf("Strong Edges (P > 0.5):  %d\n", strong_edges))
+    cat("=========================================\n")
   }
   return(list(
     networks = Trans_Func_Matrix,
