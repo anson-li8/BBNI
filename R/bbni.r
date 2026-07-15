@@ -9,12 +9,12 @@
 #' evaluated with a Metropolis-Hastings acceptance threshold using log-posterior values.
 #'
 #' @param GeneData A binary empirical observation matrix of the binary expression data (\eqn{G}{G}).
-#' @param num.node An integer representing the total number of network nodes.
-#' @param SampleSize An integer representing the total number of time points in the dataset.
-#' @param prior_para A matrix of Beta prior hyperparameters \eqn{\alpha}{\alpha} and \eqn{\beta}{\beta} for root node probabilities and the global noise parameter \eqn{e}{e}.
-#' @param num_update An integer representing the total number of MCMC iterations to perform.
-#' @param penalty A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}{P(T)}.
-#' @param prop.ratio A numeric probability threshold used to decide whether to sample a move from the empirical proposal distribution or a uniform random distribution.
+#' @param num.node An integer representing the total number of network nodes. Defaults to \code{nrow(GeneData)} if not specified.)
+#' @param SampleSize An integer representing the total number of time points in the dataset. Defaults to \code{ncol(GeneData)} if not specified.
+#' @param prior_para A matrix of Beta prior hyperparameters \eqn{\alpha}{\alpha} and \eqn{\beta}{\beta} for root node probabilities and the global noise parameter \eqn{e}{e}. Defaults to a flat prior if not specified.
+#' @param num_update An integer representing the total number of MCMC iterations to perform. Defaults to 4000 if not specified.
+#' @param penalty A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}{P(T)}. Defaults to 0.1 if not specified.
+#' @param prop.ratio A numeric probability threshold used to decide whether to sample a move from the empirical proposal distribution or a uniform random distribution. Defaults to 0.5 if not specified.
 #' @param verbose Logical. If TRUE, prints verbose MCMC iteration progress to the console. Default is FALSE.
 #'
 #' @return A list containing the full trajectory of the MCMC chain. Specifically, `networks` (a list of sampled transition function matrices) and `log_posterior` (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)}{P(T,F|G)} used for Bayesian model averaging.
@@ -71,7 +71,7 @@
 #' @importFrom stats runif
 #' @export
 run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(GeneData), prior_para = NULL,
-                     num_update = 4000, penalty = 0.1, prop.ratio = 0.5, verbose = TRUE) {
+                     num_update = 4000, penalty = 0.1, prop.ratio = 0.5, verbose = FALSE) {
   # Generate flat priors if not provided by user
   if (is.null(prior_para)) {
     prior_para <- matrix(1, nrow = num.node + 1, ncol = 2)
