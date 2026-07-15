@@ -70,8 +70,12 @@
 #'
 #' @importFrom stats runif
 #' @export
-run_bbni <- function(GeneData, num.node, SampleSize, prior_para,
-                     num_update, penalty, prop.ratio, verbose = FALSE) {
+run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(GeneData), prior_para = NULL,
+                     num_update = 4000, penalty = 0.1, prop.ratio = 0.5, verbose = TRUE) {
+  # Generate flat priors if not provided by user
+  if (is.null(prior_para)) {
+    prior_para <- matrix(1, nrow = num.node + 1, ncol = 2)
+  }
   Candidate <- ProposalConstruction(GeneData, SampleSize) # create the proposal for generated data
   prior.triplet <- Candidate[[1]]
   prior.pairwise <- Candidate[[2]]

@@ -6,13 +6,13 @@
 \usage{
 run_bbni(
   GeneData,
-  num.node,
-  SampleSize,
-  prior_para,
-  num_update,
-  penalty,
-  prop.ratio,
-  verbose = FALSE
+  num.node = nrow(GeneData),
+  SampleSize = ncol(GeneData),
+  prior_para = NULL,
+  num_update = 4000,
+  penalty = 0.1,
+  prop.ratio = 0.5,
+  verbose = TRUE
 )
 }
 \arguments{
