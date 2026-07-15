@@ -111,6 +111,11 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
   iter <- 1
   jump_point <- numeric()
   jump_point[1] <- 1 # parameters for each chain
+  if (verbose) {
+    # initialize progress bar
+    cat("Running BBMI MCMC Sampling...\n")
+    pb <- txtProgressBar(min = 0, max = num_update, style = 3)
+  }
   for (ii in 1:num_update) { # run ii full rounds, with each round of num.node times
     if (ii <= round(0.1 * num_update)) { # use adaptive ratio of using proposal information
       prop.ratio <- 0.1
@@ -122,9 +127,8 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
     update_order <- sample.int(num.node, num.node, replace = FALSE)
     for (k in seq_along(update_order)) { #   consider the updating node g_k
       if (verbose) {
-        cat("ii", ii, "th iteration is running", "\n")
-        cat("n=", n, "\n")
-        cat("all_logpost=", all_logpost[iter], "\n")
+        # update progress bar
+        setTxtProgressBar(pb, ii)
       }
       old <- n
       current_incid_matrix <- Incidence_Matrix[[iter]]
@@ -1281,6 +1285,10 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
       }
     } # end of updating
   } # end of num_update
+  if (verbose) {
+    close(pb)
+    cat("MCMC Sampling Complete.\n")
+  }
   return(list(
     networks = Trans_Func_Matrix,
     log_posterior = all_logpost
