@@ -79,19 +79,19 @@ noise expected by the model.</p>
 
 
 <dt id="arg-samplesize">SampleSize<a class="anchor" aria-label="anchor" href="#arg-samplesize"></a></dt>
-<dd><p>An integer representing the total number of time points to simulate.</p></dd>
+<dd><p>An integer representing the total number of time points to simulate. Defaults to 50 if not specified.</p></dd>
 
 
 <dt id="arg-num-node">num.node<a class="anchor" aria-label="anchor" href="#arg-num-node"></a></dt>
-<dd><p>An integer representing the total number of network nodes.</p></dd>
+<dd><p>An integer representing the total number of network nodes. Defaults to <code>nrow(trans_matrix)</code> if not specified.</p></dd>
 
 
 <dt id="arg-para">para<a class="anchor" aria-label="anchor" href="#arg-para"></a></dt>
-<dd><p>A numeric vector of baseline success probabilities (\(\theta_i\)) used to generate the expression states of root nodes via independent Bernoulli trials.</p></dd>
+<dd><p>A numeric vector of baseline success probabilities (\(\theta_i\)) used to generate the expression states of root nodes via independent Bernoulli trials. Defaults to a <code>rep(0.5, nrow(trans_matrix))</code> if not specified.</p></dd>
 
 
 <dt id="arg-error">error<a class="anchor" aria-label="anchor" href="#arg-error"></a></dt>
-<dd><p>A pre-generated binary noise matrix applied to occasionally flip Boolean outputs, injecting natural noise.</p></dd>
+<dd><p>A pre-generated binary noise matrix applied to occasionally flip Boolean outputs, injecting natural noise. Defaults to a zero matrix of size <code>nrow(trans_matrix) x SampleSize</code> if not specified (no noise).</p></dd>
 
 </dl></div>
     <div class="section level2">

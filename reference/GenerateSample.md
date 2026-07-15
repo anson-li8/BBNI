@@ -30,21 +30,25 @@ GenerateSample(
 - SampleSize:
 
   An integer representing the total number of time points to simulate.
+  Defaults to 50 if not specified.
 
 - num.node:
 
-  An integer representing the total number of network nodes.
+  An integer representing the total number of network nodes. Defaults to
+  `nrow(trans_matrix)` if not specified.
 
 - para:
 
   A numeric vector of baseline success probabilities (\\\theta_i\\) used
   to generate the expression states of root nodes via independent
-  Bernoulli trials.
+  Bernoulli trials. Defaults to a `rep(0.5, nrow(trans_matrix))` if not
+  specified.
 
 - error:
 
   A pre-generated binary noise matrix applied to occasionally flip
-  Boolean outputs, injecting natural noise.
+  Boolean outputs, injecting natural noise. Defaults to a zero matrix of
+  size `nrow(trans_matrix) x SampleSize` if not specified (no noise).
 
 ## Value
 
