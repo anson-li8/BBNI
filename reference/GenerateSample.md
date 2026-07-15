@@ -11,7 +11,13 @@ model.
 ## Usage
 
 ``` r
-GenerateSample(trans_matrix, num.node, SampleSize, para, error)
+GenerateSample(
+  trans_matrix,
+  SampleSize = 50,
+  num.node = nrow(trans_matrix),
+  para = rep(0.5, nrow(trans_matrix)),
+  error = matrix(0, nrow = nrow(trans_matrix), ncol = SampleSize)
+)
 ```
 
 ## Arguments
@@ -21,13 +27,13 @@ GenerateSample(trans_matrix, num.node, SampleSize, para, error)
   A square matrix combining the network topology \\T\\ and integer-coded
   Boolean logic functions \\F\\ assigned to each directed edge.
 
-- num.node:
-
-  An integer representing the total number of network nodes.
-
 - SampleSize:
 
   An integer representing the total number of time points to simulate.
+
+- num.node:
+
+  An integer representing the total number of network nodes.
 
 - para:
 
