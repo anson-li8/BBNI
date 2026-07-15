@@ -4,14 +4,20 @@
 \alias{GenerateSample}
 \title{Simulate Time-Series Observation Dataset}
 \usage{
-GenerateSample(trans_matrix, num.node, SampleSize, para, error)
+GenerateSample(
+  trans_matrix,
+  SampleSize = 50,
+  num.node = nrow(trans_matrix),
+  para = rep(0.5, nrow(trans_matrix)),
+  error = matrix(0, nrow = nrow(trans_matrix), ncol = SampleSize)
+)
 }
 \arguments{
 \item{trans_matrix}{A square matrix combining the network topology \eqn{T}{T} and integer-coded Boolean logic functions \eqn{F}{F} assigned to each directed edge.}
 
-\item{num.node}{An integer representing the total number of network nodes.}
-
 \item{SampleSize}{An integer representing the total number of time points to simulate.}
+
+\item{num.node}{An integer representing the total number of network nodes.}
 
 \item{para}{A numeric vector of baseline success probabilities (\eqn{\theta_i}{\theta_i}) used to generate the expression states of root nodes via independent Bernoulli trials.}
 

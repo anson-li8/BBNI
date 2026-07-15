@@ -61,8 +61,8 @@ GenerateNetwork <- function(num.node) {
 #' noise expected by the model.
 #'
 #' @param trans_matrix A square matrix combining the network topology \eqn{T}{T} and integer-coded Boolean logic functions \eqn{F}{F} assigned to each directed edge.
-#' @param num.node An integer representing the total number of network nodes.
 #' @param SampleSize An integer representing the total number of time points to simulate.
+#' @param num.node An integer representing the total number of network nodes.
 #' @param para A numeric vector of baseline success probabilities (\eqn{\theta_i}{\theta_i}) used to generate the expression states of root nodes via independent Bernoulli trials.
 #' @param error A pre-generated binary noise matrix applied to occasionally flip Boolean outputs, injecting natural noise.
 #'
@@ -91,7 +91,7 @@ GenerateNetwork <- function(num.node) {
 #'
 #' @importFrom bitops bitXor bitAnd bitOr
 #' @export
-GenerateSample <- function(trans_matrix, num.node, SampleSize, para, error) {
+GenerateSample <- function(trans_matrix, SampleSize = 50, num.node = nrow(trans_matrix), para = rep(0.5, nrow(trans_matrix)), error = matrix(0, nrow = nrow(trans_matrix), ncol = SampleSize)) {
   node_ances <- matrix(nrow = num.node, ncol = 2)
   GeneData <- matrix(0, nrow = num.node, ncol = SampleSize)
   incid_matrix <- trans_matrix
