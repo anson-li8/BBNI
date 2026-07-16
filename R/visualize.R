@@ -15,8 +15,13 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, ...) {
     stop("Package \"igraph\" is required for plotting. Please install it.", call. = FALSE)
   }
   # Extract list of networks and calculate posterior probabilities (res)
-  networks <- results$networks
-  res <- Reduce(`+`, lapply(networks, function(m) (m > 0) * 1)) / length(networks)
+  if (!is.null(results$post_edge_prob)) {
+    res <- results$post_edge_prob
+  } else {
+    # fallback by manually calculate
+    networks <- results$networks
+    res <- Reduce(`+`, lapply(networks, function(m) (m > 0) * 1)) / length(networks)
+  }
   # Filter probability matrix based on threshold
   adj_matrix <- ifelse(res >= threshold, 1, 0)
   # Assign node names if provided, otherwise default to N1, N2...

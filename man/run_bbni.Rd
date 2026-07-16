@@ -13,7 +13,8 @@ run_bbni(
   penalty = 0.1,
   prop.ratio = 0.5,
   verbose = FALSE,
-  timeseries = TRUE
+  timeseries = TRUE,
+  burn_in = 0.7
 )
 }
 \arguments{
@@ -34,9 +35,11 @@ run_bbni(
 \item{verbose}{Logical. If TRUE, prints verbose MCMC iteration progress to the console. Default is FALSE.}
 
 \item{timeseries}{Logical. If TRUE, the algorithm assumes a time-series dataset. If FALSE, the algorithm assumes independent samples. Default is TRUE.}
+
+\item{burn_in}{A numeric value between 0 and 1 representing the proportion of initial MCMC samples to discard as burn-in. Defaults to 0.7 if not specified.}
 }
 \value{
-A list containing the full trajectory of the MCMC chain. Specifically, \code{networks} (a list of sampled transition function matrices) and \code{log_posterior} (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)}{P(T,F|G)} used for Bayesian model averaging.
+A list containing the full trajectory of the MCMC chain. Specifically, \code{networks} (a list of sampled transition function matrices) and \code{log_posterior} (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)}{P(T,F|G)} used for Bayesian model averaging. Additionally, the \code{post_edge_prob} (matrix of marginal posterior edge probabilities) and \code{burn_in} ratio are returned in the list.
 }
 \description{
 Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm to sample
