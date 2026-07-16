@@ -18,19 +18,19 @@ run_bbni(
 )
 }
 \arguments{
-\item{GeneData}{A binary empirical observation matrix of the binary expression data (\eqn{G}{G}).}
+\item{GeneData}{A binary empirical observation matrix (\eqn{G}{G}), where rows represent individual network nodes (genes) and columns represent independent samples or sequential time points.}
 
 \item{num.node}{An integer representing the total number of network nodes. Defaults to \code{nrow(GeneData)} if not specified.)}
 
-\item{SampleSize}{An integer representing the total number of time points in the dataset. Defaults to \code{ncol(GeneData)} if not specified.}
+\item{SampleSize}{An integer representing the total number of time points or independent samples in the dataset. Defaults to \code{ncol(GeneData)} if not specified.}
 
-\item{prior_para}{A matrix of Beta prior hyperparameters \eqn{\alpha}{\alpha} and \eqn{\beta}{\beta} for root node probabilities and the global noise parameter \eqn{e}{e}. Defaults to a flat prior if not specified.}
+\item{prior_para}{A matrix (with dimensions \verb{(num.node + 1) x 2}) of Beta prior hyperparameters \eqn{\alpha}{\alpha} and \eqn{\beta}{\beta} for root node probabilities and the global noise parameter \eqn{e}{e}. Defaults to a flat prior if not specified.}
 
 \item{num_update}{An integer representing the total number of MCMC iterations to perform. Defaults to 4000 if not specified.}
 
 \item{penalty}{A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}{P(T)}. Defaults to 0.1 if not specified.}
 
-\item{prop.ratio}{A numeric probability threshold used to decide whether to sample a move from the empirical proposal distribution or a uniform random distribution. Defaults to 0.5 if not specified.}
+\item{prop.ratio}{A numeric value between 0 and 1 representing the probability of choosing a uniform proposal distribution over an empirical proposal distribution at each iteration. Defaults to 0.5}
 
 \item{verbose}{Logical. If TRUE, prints verbose MCMC iteration progress to the console. Default is FALSE.}
 
@@ -78,7 +78,6 @@ evaluated with a Metropolis-Hastings acceptance threshold using log-posterior va
 
   dummy_data <- GenerateSample(
     trans_matrix = true_network,
-    num.node = num_nodes,
     SampleSize = sample_size,
     para = para,
     error = error_matrix
@@ -87,16 +86,14 @@ evaluated with a Metropolis-Hastings acceptance threshold using log-posterior va
   # 3. Run the MCMC sampler (silently)
   mcmc_results <- run_bbni(
     GeneData = dummy_data,
-    num.node = num_nodes,
-    SampleSize = sample_size,
     prior_para = prior_para,
     num_update = 100, # Scaled down for example speed
-    penalty = 0.1,
     prop.ratio = 0.1
   )
 
-  # 4. Inspect results
-  tail(mcmc_results$log_posterior)
+  # 4. Visualize results
+  plot_bbni(mcmc_results)
+  plot_trace(mcmc_results)
 }
 
 }
