@@ -2,7 +2,8 @@
 
 Generates a trace plot of the log-posterior values over iterations of
 the MCMC to visually assess convergence and stability of the executed
-Markov chain.
+Markov chain. Burn-in line is graphed to show when the data started to
+be utilized for edge-probability calculations.
 
 ## Usage
 
