@@ -133,6 +133,6 @@ distribution \\P(T,F\|G)\\ used for Bayesian model averaging.
 
   # 4. Inspect results
   tail(mcmc_results$log_posterior)
-#> [1] -279.5854 -279.5854 -281.8880 -281.8880 -281.8880 -281.8880
+#> [1] -229.1624 -229.1624 -229.1624 -229.1624 -229.1624 -229.1624
 # }
 ```
