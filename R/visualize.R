@@ -106,4 +106,9 @@ plot_trace <- function(results) {
        xlab = "Iteration", ylab = "Log-Posterior",
        main = "MCMC Trace Plot",
        lwd = 1.5)
+  # add vertical line for burnin if present
+  if (!is.null(results$burn_in)) {
+    abline(v = results$burn_in * length(results$log_posterior), col = "red", lty = 2)
+    legend("bottomright", legend = paste("Burnin =", results$burn_in), col = "red", lty = 2, bty = "n")
+  }
 }
