@@ -5,7 +5,7 @@
 - [`GenerateNetwork()`](https://anson-li8.github.io/BBNI/reference/GenerateNetwork.md)
   : Generate Initial Network Topology
 - [`GenerateSample()`](https://anson-li8.github.io/BBNI/reference/GenerateSample.md)
-  : Simulate Time-Series Observation Dataset
+  : Simulate Boolean Network Observation Dataset
 - [`plot_bbni()`](https://anson-li8.github.io/BBNI/reference/plot_bbni.md)
   : Plot the Inferred Bayesian Boolean Network
 - [`plot_trace()`](https://anson-li8.github.io/BBNI/reference/plot_trace.md)
