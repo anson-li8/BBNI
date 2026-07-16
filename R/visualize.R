@@ -76,6 +76,8 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, ...) {
 #' @description
 #' Generates a trace plot of the log-posterior values over iterations of the MCMC
 #' to visually assess convergence and stability of the executed Markov chain.
+#' Burn-in line is graphed to show when the data started to be utilized for
+#' edge-probability calculations.
 #'
 #' @param results The list returned by \code{run_bbni()}, containing \code{networks} and \code{log_posterior}.
 #'
@@ -106,9 +108,9 @@ plot_trace <- function(results) {
        xlab = "Iteration", ylab = "Log-Posterior",
        main = "MCMC Trace Plot",
        lwd = 1.5)
-  # add vertical line for burnin if present
+  # add vertical line for burn-in if present
   if (!is.null(results$burn_in)) {
     abline(v = results$burn_in * length(results$log_posterior), col = "red", lty = 2)
-    legend("bottomright", legend = paste("Burnin =", results$burn_in), col = "red", lty = 2, bty = "n")
+    legend("bottomright", legend = paste("Burn-in =", results$burn_in), col = "red", lty = 2, bty = "n")
   }
 }
