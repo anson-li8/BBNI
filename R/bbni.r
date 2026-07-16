@@ -71,12 +71,12 @@
 #' @importFrom stats runif
 #' @export
 run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(GeneData), prior_para = NULL,
-                     num_update = 4000, penalty = 0.1, prop.ratio = 0.5, verbose = FALSE) {
+                     num_update = 4000, penalty = 0.1, prop.ratio = 0.5, verbose = FALSE, timeseries = TRUE) {
   # Generate flat priors if not provided by user
   if (is.null(prior_para)) {
     prior_para <- matrix(1, nrow = num.node + 1, ncol = 2)
   }
-  Candidate <- ProposalConstruction(GeneData, SampleSize) # create the proposal for generated data
+  Candidate <- ProposalConstruction(GeneData, SampleSize, timeseries) # create the proposal for generated data
   prior.triplet <- Candidate[[1]]
   prior.pairwise <- Candidate[[2]]
 
@@ -96,14 +96,14 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
   Ancestor_Matrix <- list() # Matrix: Ancestor Matrix recording ancestor-offspring relations for the whole chain
   Trans_Func_Matrix <- list() # Matrix: Transition Function Matrix for the whole chain
   Sample_Matrix <- matrix(nrow = num.node * num_update + 1, ncol = num.node + 2)
-  Sample_Matrix[1, ] <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = trans_func_matrix)[[2]]
+  Sample_Matrix[1, ] <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = trans_func_matrix, timeseries = timeseries)[[2]]
   Incidence_Matrix[[1]] <- incid_matrix
   Ancestor_Matrix[[1]] <- ances_matrix
   Trans_Func_Matrix[[1]] <- trans_func_matrix
   num <- numeric()
   logpost <- numeric()
   all_logpost <- numeric()
-  aa <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = Trans_Func_Matrix[[1]])
+  aa <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = Trans_Func_Matrix[[1]], timeseries = timeseries)
   all_logpost[1] <- aa[[1]][length(aa[[1]])]
   logpost[1] <- all_logpost[1]
   n <- 1
@@ -225,7 +225,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
           }
           add_one_prob <- 1 / length(legal_parent)
           prop_trans_func_prob <- 1 / 2 #  there are in all two types of boolean functions to choose for pairwise genes
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           prop_sample_prob <- numeric()
@@ -318,7 +318,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
           }
           sample_two_prob <- 1 / choose(num_legal_parent, 2)
           prop_trans_func_prob <- 1 / 10
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           prop_sample_prob <- numeric()
@@ -412,7 +412,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
           }
           add_one_prob <- 1 / length(legal_parent)
           prop_trans_func_prob <- 1 / 10 # there are 10 functions to choose
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           prop_sample_prob <- numeric()
@@ -494,7 +494,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
           }
           swap_one_prob <- 1 / length(swap_candi)
           prop_trans_func_prob <- 1 / 2 #  new proposal transition function matrix
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           prop_sample_prob <- numeric()
@@ -543,7 +543,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
           prop_trans_func_matrix <- current_trans_func_matrix
           prop_trans_func_matrix[update_order[k], remove_one_node] <- 0
           prop_trans_func_prob <- 1
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           prop_sample_prob <- numeric()
@@ -605,7 +605,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
             func_order <- current_trans_func_matrix[update_order[k], parent_of_update]
             prop_trans_func_matrix[update_order[k], parent_of_update] <- 0
             prop_trans_func_matrix[parent_of_update, update_order[k]] <- func_order
-            xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+            xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
             prop_sample <- xxx[[2]]
             prop_post <- xxx[[1]][length(xxx[[1]])]
 
@@ -660,7 +660,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
               if (length(parent_child) == 2) {
                 prop_trans_func_matrix[children, setdiff(parent_child, parent_of_update)] <- 10 + sample.int(2, 1)
               }
-              xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+              xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
               prop_sample <- xxx[[2]]
               prop_post <- xxx[[1]][length(xxx[[1]])]
 
@@ -729,7 +729,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
           }
           swap_two_prob <- 1 / choose(length(swap_candi), 2)
           prop_trans_func_prob <- 1 / 10
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           prop_sample_prob <- numeric()
@@ -813,7 +813,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
           }
           prop_trans_func_matrix[update_order[k], setdiff(parent_of_update, remove_one_node)] <- func_order
           prop_trans_func_prob <- 1 / 2
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           prop_sample_prob <- numeric()
@@ -870,7 +870,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
           prop_trans_func_matrix[update_order[k], remove_node[1]] <- 0
           prop_trans_func_matrix[update_order[k], remove_node[2]] <- 0
           prop_trans_func_prob <- 1
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           prop_sample_prob <- numeric()
@@ -958,7 +958,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
           }
           swap_one_prob <- 1 / length(swap_candi) * 1 / 2
           prop_trans_func_prob <- 1 / 10
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           prop_sample_prob <- numeric()
@@ -1062,7 +1062,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
           }
           swap_two_prob <- 1 / choose(length(swap_candi), 2)
           prop_trans_func_prob <- 1 / 10
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           prop_sample_prob <- numeric()
@@ -1130,7 +1130,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
               }
               prop_trans_func_matrix[sample.child, update_order[k]] <- func_order
               prop_trans_func_matrix[sample.child, setdiff(parent_of_update, sample.child)] <- func_order
-              xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+              xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
               prop_sample <- xxx[[2]]
               prop_post <- xxx[[1]][length(xxx[[1]])]
 
@@ -1166,7 +1166,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
               prop_trans_func_matrix[update_order[k], reverse_pare] <- 0
               prop_trans_func_matrix[update_order[k], remain_pare] <- 10 + sample.int(2, 1)
               prop_trans_func_matrix[reverse_pare, update_order[k]] <- 10 + sample.int(2, 1)
-              xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+              xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
               prop_sample <- xxx[[2]]
               prop_post <- xxx[[1]][length(xxx[[1]])]
 
@@ -1191,7 +1191,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
               func_order <- sample.int(10, 1)
               prop_trans_func_matrix[reverse_pare, update_order[k]] <- func_order
               prop_trans_func_matrix[reverse_pare, reverse_node_pare] <- func_order
-              xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+              xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
               prop_sample <- xxx[[2]]
               prop_post <- xxx[[1]][length(xxx[[1]])]
 
@@ -1250,7 +1250,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
               prop_trans_func_matrix[update_order[k], parent_of_update[i]] <- func_order
             }
           }
-          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix)
+          xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = prop_trans_func_matrix, timeseries = timeseries)
           prop_sample <- xxx[[2]]
           prop_post <- xxx[[1]][length(xxx[[1]])]
           nume <- sum(prop_post)
@@ -1264,7 +1264,7 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
       }
       if (old == n) { # no update
         iter <- iter + 1
-        xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = current_trans_func_matrix)
+        xxx <- Error_LLH(GeneData = GeneData, SampleSize = SampleSize, num.node = num.node, prior_para = prior_para, penalty = penalty, TRFUM = current_trans_func_matrix, timeseries = timeseries)
         current_sample <- xxx[[2]]
         Sample_Matrix[iter, ] <- current_sample
         all_logpost[iter] <- xxx[[1]][length(xxx[[1]])]
