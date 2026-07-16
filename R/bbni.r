@@ -16,6 +16,7 @@
 #' @param penalty A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}{P(T)}. Defaults to 0.1 if not specified.
 #' @param prop.ratio A numeric probability threshold used to decide whether to sample a move from the empirical proposal distribution or a uniform random distribution. Defaults to 0.5 if not specified.
 #' @param verbose Logical. If TRUE, prints verbose MCMC iteration progress to the console. Default is FALSE.
+#' @param timeseries Logical. If TRUE, the algorithm assumes a time-series dataset. If FALSE, the algorithm assumes independent samples. Default is TRUE.
 #'
 #' @return A list containing the full trajectory of the MCMC chain. Specifically, `networks` (a list of sampled transition function matrices) and `log_posterior` (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)}{P(T,F|G)} used for Bayesian model averaging.
 #'
@@ -69,6 +70,7 @@
 #' }
 #'
 #' @importFrom stats runif
+#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @export
 run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(GeneData), prior_para = NULL,
                      num_update = 4000, penalty = 0.1, prop.ratio = 0.5, verbose = FALSE, timeseries = TRUE) {
