@@ -73,7 +73,8 @@ evaluated with a Metropolis-Hastings acceptance threshold using log-posterior va
 <span>  penalty <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  prop.ratio <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  timeseries <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  timeseries <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  burn_in <span class="op">=</span> <span class="fl">0.7</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -116,10 +117,14 @@ evaluated with a Metropolis-Hastings acceptance threshold using log-posterior va
 <dt id="arg-timeseries">timeseries<a class="anchor" aria-label="anchor" href="#arg-timeseries"></a></dt>
 <dd><p>Logical. If TRUE, the algorithm assumes a time-series dataset. If FALSE, the algorithm assumes independent samples. Default is TRUE.</p></dd>
 
+
+<dt id="arg-burn-in">burn_in<a class="anchor" aria-label="anchor" href="#arg-burn-in"></a></dt>
+<dd><p>A numeric value between 0 and 1 representing the proportion of initial MCMC samples to discard as burn-in. Defaults to 0.7 if not specified.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list containing the full trajectory of the MCMC chain. Specifically, <code>networks</code> (a list of sampled transition function matrices) and <code>log_posterior</code> (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \(P(T,F|G)\) used for Bayesian model averaging.</p>
+    <p>A list containing the full trajectory of the MCMC chain. Specifically, <code>networks</code> (a list of sampled transition function matrices) and <code>log_posterior</code> (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \(P(T,F|G)\) used for Bayesian model averaging. Additionally, the <code>post_edge_prob</code> (matrix of marginal posterior edge probabilities) and <code>burn_in</code> ratio are returned in the list.</p>
     </div>
 
     <div class="section level2">
