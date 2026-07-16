@@ -56,7 +56,7 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, ...) {
     colnames(adj_matrix) <- rownames(adj_matrix) <- node_names
   }
   # Create directed graph
-  g <- igraph::graph_from_adjacency_matrix(adj_matrix, mode = "directed")
+  g <- igraph::graph_from_adjacency_matrix(t(adj_matrix), mode = "directed")
   # Plot with defaults
   igraph::plot.igraph(g,
                       vertex.size = 20,
