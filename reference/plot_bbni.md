@@ -9,7 +9,13 @@ from the plot.
 ## Usage
 
 ``` r
-plot_bbni(results, threshold = 0.5, node_names = NULL, ...)
+plot_bbni(
+  results,
+  threshold = 0.5,
+  node_names = NULL,
+  true_network = NULL,
+  ...
+)
 ```
 
 ## Arguments
@@ -29,6 +35,13 @@ plot_bbni(results, threshold = 0.5, node_names = NULL, ...)
 
   Character vector. Optional names for the nodes. Defaults to "N1",
   "N2", etc.
+
+- true_network:
+
+  Optional square matrix representing the true network topology. If
+  provided, edges will be color-coded to indicate true positives (along
+  with displaying wrong function inferences), false positives, and false
+  negatives. Purely for simulation purposes.
 
 - ...:
 
@@ -56,7 +69,7 @@ prior_para[6, 2] <- 100
 results <- run_bbni(dummy_data, prior_para = prior_para, num_update = 100)
 
 # 3. Plot inferred network
-plot_bbni(results, threshold = 0.5)
+plot_bbni(results, true_network = true_network, threshold = 0.5)
 
 # }
 ```
