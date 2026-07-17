@@ -4,7 +4,13 @@
 \alias{plot_bbni}
 \title{Plot the Inferred Bayesian Boolean Network}
 \usage{
-plot_bbni(results, threshold = 0.5, node_names = NULL, ...)
+plot_bbni(
+  results,
+  threshold = 0.5,
+  node_names = NULL,
+  true_network = NULL,
+  ...
+)
 }
 \arguments{
 \item{results}{The list returned by \code{run_bbni()}, containing \code{networks} and \code{log_posterior}.}
@@ -12,6 +18,8 @@ plot_bbni(results, threshold = 0.5, node_names = NULL, ...)
 \item{threshold}{Numeric. The minimum posterior probability required to draw an edge. Defaults to 0.5.}
 
 \item{node_names}{Character vector. Optional names for the nodes. Defaults to "N1", "N2", etc.}
+
+\item{true_network}{Optional square matrix representing the true network topology. If provided, edges will be color-coded to indicate true positives (along with displaying wrong function inferences), false positives, and false negatives. Purely for simulation purposes.}
 
 \item{...}{Additional graphical parameters passed to \code{igraph::plot.igraph()}.}
 }
@@ -39,7 +47,7 @@ prior_para[6, 2] <- 100
 results <- run_bbni(dummy_data, prior_para = prior_para, num_update = 100)
 
 # 3. Plot inferred network
-plot_bbni(results, threshold = 0.5)
+plot_bbni(results, true_network = true_network, threshold = 0.5)
 }
 
 }

@@ -9,6 +9,7 @@
 #' @param results The list returned by \code{run_bbni()}, containing \code{networks} and \code{log_posterior}.
 #' @param threshold Numeric. The minimum posterior probability required to draw an edge. Defaults to 0.5.
 #' @param node_names Character vector. Optional names for the nodes. Defaults to "N1", "N2", etc.
+#' @param true_network Optional square matrix representing the true network topology. If provided, edges will be color-coded to indicate true positives (along with displaying wrong function inferences), false positives, and false negatives. Purely for simulation purposes.
 #' @param ... Additional graphical parameters passed to \code{igraph::plot.igraph()}.
 #'
 #' @return An invisible \code{igraph} object.
@@ -28,7 +29,7 @@
 #' results <- run_bbni(dummy_data, prior_para = prior_para, num_update = 100)
 #'
 #' # 3. Plot inferred network
-#' plot_bbni(results, threshold = 0.5)
+#' plot_bbni(results, true_network = true_network, threshold = 0.5)
 #' }
 #'
 #' @importFrom igraph graph_from_adjacency_matrix plot.igraph
@@ -55,6 +56,19 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, true_network 
   } else {
     colnames(adj_matrix) <- rownames(adj_matrix) <- node_names
   }
+  # get functions for inferred edges
+  inf_func_matrix <- matrix(0, num_nodes, num_nodes)
+  for (i in 1:num_nodes) {
+    for (j in 1:num_nodes) {
+      if (adj_matrix[i, j] == 1) {
+        vals <- sapply(results$networks, `[` , i, j)
+        vals <- vals[vals > 0]
+        if (length(vals) > 0) {
+          inf_func_matrix[i, j] <- as.integer(names(which.max(table(vals))))
+        }
+      }
+    }
+  }
   # if ground truth provided, color-code to show model performance
   if (!is.null(true_network)) {
     true_adj <- (true_network > 0) * 1
@@ -64,8 +78,10 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, true_network 
     idx <- cbind(edges[, 2], edges[, 1])
     is_true <- true_adj[idx] == 1
     is_inf  <- adj_matrix[idx] == 1
+    is_correct_func <- (true_network[idx] == inf_func_matrix[idx])
     e_colors <- rep("darkgray", igraph::ecount(g))
-    e_colors[is_true & is_inf] <- "darkgreen"   # True Positive
+    e_colors[is_true & is_inf & is_correct_func] <- "darkgreen"   # True Positive
+    e_colors[is_true & is_inf & !is_correct_func] <- "darkorange" # True Positive, but wrong function
     e_colors[!is_true & is_inf] <- "firebrick"  # False Positive
     e_colors[is_true & !is_inf] <- "gray70"     # False Negative (Missed)
     e_lty <- rep(1, igraph::ecount(g))
@@ -92,9 +108,9 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, true_network 
   # add legend if ground truth was provided
   if (!is.null(true_network)) {
     legend("bottomleft",
-           legend = c("Correct (TP)", "Spurious (FP)", "Missed (FN)"),
-           col = c("darkgreen", "firebrick", "gray70"),
-           lty = c(1, 1, 2), lwd = 2, bty = "n", cex = 0.8)
+           legend = c("Correct (TP)", "Correct (TP), Wrong Function", "Spurious (FP)", "Missed (FN)"),
+           col = c("darkgreen", "darkorange", "firebrick", "gray70"),
+           lty = c(1, 1, 1, 2), lwd = 2, bty = "n", cex = 0.8)
   }
   # return graph object invisibly in case user wants to manipulate it further
   invisible(g)
