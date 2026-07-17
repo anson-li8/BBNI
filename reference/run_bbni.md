@@ -100,7 +100,7 @@ probabilities) and `burn_in` ratio are returned in the list.
 # \donttest{
   # 1. Define network parameters
   set.seed(235)
-  num_nodes <- 10
+  num_nodes <- 8
   sample_size <- 50
 
   # 2. Generate true network and simulate data
@@ -133,12 +133,12 @@ probabilities) and `burn_in` ratio are returned in the list.
   mcmc_results <- run_bbni(
     GeneData = dummy_data,
     prior_para = prior_para,
-    num_update = 100, # Scaled down for example speed
+    num_update = 80, # Scaled down for example speed
     prop.ratio = 0.1
   )
 
   # 4. Visualize results
-  plot_bbni(mcmc_results)
+  plot_bbni(mcmc_results, true_network = true_network, threshold = 0.5)
 
   plot_trace(mcmc_results)
 
