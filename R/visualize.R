@@ -15,7 +15,6 @@
 #' @return An invisible \code{igraph} object.
 #'
 #' @examples
-#' \donttest{
 #' # 1. Generate synthetic network and time-series data
 #' set.seed(123)
 #' true_network <- GenerateNetwork(num.node = 5)
@@ -30,7 +29,6 @@
 #'
 #' # 3. Plot inferred network
 #' plot_bbni(results, true_network = true_network, threshold = 0.5)
-#' }
 #'
 #' @importFrom igraph graph_from_adjacency_matrix plot.igraph
 #' @export
@@ -128,14 +126,12 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, true_network 
 #' @return An invisible \code{igraph} object.
 #'
 #' @examples
-#' \donttest{
 #' # 1. Generate synthetic 5-node network topology
 #' set.seed(123)
 #' true_network <- GenerateNetwork(num.node = 5)
 #'
 #' # 2. Plot the generated network
 #' plot_network(true_network)
-#' }
 #'
 #' @importFrom igraph graph_from_adjacency_matrix plot.igraph
 #' @export
@@ -172,7 +168,6 @@ plot_network <- function(trans_matrix, node_names = NULL, ...) {
 #' @return A base R trace plot.
 #'
 #' @examples
-#' \donttest{
 #' # 1. Generate synthetic network and time-series data
 #' set.seed(123)
 #' true_network <- GenerateNetwork(num.node = 5)
@@ -187,7 +182,6 @@ plot_network <- function(trans_matrix, node_names = NULL, ...) {
 #'
 #' # 3. Visualize MCMC results
 #' plot_trace(results)
-#' }
 #'
 #' @importFrom graphics plot abline legend
 #' @export
