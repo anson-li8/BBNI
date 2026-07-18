@@ -9,7 +9,7 @@
 #' @returns A binary matrix of the same dimensions as `incid_matrix`. An entry of 1 at (i, k) indicates that node i is an ancestor of node k through one or more directed edges.
 #' @noRd
 update_ancestor_matrix <- function(incid_matrix) {
-  # floyd-warshall, one vectorized pass / node instead of four nested loops. time complexity from o(N^4) -> o(N^3)
+  # floyd-warshall, one vectorized pass / node instead of four nested loops. time complexity from O(N^4) -> O(N^3)
   n <- nrow(incid_matrix)
   ances_matrix <- incid_matrix
   for (k in seq_len(n)) {
