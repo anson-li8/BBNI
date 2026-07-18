@@ -52,7 +52,7 @@ true_network <- GenerateNetwork(num.node = num_nodes)
 plot_network(true_network)
 ```
 
-![plot of chunk simulate-data](articles/figure/simulate-data-1.png)
+![plot of chunk simulate-data](articles/figures/simulate-data-1.png)
 
 plot of chunk simulate-data
 
