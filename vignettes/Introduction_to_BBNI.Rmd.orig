@@ -166,10 +166,9 @@ plot_trace(mcmc_results)
 
 # Add true-network reference value.
 abline(h = true_logpost, col = "firebrick", lty = 2, lwd = 2)
-legend("topright",
-  legend = "True network log-posterior",
-  col = "firebrick", lty = 2, lwd = 2, bty = "n"
-)
+legend("bottomleft",
+       legend = "True network log-posterior",
+       col = "firebrick", lty = 2, lwd = 2, bty = "n")
 ```
 
 Note that the horizontal axis has units of node-level updates rather than outer MCMC iterations. The convergence of the log-posterior towards the baseline value is an indication of chain success. With statistical variation being inevitable, a perfect match with the true topology and Boolean functions is not expected from a single posterior sample.
