@@ -2,7 +2,7 @@
 
 ## BBNI 0.2.1
 
-- Major performance optimization: ~13x speedup via vectorization in
+- Major performance optimization: ~14x speedup via vectorization in
   Error_LLH and implementing Floyd-Warshall algorithm in
   update_ancestor_matrix, keeping strict numerical equivalence with
   v0.1.1
