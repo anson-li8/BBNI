@@ -38,6 +38,13 @@ The development version can be installed from GitHub:
 devtools::install_github("anson-li8/BBNI")
 ```
 
+## Performance
+
+BBNI’s MCMC sampler was significantly optimized after the initial CRAN
+release. On a benchmark 5000-iteration run (the vignette simulation):
+**62.75 minutes -\> 4.56 minutes (92.7% less time)**, with identical
+numerical output.
+
 ## Example
 
 The following example provides a minimal check that the package loads
