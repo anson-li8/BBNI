@@ -181,8 +181,8 @@ cat(
 
 As of v0.2.1, the MCMC sampler has been significantly optimized relative
 to the original CRAN release (v0.1.1). A parallel benchmark on this
-exact 5000-iteration workflow completed in 4.56 minutes versus 62.75
-minutes, a 92.7% reduction in runtime with numerically identical output.
+exact 5000-iteration workflow completed in 4.48 minutes versus 62.75
+minutes, a 92.9% reduction in runtime with numerically identical output.
 
 ## Analyzing the output
 
