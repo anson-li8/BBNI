@@ -181,7 +181,7 @@ cat(
   num_nodes * num_update, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
-#> Sampler completed 5000 iterations ( 1e+05 node updates) in 5.15 minutes
+#> Sampler completed 5000 iterations ( 1e+05 node updates) in 3.08 minutes
 ```
 
 As of v0.2.1, the MCMC sampler has been significantly optimized relative
@@ -429,7 +429,7 @@ cat(
   nrow(yeast_data) * 4500, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
-#> Sampler completed 4500 iterations ( 63000 node updates) in 3.08 minutes
+#> Sampler completed 4500 iterations ( 63000 node updates) in 1.62 minutes
 ```
 
 The results of the MCMC chain are visualized with the following trace
@@ -485,9 +485,7 @@ sessionInfo()
 #>   LAPACK version 3.12.1
 #> 
 #> locale:
-#> [1] LC_COLLATE=Spanish_Latin America.utf8  LC_CTYPE=C                             LC_MONETARY=Spanish_Latin America.utf8 LC_NUMERIC=C                          
-#> [5] LC_TIME=Spanish_Latin America.utf8    
-#> system code page: 65001
+#> [1] LC_COLLATE=Spanish_Latin America.utf8  LC_CTYPE=Spanish_Latin America.utf8    LC_MONETARY=Spanish_Latin America.utf8 LC_NUMERIC=C                           LC_TIME=Spanish_Latin America.utf8    
 #> 
 #> time zone: America/Chicago
 #> tzcode source: internal
@@ -496,13 +494,10 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] BBNI_0.2.1     testthat_3.3.2
+#> [1] BBNI_0.2.1
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] compiler_4.6.0    brio_1.1.5        xml2_1.5.2        bitops_1.0-9      callr_3.8.0       yaml_2.3.12       fastmap_1.2.0     R6_2.6.1         
-#>  [9] commonmark_2.0.0  igraph_2.3.3      knitr_1.51        tibble_3.3.1      desc_1.4.3        rprojroot_2.1.1   pillar_1.11.1     rlang_1.3.0      
-#> [17] cachem_1.1.0      roxygen2_8.0.0    xfun_0.60         fs_2.1.0          pkgload_1.5.3     otel_0.2.0        memoise_2.0.1     cli_3.6.6        
-#> [25] withr_3.0.3       magrittr_2.0.5    processx_3.9.0    digest_0.6.39     rstudioapi_0.18.0 devtools_2.5.2    lifecycle_1.0.5   waldo_0.6.2      
-#> [33] vctrs_0.7.3       evaluate_1.0.5    glue_1.8.1        sessioninfo_1.2.4 pkgbuild_1.4.8    rmarkdown_2.31    purrr_1.2.2       tools_4.6.0      
-#> [41] usethis_3.2.1     pkgconfig_2.0.3   ellipsis_0.3.3    htmltools_0.5.9
+#>  [1] vctrs_0.7.3       cli_3.6.6         knitr_1.51        rlang_1.3.0       xfun_0.60         otel_0.2.0        processx_3.9.0    purrr_1.2.2       pkgload_1.5.3     glue_1.8.1        pkgbuild_1.4.8   
+#> [12] evaluate_1.0.5    ellipsis_0.3.3    fastmap_1.2.0     lifecycle_1.0.5   memoise_2.0.1     compiler_4.6.0    igraph_2.3.3      fs_2.1.0          sessioninfo_1.2.4 pkgconfig_2.0.3   R6_2.6.1         
+#> [23] usethis_3.2.1     callr_3.8.0       magrittr_2.0.5    tools_4.6.0       devtools_2.5.2    cachem_1.1.0      remotes_2.5.0     desc_1.4.3
 ```
