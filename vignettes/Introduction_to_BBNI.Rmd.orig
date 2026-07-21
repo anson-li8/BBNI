@@ -41,7 +41,8 @@ sample_size <- 110
 # 1. Generate random DAG topology (T) and associated Boolean transition functions (F)
 true_network <- GenerateNetwork(num.node = num_nodes)
 # visualize "true" synthetic topology before inference
-plot_network(true_network)
+true_layout <- igraph::layout_with_fr(igraph::graph_from_adjacency_matrix(t((true_network > 0) * 1), mode = "directed")) # for graph reproducibility
+plot_network(true_network, layout = true_layout)
 
 # 2. Set Beta prior hyperparameters. Root nodes use Beta(3, 3), defining a prior
 #    mean of 0.5 while also permitting node-specific variation. Final row specifies
@@ -182,7 +183,8 @@ The final sampled network can be visualized as follows:
 
 ```{r view-results}
 final_network <- tail(mcmc_results$networks, 1)[[1]]
-plot_network(final_network)
+final_layout <- igraph::layout_with_fr(igraph::graph_from_adjacency_matrix(t((final_network > 0) * 1), mode = "directed")) # for graph reproducibility
+plot_network(final_network, layout = final_layout)
 ```
 
 ### Recovery of the true network
@@ -231,7 +233,10 @@ cat("Missed (false negative) edges:   ", bma_fn, "\n")
 The following plot compares the true network and the BMA consensus network. Edges that are structurally correct but assigned the wrong Boolean function are marked differently from edges for which both the parent relation and function are correctly recovered. Only edges with a computed statistical probability of higher than 50% are shown:
 
 ```{r visualize-network, fig.width=9, fig.height=4}
-plot_bbni(mcmc_results, true_network = true_network, threshold = 0.5)
+# ensure reproducibility of visualization
+combined_adj_layout <- ((mcmc_results$post_edge_prob > 0.5) | (true_network > 0)) * 1
+compare_layout <- igraph::layout_with_fr(igraph::graph_from_adjacency_matrix(t(combined_adj_layout), mode = "directed"))
+plot_bbni(mcmc_results, true_network = true_network, threshold = 0.5, layout = compare_layout, asp = 0)
 ```
 
 ## Application to real-world biological data
@@ -281,7 +286,8 @@ cat(
 
 # Visualize results
 plot_trace(yeast_results)
-plot_bbni(yeast_results, node_names = rownames(yeast_data), threshold = 0.5)
+yeast_layout <- igraph::layout_with_fr(igraph::graph_from_adjacency_matrix(t((yeast_results$post_edge_prob > 0.5) * 1), mode = "directed")) # for graph reproducibility
+plot_bbni(yeast_results, node_names = rownames(yeast_data), threshold = 0.5, layout = yeast_layout, asp = 0)
 ```
 
 ## Next steps

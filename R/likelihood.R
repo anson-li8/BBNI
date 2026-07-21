@@ -13,7 +13,7 @@
 #' @param SampleSize An integer representing the total number of time points/samples in `GeneData`.
 #' @param num.node An integer representing the total number of genes/nodes in the network.
 #' @param prior_para A matrix of Beta distribution hyperparameters (\eqn{\alpha, \beta}{\alpha, \beta}) for root nodes and the global noise parameter \eqn{e}{e}.
-#' @param penalty A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}{P(T)}.
+#' @param penalty Structural-prior hyperparameter in \eqn{(0, 1]}{(0, 1]}. A value of \code{1} corresponds to a uniform prior over valid network topologies; values below \code{1} apply an edge-count penalty that favors sparser networks.
 #'
 #' @return A list of two vectors evaluating model fit. `results[[1]]` contains `[ErrorFactor, RootFactor, likelihood, post_para, log_post_model]`, where `log_post_model` is the collapsed posterior metric \eqn{\log p(T, F \mid G)}{\log p(T, F | G)}. `results[[2]]` contains `[para_sample, mismatch, Perror]`, providing point estimates of the root ON-probabilities, total mismatches, and estimated noise error rate \eqn{e}{e}.
 #' @noRd

@@ -26,9 +26,8 @@ run_bbni(
 
 \item{prior_para}{A matrix (with dimensions \verb{(num.node + 1) x 2}) of Beta prior hyperparameters \eqn{\alpha}{\alpha} and \eqn{\beta}{\beta} for root node probabilities and the global noise parameter \eqn{e}{e}. Defaults to a flat prior if not specified.}
 
-\item{num_update}{An integer representing the total number of MCMC iterations to perform. Defaults to 4000 if not specified.}
-
-\item{penalty}{A numeric value representing the structural prior probability per edge used to penalize network complexity \eqn{P(T)}{P(T)}. Defaults to 0.1 if not specified.}
+\item{num_update}{An integer representing the total number of MCMC iterations to perform. Defaults to 4000 if not specified.
+#' @param penalty Structural-prior hyperparameter in \eqn{(0, 1]}{(0, 1]}. A value of \code{1} corresponds to a uniform prior over valid network topologies; values below \code{1} apply an edge-count penalty that favors sparser networks. Defaults to 0.1 if not specified.}
 
 \item{prop.ratio}{A numeric value between 0 and 1 representing the probability of choosing a uniform proposal distribution over an empirical proposal distribution at each iteration. Defaults to 0.5}
 
