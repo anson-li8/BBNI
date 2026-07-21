@@ -58,29 +58,29 @@ Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty
       # switch case
       mismatch <- mismatch + switch(rule,
       # 1
-      sum(bitXor(child, bitAnd(parent1, parent2))),
+      sum(bitwXor(child, bitwAnd(parent1, parent2))),
       # 2
-      sum(bitXor(child, 1 - bitAnd(parent1, parent2))),
+      sum(bitwXor(child, 1 - bitwAnd(parent1, parent2))),
       # 3
-      sum(bitXor(child, bitOr(parent1, parent2))),
+      sum(bitwXor(child, bitwOr(parent1, parent2))),
       # 4
-      sum(bitXor(child, 1 - bitOr(parent1, parent2))),
+      sum(bitwXor(child, 1 - bitwOr(parent1, parent2))),
       # 5
-      sum(bitXor(child, bitOr(1 - parent1, parent2))),
+      sum(bitwXor(child, bitwOr(1 - parent1, parent2))),
       # 6
-      sum(bitXor(child, bitOr(parent1, 1 - parent2))),
+      sum(bitwXor(child, bitwOr(parent1, 1 - parent2))),
       # 7
-      sum(bitXor(child, bitAnd(1 - parent1, parent2))),
+      sum(bitwXor(child, bitwAnd(1 - parent1, parent2))),
       # 8
-      sum(bitXor(child, bitAnd(parent1, 1 - parent2))),
+      sum(bitwXor(child, bitwAnd(parent1, 1 - parent2))),
       # 9
-      sum(bitXor(child, bitXor(parent1, parent2))),
+      sum(bitwXor(child, bitwXor(parent1, parent2))),
       # 10
-      sum(bitXor(child, 1 - bitXor(parent1, parent2))),
+      sum(bitwXor(child, 1 - bitwXor(parent1, parent2))),
       # 11
-      sum(bitXor(child, parent1)),
+      sum(bitwXor(child, parent1)),
       # 12
-      sum(bitXor(child, 1 - parent1))
+      sum(bitwXor(child, 1 - parent1))
       )
     }
   }

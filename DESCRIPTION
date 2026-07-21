@@ -20,7 +20,6 @@ Language: en-US
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Imports: 
-    bitops,
     stats,
     igraph
 Suggests: 
