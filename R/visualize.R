@@ -56,10 +56,15 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, true_network 
   }
   # get functions for inferred edges
   inf_func_matrix <- matrix(0, num_nodes, num_nodes)
+  # filter out burn-in samples so function inference isn't polluted by early chain states
+  total_samples <- length(results$networks)
+  burn_in_ratio <- if (!is.null(results$burn_in)) results$burn_in else 0
+  burn_in_steps <- floor(burn_in_ratio * (total_samples - 1))
+  post_samples <- results$networks[(burn_in_steps + 2):total_samples]
   for (i in 1:num_nodes) {
     for (j in 1:num_nodes) {
       if (adj_matrix[i, j] == 1) {
-        vals <- sapply(results$networks, `[` , i, j)
+        vals <- sapply(post_samples, `[` , i, j)
         vals <- vals[vals > 0]
         if (length(vals) > 0) {
           inf_func_matrix[i, j] <- as.integer(names(which.max(table(vals))))
@@ -96,13 +101,15 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, true_network 
   }
   # plot graph
   igraph::plot.igraph(g,
-                      vertex.size = 20,
+                      vertex.size = 12,
                       vertex.color = "lightblue",
                       vertex.label.color = "black",
-                      vertex.label.cex = 0.8,
-                      edge.arrow.size = 0.5,
+                      vertex.label.cex = 0.7,
+                      edge.arrow.size = 0.4,
+                      edge.curved = 0.1,
                       main = main_title,
                       ...)
+  # add legend if ground truth was provided
   # add legend if ground truth was provided
   if (!is.null(true_network)) {
     legend("bottomleft",
