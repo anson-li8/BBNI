@@ -14,16 +14,16 @@ ProposalConstruction <- function(GeneData, SampleSize, timeseries = TRUE) {
   gene.data <- GeneData
   error.prop <- 0.4
   pseudo.count <- 0.01
-  SampleSize <- SampleSize + pseudo.count * 8
-  threshold <- SampleSize * error.prop
+  orig_n <- SampleSize
+  effective_n <- if (timeseries) orig_n - 1 else orig_n
+  SampleSize <- effective_n
+  threshold <- (SampleSize + pseudo.count * 8) * error.prop
   if (timeseries) {
-    idx_parent <- 1:(SampleSize - 1)
-    idx_child <- 2:SampleSize
-    child_offset <- 1
+    idx_parent <- 1:(orig_n - 1)
+    idx_child <- 2:orig_n
   } else {
-    idx_parent <- 1:SampleSize
-    idx_child <- 1:SampleSize
-    child_offset <- 0
+    idx_parent <- 1:orig_n
+    idx_child <- 1:orig_n
   }
   candidate.prior <- list()
   kk <- 1
