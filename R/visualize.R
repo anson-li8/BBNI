@@ -49,10 +49,14 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, true_network 
   adj_matrix <- ifelse(res >= threshold, 1, 0)
   # Assign node names if provided, otherwise default to N1, N2...
   num_nodes <- nrow(res)
-  if (is.null(node_names)) {
+    if (is.null(node_names)) {
     colnames(adj_matrix) <- rownames(adj_matrix) <- paste0("N", 1:num_nodes)
+    vsize <- 12   # short N-labels: keep current look
+    lcex  <- 0.7
   } else {
     colnames(adj_matrix) <- rownames(adj_matrix) <- node_names
+    vsize <- 20   # real gene names (e.g. CDC20), bigger circle + smaller text so labels fit
+    lcex  <- 0.6
   }
   # get functions for inferred edges
   inf_func_matrix <- matrix(0, num_nodes, num_nodes)
@@ -100,16 +104,17 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, true_network 
     main_title <- paste("Inferred Network (Threshold >=", threshold, ")")
   }
   # plot graph
-  igraph::plot.igraph(g,
-                      vertex.size = 12,
-                      vertex.color = "lightblue",
-                      vertex.label.color = "black",
-                      vertex.label.cex = 0.7,
-                      edge.arrow.size = 0.4,
-                      edge.curved = 0.1,
-                      main = main_title,
-                      ...)
-  # add legend if ground truth was provided
+    # Capture extra arguments (like layout)
+  dots <- list(...)
+  # plot graph
+  do.call(igraph::plot.igraph, c(list(g,
+    vertex.size = vsize,
+    vertex.color = "lightblue",
+    vertex.label.color = "black",
+    vertex.label.cex = lcex,
+    edge.arrow.size = 0.4,
+    edge.curved = 0.1,
+    main = main_title), dots))
   # add legend if ground truth was provided
   if (!is.null(true_network)) {
     legend("bottomleft",
@@ -171,6 +176,7 @@ plot_network <- function(trans_matrix, node_names = NULL, ...) {
 #' edge-probability calculations.
 #'
 #' @param results The list returned by \code{run_bbni()}, containing \code{networks} and \code{log_posterior}.
+#' @param An integer specifying the thinning interval (sampling frequency) for plotting. Default is 1, which plots all log-posterior values. Values greater than 1 plot every \code{every}-th iteration.
 #'
 #' @return A base R trace plot.
 #'
@@ -192,15 +198,17 @@ plot_network <- function(trans_matrix, node_names = NULL, ...) {
 #'
 #' @importFrom graphics plot abline legend
 #' @export
-plot_trace <- function(results) {
+plot_trace <- function(results, every = 1) {
   logpost <- results$log_posterior
+  if (every > 1) logpost <- logpost[seq(1, length(logpost), by = every)]
   plot(logpost, type = "l", col = "darkblue",
-       xlab = "Node-level update", ylab = "Log-Posterior",
-       main = "MCMC Trace Plot",
-       lwd = 1.5)
+      xlab = if (every == 1) "Node-level update" else "Outer iteration", 
+      ylab = "Log-Posterior",
+      main = "MCMC Trace Plot",
+      lwd = 1.5)
   # add vertical line for burn-in if present
   if (!is.null(results$burn_in)) {
-    abline(v = results$burn_in * length(results$log_posterior), col = "red", lty = 2)
+    abline(v = results$burn_in * length(logpost), col = "red", lty = 2)
     legend("bottomright", legend = paste("Burn-in =", results$burn_in), col = "red", lty = 2, bty = "n")
   }
 }

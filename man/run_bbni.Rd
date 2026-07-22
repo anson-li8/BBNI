@@ -50,6 +50,11 @@ paired with transition function reassignments to one of 14 candidate Boolean rul
 Proposed states transitions are strictly verified to follow the DAG constraint and
 evaluated with a Metropolis-Hastings acceptance threshold using log-posterior values.
 }
+\details{
+Posterior edge probabilities (\code{post_edge_prob}) are computed from one
+thinned sample per outer iteration (a full Gibbs sweep) after discarding
+\code{burn_in}, as designed in the original method paper.
+}
 \examples{
 # 1. Define network parameters
 set.seed(235)

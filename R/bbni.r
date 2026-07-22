@@ -19,6 +19,10 @@
 #' @param timeseries Logical. If TRUE, the algorithm assumes a time-series dataset. If FALSE, the algorithm assumes independent samples. Default is TRUE.
 #' @param burn_in A numeric value between 0 and 1 representing the proportion of initial MCMC samples to discard as burn-in. Defaults to 0.7 if not specified.
 #'
+#' @details Posterior edge probabilities (`post_edge_prob`) are computed from one
+#' thinned sample per outer iteration (a full Gibbs sweep) after discarding
+#' `burn_in`, as designed in the original method paper.
+#'
 #' @return A list containing the full trajectory of the MCMC chain. Specifically, `networks` (a list of sampled transition function matrices) and `log_posterior` (a numeric vector of log-posterior scores for each iteration). These represent samples drawn from the marginal posterior distribution \eqn{P(T,F|G)}{P(T,F|G)} used for Bayesian model averaging. Additionally, the `post_edge_prob` (matrix of marginal posterior edge probabilities) and `burn_in` ratio are returned in the list.
 #'
 #' @examples
@@ -1291,10 +1295,9 @@ run_bbni <- function(GeneData, num.node = nrow(GeneData), SampleSize = ncol(Gene
       }
     } # end of updating
   } # end of num_update
-  # calculate burn-in
-  burn_in_steps <- floor(burn_in * num_update * num.node)
-  # post-burn-in samples
-  post_samples <- Trans_Func_Matrix[(burn_in_steps + 2):(num_update * num.node + 1)]
+  # thin to one sample per completed outer iteration (a full Gibbs sweep)
+  keep_iter <- seq(floor(burn_in * num_update) + 1L, num_update)
+  post_samples <- Trans_Func_Matrix[num.node * keep_iter + 1L]
   # calculate the posterior probability of each edge
   post_edge_prob <- Reduce(`+`, lapply(post_samples, function(m) (m > 0) * 1)) / length(post_samples)
   rownames(post_edge_prob) <- rownames(GeneData)

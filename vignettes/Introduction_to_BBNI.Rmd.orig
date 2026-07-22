@@ -137,7 +137,7 @@ cat(
 )
 ```
 
-As of v0.2.2, the MCMC sampler has been substantially optimized relative to the original CRAN release (v0.1.1). Controlled benchmarks show roughly an 10-fold speedup for 20-node networks; exact runtimes depend on hardware and system load.
+As of v0.2.2, the MCMC sampler has been substantially optimized relative to the original CRAN release (v0.1.1). Controlled benchmarks show roughly a 10-fold speedup for 20-node networks; exact runtimes depend on hardware and system load.
 
 ## Analyzing the output
 
@@ -216,7 +216,7 @@ Once again, some deviation is reasonable because this comparison uses only one s
 
 Instead of relying on a single sampled network, we can summarize the posterior distribution by Bayesian model averaging (BMA) over several retained network samples. This allows calculation of posterior edge-inclusion probabilities, which are often more informative than a single end sample. In biological applications, reducing false-positive edges is particularly important, as each predicted interaction may warrant costly experimental validation.
 
-We first discard an initial burn-in period, here set to 75% of the recorded chain to match the burn-in convention used in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806)'s own simulation studies, instead of `run_bbni()`'s own default `burn_in` value of 70%. This is to reduce the impact of the arbitrary starting structure. `run_bbni()` computes `post_edge_prob` from all post-burn-in node-level samples; because consecutive node-level updates are dependent, the trace plot and burn-in choice should be apppropriately inspected. For each directed edge, the posterior inclusion probability is the fraction of post-burn-in samples in which that edge appears:
+We first discard an initial burn-in period, here set to 75% of the recorded chain to match the burn-in convention used in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806)'s own simulation studies, instead of `run_bbni()`'s own default `burn_in` value of 70%. This is to reduce the impact of the unpredictability of the arbitrary starting structure. We then retain one network per outer iteration (every `num.node` node-level updates) to account for the strong statistical dependence of within-iteration samples. For each directed edge, the posterior inclusion probability is calculated as the fraction of retained samples in which that edge appears:
 
 ```{r model-averaging}
 bma_edges <- mcmc_results$post_edge_prob > 0.5
@@ -264,7 +264,7 @@ run_start <- Sys.time()
 yeast_results <- run_bbni(
   GeneData = yeast_data,
   prior_para = yeast_prior_para,
-  num_update = 4500,
+  num_update = 10000,
   penalty = 0.1,
   prop.ratio = 0.1,
   timeseries = FALSE,
@@ -278,15 +278,15 @@ The time and number of iterations are outputted below:
 ```{r yeast-duration}
 # Duration of chain
 cat(
-  "Sampler completed", 4500, "iterations (",
-  nrow(yeast_data) * 4500, "node updates) in",
+  "Sampler completed", 10000, "iterations (",
+  nrow(yeast_data) * 10000, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
 ```
 The results of the MCMC chain are visualized with the following trace plot and network plot:
 ```{r yeast-trace}
 # Visualize results
-plot_trace(yeast_results)
+plot_trace(yeast_results, every = nrow(yeast_data))
 ```
 ```{r yeast-plot, fig.width=10, fig.height=6}
 yeast_layout <- igraph::layout_with_fr(igraph::graph_from_adjacency_matrix(t((yeast_results$post_edge_prob > 0.5) * 1), mode = "directed")) # for graph reproducibility
