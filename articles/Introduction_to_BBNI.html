@@ -69,9 +69,8 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>The <code>BBNI</code> (<u>B</u>ayesian <u>B</u>oolean <u>N</u>etwork
-<u>I</u>nference) package implements the Bayesian Boolean network
-inference algorithm of <a href="https://doi.org/10.1371/journal.pone.0115806" class="external-link">Han et
+<p>The <code>BBNI</code> (Bayesian Boolean Network Inference) package
+implements the Bayesian Boolean network inference algorithm of <a href="https://doi.org/10.1371/journal.pone.0115806" class="external-link">Han et
 al. (2014)</a> on binary gene-expression data. The package computes both
 the directed network topology (including root and non-root nodes) and
 the Boolean transition functions corresponding to each defined node.</p>
@@ -244,7 +243,7 @@ sampling; it’s left default here to keep the vignette clean.</p>
 <span>  <span class="va">num_nodes</span> <span class="op">*</span> <span class="va">num_update</span>, <span class="st">"node updates) in"</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">difftime</a></span><span class="op">(</span><span class="va">run_end</span>, <span class="va">run_start</span>, units <span class="op">=</span> <span class="st">"mins"</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"minutes\n"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Sampler completed 5000 iterations ( 1e+05 node updates) in 2.25 minutes</span></span></code></pre></div>
+<span><span class="co">#&gt; Sampler completed 5000 iterations ( 1e+05 node updates) in 2.41 minutes</span></span></code></pre></div>
 <p>As of v0.2.2, the MCMC sampler has been substantially optimized
 relative to the original CRAN release (v0.1.1). Controlled benchmarks
 show roughly a 10-fold speedup for 20-node networks; exact runtimes
@@ -457,7 +456,7 @@ relation to existing biological knowledge.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">yeast_data</span><span class="op">)</span> <span class="op">*</span> <span class="fl">10000</span>, <span class="st">"node updates) in"</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">difftime</a></span><span class="op">(</span><span class="va">run_end</span>, <span class="va">run_start</span>, units <span class="op">=</span> <span class="st">"mins"</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"minutes\n"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Sampler completed 10000 iterations ( 140000 node updates) in 2.3 minutes</span></span></code></pre></div>
+<span><span class="co">#&gt; Sampler completed 10000 iterations ( 140000 node updates) in 2.08 minutes</span></span></code></pre></div>
 <p>The results of the MCMC chain are visualized with the following trace
 plot and network plot:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -519,11 +518,7 @@ analysis when possible.</li>
 <span><span class="co">#&gt;   LAPACK version 3.12.1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; locale:</span></span>
-<span><span class="co">#&gt; [1] LC_COLLATE=Spanish_Latin America.utf8 </span></span>
-<span><span class="co">#&gt; [2] LC_CTYPE=Spanish_Latin America.utf8   </span></span>
-<span><span class="co">#&gt; [3] LC_MONETARY=Spanish_Latin America.utf8</span></span>
-<span><span class="co">#&gt; [4] LC_NUMERIC=C                          </span></span>
-<span><span class="co">#&gt; [5] LC_TIME=Spanish_Latin America.utf8    </span></span>
+<span><span class="co">#&gt; [1] LC_COLLATE=Spanish_Latin America.utf8  LC_CTYPE=Spanish_Latin America.utf8    LC_MONETARY=Spanish_Latin America.utf8 LC_NUMERIC=C                           LC_TIME=Spanish_Latin America.utf8    </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; time zone: America/Chicago</span></span>
 <span><span class="co">#&gt; tzcode source: internal</span></span>
@@ -532,19 +527,12 @@ analysis when possible.</li>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] BBNI_0.2.1</span></span>
+<span><span class="co">#&gt; [1] BBNI_0.2.1     testthat_3.3.2</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] vctrs_0.7.3       knitr_1.51        cli_3.6.6         xfun_0.60        </span></span>
-<span><span class="co">#&gt;  [5] rlang_1.3.0       otel_0.2.0        processx_3.9.0    purrr_1.2.2      </span></span>
-<span><span class="co">#&gt;  [9] pkgload_1.5.3     jsonlite_2.0.0    glue_1.8.1        rprojroot_2.1.1  </span></span>
-<span><span class="co">#&gt; [13] pkgbuild_1.4.8    ps_1.9.3          pak_0.10.0        brio_1.1.5       </span></span>
-<span><span class="co">#&gt; [17] evaluate_1.0.5    tibble_3.3.1      ellipsis_0.3.3    fastmap_1.2.0    </span></span>
-<span><span class="co">#&gt; [21] lifecycle_1.0.5   memoise_2.0.1     compiler_4.6.0    igraph_2.3.3     </span></span>
-<span><span class="co">#&gt; [25] fs_2.1.0          sessioninfo_1.2.4 testthat_3.3.2    pkgconfig_2.0.3  </span></span>
-<span><span class="co">#&gt; [29] R6_2.6.1          usethis_3.2.1     pillar_1.11.1     callr_3.7.6      </span></span>
-<span><span class="co">#&gt; [33] magrittr_2.0.5    tools_4.6.0       devtools_2.5.2    cachem_1.1.0     </span></span>
-<span><span class="co">#&gt; [37] desc_1.4.3</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] vctrs_0.7.3       cli_3.6.6         knitr_1.51        rlang_1.3.0       xfun_0.60         otel_0.2.0        purrr_1.2.2       pkgload_1.5.3     glue_1.8.1        rprojroot_2.1.1   pkgbuild_1.4.8   </span></span>
+<span><span class="co">#&gt; [12] brio_1.1.5        evaluate_1.0.5    ellipsis_0.3.3    fastmap_1.2.0     lifecycle_1.0.5   memoise_2.0.1     compiler_4.6.0    igraph_2.3.3      fs_2.1.0          sessioninfo_1.2.4 pkgconfig_2.0.3  </span></span>
+<span><span class="co">#&gt; [23] rstudioapi_0.18.0 R6_2.6.1          usethis_3.2.1     magrittr_2.0.5    tools_4.6.0       devtools_2.5.2    cachem_1.1.0      desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
