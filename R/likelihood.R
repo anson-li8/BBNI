@@ -25,6 +25,7 @@ Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty
     idx_child <- 1:SampleSize
     idx_parent <- 1:SampleSize
   }
+  n_obs <- length(idx_child)
   # speedup. vectorized row processing w/ pre-allocated memory instead of nested loops
   # drops time complexity from O(N^2) -> O(N)
   n <- nrow(TRFUM)
@@ -85,10 +86,18 @@ Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty
     }
   }
   pseudo_count <- 0.0001
-  mismatch <- mismatch + pseudo_count
-  Perror <- mismatch / (n_nonroot * SampleSize + pseudo_count)
-  ErrorFactor <- mismatch * log(Perror) + (n_nonroot * SampleSize - mismatch + pseudo_count) * log(1 - Perror)
-  ErrorPrior <- (prior_para[num.node + 1, 1] - 1) * log(Perror) + (prior_para[num.node + 1, 2] - 1) * log(1 - Perror)
+  raw_mismatch <- mismatch
+  mismatch <- raw_mismatch + pseudo_count
+  # use effective observation count for noise calculations
+  if (n_nonroot > 0) {
+    Perror <- mismatch / (n_nonroot * n_obs + pseudo_count)
+    ErrorFactor <- mismatch * log(Perror) + (n_nonroot * n_obs - mismatch + pseudo_count) * log(1 - Perror)
+    ErrorPrior <- (prior_para[num.node + 1, 1] - 1) * log(Perror) + (prior_para[num.node + 1, 2] - 1) * log(1 - Perror)
+  } else {
+    Perror <- NA
+    ErrorFactor <- NA
+    ErrorPrior <- 0
+  }
   RootFactor <- numeric()
   RootPrior <- numeric()
   succ_count <- numeric()
@@ -124,7 +133,7 @@ Error_LLH <- function(TRFUM, GeneData, SampleSize, num.node, prior_para, penalty
       deno <- lbeta(prior_para[index, 1], prior_para[index, 2])
       log_post_model <- log_post_model + nume - deno
     }
-    noise_nume <- lbeta(mismatch + prior_para[num.node + 1, 1], n_nonroot * SampleSize - mismatch + prior_para[num.node + 1, 2])
+    noise_nume <- lbeta(raw_mismatch + prior_para[num.node + 1, 1], n_nonroot * n_obs - raw_mismatch + prior_para[num.node + 1, 2])
     noise_deno <- lbeta(prior_para[num.node + 1, 1], prior_para[num.node + 1, 2])
     log_post_model <- log_post_model + noise_nume - noise_deno
     log_post_model <- log_post_model + length(TRFUM[TRFUM>0]) * log(penalty)
