@@ -137,7 +137,7 @@ cat(
 )
 ```
 
-As of v0.2.1, the MCMC sampler has been significantly optimized relative to the original CRAN release (v0.1.1). A parallel benchmark on this exact 5000-iteration workflow completed in 4.48 minutes versus 62.75 minutes, a 92.9% reduction in runtime with numerically identical output.
+As of v0.2.2, the MCMC sampler has been substantially optimized relative to the original CRAN release (v0.1.1). Controlled benchmarks show roughly an 10-fold speedup for 20-node networks; exact runtimes depend on hardware and system load.
 
 ## Analyzing the output
 
