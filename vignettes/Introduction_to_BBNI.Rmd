@@ -11,7 +11,7 @@ vignette: >
 
 ## Overview
 
-The `BBNI` ([B]{.underline}ayesian [B]{.underline}oolean [N]{.underline}etwork [I]{.underline}nference) package implements the Bayesian Boolean network inference algorithm of [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806) on binary gene-expression data. The package computes both the directed network topology (including root and non-root nodes) and the Boolean transition functions corresponding to each defined node.
+The `BBNI` (Bayesian Boolean Network Inference) package implements the Bayesian Boolean network inference algorithm of [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806) on binary gene-expression data. The package computes both the directed network topology (including root and non-root nodes) and the Boolean transition functions corresponding to each defined node.
 
 This approach deliberately attempts to compensate for biological noise and model uncertainty, two central priorities stated in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806). Employing a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) process, the `BBNI` sampler is able to estimate the posterior distribution of valid directed acyclic graph (DAG) topologies and their corresponding Boolean logic functions.
 
@@ -138,7 +138,7 @@ cat(
   num_nodes * num_update, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
-#> Sampler completed 5000 iterations ( 1e+05 node updates) in 2.25 minutes
+#> Sampler completed 5000 iterations ( 1e+05 node updates) in 2.41 minutes
 ```
 
 As of v0.2.2, the MCMC sampler has been substantially optimized relative to the original CRAN release (v0.1.1). Controlled benchmarks show roughly a 10-fold speedup for 20-node networks; exact runtimes depend on hardware and system load.
@@ -307,7 +307,7 @@ cat(
   nrow(yeast_data) * 10000, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
-#> Sampler completed 10000 iterations ( 140000 node updates) in 2.3 minutes
+#> Sampler completed 10000 iterations ( 140000 node updates) in 2.08 minutes
 ```
 The results of the MCMC chain are visualized with the following trace plot and network plot:
 
@@ -351,11 +351,7 @@ sessionInfo()
 #>   LAPACK version 3.12.1
 #> 
 #> locale:
-#> [1] LC_COLLATE=Spanish_Latin America.utf8 
-#> [2] LC_CTYPE=Spanish_Latin America.utf8   
-#> [3] LC_MONETARY=Spanish_Latin America.utf8
-#> [4] LC_NUMERIC=C                          
-#> [5] LC_TIME=Spanish_Latin America.utf8    
+#> [1] LC_COLLATE=Spanish_Latin America.utf8  LC_CTYPE=Spanish_Latin America.utf8    LC_MONETARY=Spanish_Latin America.utf8 LC_NUMERIC=C                           LC_TIME=Spanish_Latin America.utf8    
 #> 
 #> time zone: America/Chicago
 #> tzcode source: internal
@@ -364,17 +360,10 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] BBNI_0.2.1
+#> [1] BBNI_0.2.1     testthat_3.3.2
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.3       knitr_1.51        cli_3.6.6         xfun_0.60        
-#>  [5] rlang_1.3.0       otel_0.2.0        processx_3.9.0    purrr_1.2.2      
-#>  [9] pkgload_1.5.3     jsonlite_2.0.0    glue_1.8.1        rprojroot_2.1.1  
-#> [13] pkgbuild_1.4.8    ps_1.9.3          pak_0.10.0        brio_1.1.5       
-#> [17] evaluate_1.0.5    tibble_3.3.1      ellipsis_0.3.3    fastmap_1.2.0    
-#> [21] lifecycle_1.0.5   memoise_2.0.1     compiler_4.6.0    igraph_2.3.3     
-#> [25] fs_2.1.0          sessioninfo_1.2.4 testthat_3.3.2    pkgconfig_2.0.3  
-#> [29] R6_2.6.1          usethis_3.2.1     pillar_1.11.1     callr_3.7.6      
-#> [33] magrittr_2.0.5    tools_4.6.0       devtools_2.5.2    cachem_1.1.0     
-#> [37] desc_1.4.3
+#>  [1] vctrs_0.7.3       cli_3.6.6         knitr_1.51        rlang_1.3.0       xfun_0.60         otel_0.2.0        purrr_1.2.2       pkgload_1.5.3     glue_1.8.1        rprojroot_2.1.1   pkgbuild_1.4.8   
+#> [12] brio_1.1.5        evaluate_1.0.5    ellipsis_0.3.3    fastmap_1.2.0     lifecycle_1.0.5   memoise_2.0.1     compiler_4.6.0    igraph_2.3.3      fs_2.1.0          sessioninfo_1.2.4 pkgconfig_2.0.3  
+#> [23] rstudioapi_0.18.0 R6_2.6.1          usethis_3.2.1     magrittr_2.0.5    tools_4.6.0       devtools_2.5.2    cachem_1.1.0      desc_1.4.3
 ```
