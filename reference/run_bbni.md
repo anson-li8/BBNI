@@ -97,6 +97,12 @@ distribution \\P(T,F\|G)\\ used for Bayesian model averaging.
 Additionally, the `post_edge_prob` (matrix of marginal posterior edge
 probabilities) and `burn_in` ratio are returned in the list.
 
+## Details
+
+Posterior edge probabilities (`post_edge_prob`) are computed from one
+thinned sample per outer iteration (a full Gibbs sweep) after discarding
+`burn_in`, as designed in the original method paper.
+
 ## Examples
 
 ``` r

@@ -1,17 +1,17 @@
 # BBNI
 
-BBNI is a Bayesian approach to Boolean gene regulatory network inference
-from noisy gene expression data. The method is discussed in more detail
-in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806).
-Unlike methods that return a single best-fit network topology, such as
-REVEAL and BFE, found in
-[BoolNet](https://cran.r-project.org/package=BoolNet), BBNI uses Markov
-chain Monte Carlo (MCMC) to sample from a joint posterior distribution
-of network topologies and Boolean transition functions. BBNI
-deliberately takes biological noise into account and allows for
-summarization (such as Bayesian model averaging, or BMA) that stabilizes
-results through posterior edge probabilities rather than a single point
-estimate.
+BBNI (*B*ayesian *B*oolean *N*etwork *I*nference) is a Bayesian approach
+to Boolean gene regulatory network inference from noisy gene expression
+data. The method is discussed in more detail in [Han et
+al. (2014)](https://doi.org/10.1371/journal.pone.0115806). Unlike
+methods that return a single best-fit network topology, such as REVEAL
+and BFE, found in [BoolNet](https://cran.r-project.org/package=BoolNet),
+BBNI uses Markov chain Monte Carlo (MCMC) to sample from a joint
+posterior distribution of network topologies and Boolean transition
+functions. BBNI deliberately takes biological noise into account and
+allows for summarization (such as Bayesian model averaging, or BMA) that
+stabilizes results through posterior edge probabilities rather than a
+single point estimate.
 
 ## Installation
 
@@ -33,7 +33,7 @@ devtools::install_github("anson-li8/BBNI")
 ## Performance
 
 BBNI’s MCMC sampler was significantly optimized after the initial CRAN
-release. Controlled benchmarks show roughly an 10-fold speedup for
+release. Controlled benchmarks show roughly a 10-fold speedup for
 20-node networks; exact runtimes depend on hardware and system load.
 
 ## Example

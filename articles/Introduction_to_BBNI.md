@@ -2,8 +2,8 @@
 
 ## Overview
 
-The `BBNI` (Bayesian Boolean Network Inference) package implements the
-Bayesian Boolean network inference algorithm of [Han et
+The `BBNI` (*B*ayesian *B*oolean *N*etwork *I*nference) package
+implements the Bayesian Boolean network inference algorithm of [Han et
 al. (2014)](https://doi.org/10.1371/journal.pone.0115806) on binary
 gene-expression data. The package computes both the directed network
 topology (including root and non-root nodes) and the Boolean transition
@@ -183,13 +183,13 @@ cat(
   num_nodes * num_update, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
-#> Sampler completed 5000 iterations ( 1e+05 node updates) in 2.75 minutes
+#> Sampler completed 5000 iterations ( 1e+05 node updates) in 2.25 minutes
 ```
 
 As of v0.2.2, the MCMC sampler has been substantially optimized relative
 to the original CRAN release (v0.1.1). Controlled benchmarks show
-roughly an 10-fold speedup for 20-node networks; exact runtimes depend
-on hardware and system load.
+roughly a 10-fold speedup for 20-node networks; exact runtimes depend on
+hardware and system load.
 
 ## Analyzing the output
 
@@ -312,13 +312,12 @@ al. (2014)](https://doi.org/10.1371/journal.pone.0115806)’s own
 simulation studies, instead of
 [`run_bbni()`](https://anson-li8.github.io/BBNI/reference/run_bbni.md)’s
 own default `burn_in` value of 70%. This is to reduce the impact of the
-arbitrary starting structure.
-[`run_bbni()`](https://anson-li8.github.io/BBNI/reference/run_bbni.md)
-computes `post_edge_prob` from all post-burn-in node-level samples;
-because consecutive node-level updates are dependent, the trace plot and
-burn-in choice should be apppropriately inspected. For each directed
-edge, the posterior inclusion probability is the fraction of
-post-burn-in samples in which that edge appears:
+unpredictability of the arbitrary starting structure. We then retain one
+network per outer iteration (every `num.node` node-level updates) to
+account for the strong statistical dependence of within-iteration
+samples. For each directed edge, the posterior inclusion probability is
+calculated as the fraction of retained samples in which that edge
+appears:
 
 ``` r
 
@@ -396,7 +395,7 @@ run_start <- Sys.time()
 yeast_results <- run_bbni(
   GeneData = yeast_data,
   prior_para = yeast_prior_para,
-  num_update = 4500,
+  num_update = 10000,
   penalty = 0.1,
   prop.ratio = 0.1,
   timeseries = FALSE,
@@ -413,11 +412,11 @@ The time and number of iterations are outputted below:
 
 # Duration of chain
 cat(
-  "Sampler completed", 4500, "iterations (",
-  nrow(yeast_data) * 4500, "node updates) in",
+  "Sampler completed", 10000, "iterations (",
+  nrow(yeast_data) * 10000, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
-#> Sampler completed 4500 iterations ( 63000 node updates) in 1.41 minutes
+#> Sampler completed 10000 iterations ( 140000 node updates) in 2.3 minutes
 ```
 
 The results of the MCMC chain are visualized with the following trace
@@ -426,7 +425,7 @@ plot and network plot:
 ``` r
 
 # Visualize results
-plot_trace(yeast_results)
+plot_trace(yeast_results, every = nrow(yeast_data))
 ```
 
 ![plot of chunk yeast-trace](figures/yeast-trace-1.png)
@@ -492,7 +491,11 @@ sessionInfo()
 #>   LAPACK version 3.12.1
 #> 
 #> locale:
-#> [1] LC_COLLATE=Spanish_Latin America.utf8  LC_CTYPE=Spanish_Latin America.utf8    LC_MONETARY=Spanish_Latin America.utf8 LC_NUMERIC=C                           LC_TIME=Spanish_Latin America.utf8    
+#> [1] LC_COLLATE=Spanish_Latin America.utf8 
+#> [2] LC_CTYPE=Spanish_Latin America.utf8   
+#> [3] LC_MONETARY=Spanish_Latin America.utf8
+#> [4] LC_NUMERIC=C                          
+#> [5] LC_TIME=Spanish_Latin America.utf8    
 #> 
 #> time zone: America/Chicago
 #> tzcode source: internal
@@ -504,5 +507,14 @@ sessionInfo()
 #> [1] BBNI_0.2.1
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] compiler_4.6.0  magrittr_2.0.5  cli_3.6.6       tools_4.6.0     igraph_2.3.3    otel_0.2.0      knitr_1.51      xfun_0.60       lifecycle_1.0.5 pkgconfig_2.0.3 rlang_1.3.0     evaluate_1.0.5
+#>  [1] vctrs_0.7.3       knitr_1.51        cli_3.6.6         xfun_0.60        
+#>  [5] rlang_1.3.0       otel_0.2.0        processx_3.9.0    purrr_1.2.2      
+#>  [9] pkgload_1.5.3     jsonlite_2.0.0    glue_1.8.1        rprojroot_2.1.1  
+#> [13] pkgbuild_1.4.8    ps_1.9.3          pak_0.10.0        brio_1.1.5       
+#> [17] evaluate_1.0.5    tibble_3.3.1      ellipsis_0.3.3    fastmap_1.2.0    
+#> [21] lifecycle_1.0.5   memoise_2.0.1     compiler_4.6.0    igraph_2.3.3     
+#> [25] fs_2.1.0          sessioninfo_1.2.4 testthat_3.3.2    pkgconfig_2.0.3  
+#> [29] R6_2.6.1          usethis_3.2.1     pillar_1.11.1     callr_3.7.6      
+#> [33] magrittr_2.0.5    tools_4.6.0       devtools_2.5.2    cachem_1.1.0     
+#> [37] desc_1.4.3
 ```
