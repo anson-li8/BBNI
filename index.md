@@ -33,9 +33,8 @@ devtools::install_github("anson-li8/BBNI")
 ## Performance
 
 BBNI’s MCMC sampler was significantly optimized after the initial CRAN
-release. On a benchmark 5000-iteration run (the vignette simulation):
-**62.75 minutes -\> 4.48 minutes (92.9% less time)**, with identical
-numerical output.
+release. Controlled benchmarks show roughly an 10-fold speedup for
+20-node networks; exact runtimes depend on hardware and system load.
 
 ## Example
 

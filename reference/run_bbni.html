@@ -9,13 +9,13 @@
 from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies (\(T\)) and
 Boolean logic transition functions (\(F\)). The algorithm iterates through individual
 network nodes and proposes parent set mutations (edge additions, removals, or swaps)
-paired with transition function reassignments to one of 14 candidate Boolean rules.
+paired with transition function reassignments to one of 14 candidate Boolean rules (stored as codes 1-12 in the transition matrix).
 Proposed states transitions are strictly verified to follow the DAG constraint and
 evaluated with a Metropolis-Hastings acceptance threshold using log-posterior values."><meta property="og:description" content="Executes a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) algorithm to sample
 from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies (\(T\)) and
 Boolean logic transition functions (\(F\)). The algorithm iterates through individual
 network nodes and proposes parent set mutations (edge additions, removals, or swaps)
-paired with transition function reassignments to one of 14 candidate Boolean rules.
+paired with transition function reassignments to one of 14 candidate Boolean rules (stored as codes 1-12 in the transition matrix).
 Proposed states transitions are strictly verified to follow the DAG constraint and
 evaluated with a Metropolis-Hastings acceptance threshold using log-posterior values."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -57,7 +57,7 @@ evaluated with a Metropolis-Hastings acceptance threshold using log-posterior va
 from the joint posterior distribution of Directed Acyclic Graph (DAG) topologies (\(T\)) and
 Boolean logic transition functions (\(F\)). The algorithm iterates through individual
 network nodes and proposes parent set mutations (edge additions, removals, or swaps)
-paired with transition function reassignments to one of 14 candidate Boolean rules.
+paired with transition function reassignments to one of 14 candidate Boolean rules (stored as codes 1-12 in the transition matrix).
 Proposed states transitions are strictly verified to follow the DAG constraint and
 evaluated with a Metropolis-Hastings acceptance threshold using log-posterior values.</p>
     </div>
@@ -71,7 +71,7 @@ evaluated with a Metropolis-Hastings acceptance threshold using log-posterior va
 <span>  prior_para <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  num_update <span class="op">=</span> <span class="fl">4000</span>,</span>
 <span>  penalty <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>  prop.ratio <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  prop.ratio <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  timeseries <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  burn_in <span class="op">=</span> <span class="fl">0.7</span></span>
@@ -107,7 +107,7 @@ evaluated with a Metropolis-Hastings acceptance threshold using log-posterior va
 
 
 <dt id="arg-prop-ratio">prop.ratio<a class="anchor" aria-label="anchor" href="#arg-prop-ratio"></a></dt>
-<dd><p>A numeric value between 0 and 1 representing the probability of choosing a uniform proposal distribution over an empirical proposal distribution at each iteration. Defaults to 0.5</p></dd>
+<dd><p>A numeric value between 0 and 1 giving the final probability of using the empirical proposal distribution after the first 10% of outer iterations. During the first 10% of outer iterations, the empirical proposal is used with probability 0.9. Defaults to 0.1.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

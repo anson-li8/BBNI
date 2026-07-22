@@ -6,9 +6,10 @@ Acyclic Graph (DAG) topologies (\\T\\) and Boolean logic transition
 functions (\\F\\). The algorithm iterates through individual network
 nodes and proposes parent set mutations (edge additions, removals, or
 swaps) paired with transition function reassignments to one of 14
-candidate Boolean rules. Proposed states transitions are strictly
-verified to follow the DAG constraint and evaluated with a
-Metropolis-Hastings acceptance threshold using log-posterior values.
+candidate Boolean rules (stored as codes 1-12 in the transition matrix).
+Proposed states transitions are strictly verified to follow the DAG
+constraint and evaluated with a Metropolis-Hastings acceptance threshold
+using log-posterior values.
 
 ## Usage
 
@@ -20,7 +21,7 @@ run_bbni(
   prior_para = NULL,
   num_update = 4000,
   penalty = 0.1,
-  prop.ratio = 0.5,
+  prop.ratio = 0.1,
   verbose = FALSE,
   timeseries = TRUE,
   burn_in = 0.7
@@ -66,9 +67,10 @@ run_bbni(
 
 - prop.ratio:
 
-  A numeric value between 0 and 1 representing the probability of
-  choosing a uniform proposal distribution over an empirical proposal
-  distribution at each iteration. Defaults to 0.5
+  A numeric value between 0 and 1 giving the final probability of using
+  the empirical proposal distribution after the first 10% of outer
+  iterations. During the first 10% of outer iterations, the empirical
+  proposal is used with probability 0.9. Defaults to 0.1.
 
 - verbose:
 

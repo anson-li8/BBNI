@@ -18,10 +18,12 @@ directed acyclic graph (DAG) topologies and their corresponding Boolean
 logic functions.
 
 This vignette presents an example simulated workflow utilizing the
-package. That is, simulating a noisy dataset from an initial topology
-and transition functions; running the implemented MCMC sampler; and
-lastly, running various evaluation tests to determine how well the
-algorithm recovered the original topology and Boolean functions.
+package: simulating a noisy dataset from an initial topology and
+transition functions, running the implemented MCMC sampler, and
+evaluating how well the algorithm recovered the original topology and
+Boolean functions. The method assumes binary data, a directed acyclic
+graph, and a maximum in-degree of two; noise is modeled as independent
+Bernoulli bit flips.
 
 ## Setup and simulation
 
@@ -135,9 +137,9 @@ on the simulated data. The main arguments are:
   uniform prior over valid topologies, matching [Han et
   al. (2014)](https://doi.org/10.1371/journal.pone.0115806)’s original
   model. The default value is `0.1` (used throughout this vignette)
-- `prop.ratio` - mixing weight for the proposal distribution;
-  specifically, the probability of selecting the empirical proposal
-  rather than a uniform random move.
+- `prop.ratio` - final probability of selecting the empirical proposal
+  after the first 10% of outer iterations. During the first 10% of outer
+  iterations, the empirical proposal is used with probability 0.9.
 - `prior_para` - hyperparameter matrix in which the first `n` rows
   define Beta prior parameters for root-node Bernoulli activation
   probabilities; row `n+1` sets the prior parameters for the global
@@ -181,13 +183,13 @@ cat(
   num_nodes * num_update, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
-#> Sampler completed 5000 iterations ( 1e+05 node updates) in 3.08 minutes
+#> Sampler completed 5000 iterations ( 1e+05 node updates) in 2.75 minutes
 ```
 
-As of v0.2.1, the MCMC sampler has been significantly optimized relative
-to the original CRAN release (v0.1.1). A parallel benchmark on this
-exact 5000-iteration workflow completed in 4.48 minutes versus 62.75
-minutes, a 92.9% reduction in runtime with numerically identical output.
+As of v0.2.2, the MCMC sampler has been substantially optimized relative
+to the original CRAN release (v0.1.1). Controlled benchmarks show
+roughly an 10-fold speedup for 20-node networks; exact runtimes depend
+on hardware and system load.
 
 ## Analyzing the output
 
@@ -310,12 +312,13 @@ al. (2014)](https://doi.org/10.1371/journal.pone.0115806)’s own
 simulation studies, instead of
 [`run_bbni()`](https://anson-li8.github.io/BBNI/reference/run_bbni.md)’s
 own default `burn_in` value of 70%. This is to reduce the impact of the
-unpredictability of the arbitrary starting structure. We then retain one
-network per outer iteration (every `num.node` node-level updates) to
-account for the strong statistical dependence of within-iteration
-samples. For each directed edge, the posterior inclusion probability is
-calculated as the fraction of retained samples in which that edge
-appears:
+arbitrary starting structure.
+[`run_bbni()`](https://anson-li8.github.io/BBNI/reference/run_bbni.md)
+computes `post_edge_prob` from all post-burn-in node-level samples;
+because consecutive node-level updates are dependent, the trace plot and
+burn-in choice should be apppropriately inspected. For each directed
+edge, the posterior inclusion probability is the fraction of
+post-burn-in samples in which that edge appears:
 
 ``` r
 
@@ -373,26 +376,10 @@ examine trace behavior, summarize posterior edge probabilities, and
 interpret high-probability interactions in relation to existing
 biological knowledge.
 
-Running BBNI on the pooled yeast cell-cycle dataset recovers a
-biologically consistent subnetwork, matching the specific relationships
-emphasized in the original [Han et
-al. (2014)](https://doi.org/10.1371/journal.pone.0115806) paper’s
-real-data analysis. The model identifies CLB2 as a direct regulator of
-SWI5, matching the paper’s reported finding. It also recovers all three
-“coupled” gene pairs that the original paper specifically mentions —
-CLN1/CLN2, CLB1/CLB2, and CLB5/CLB6 — as directly linked. The original
-paper acknowledges that “12.82% of the links in the reference yeast
-cell-cycle network… are identified in 100% of the posterior samples.”
-Similarly, the inferred network here is intentionally sparse rather than
-dense with interconnected genes. Furthermore, several genes (SIC1, CDH1,
-MCM1) show no high-confidence links in this dataset, reflecting the
-partial-recovery limitation of real biological data that the original
-authors reported.
-
 ``` r
 
-# Load empirical yeast cell-cycle dataset (14 genes x 385 pooled conditions)
-# from the original Han et al. 2014 paper
+# Load the included binary yeast cell-cycle data (14 genes x 385 complete pooled
+# conditions); see ?yeast_data for source and preprocessing details.
 data("yeast_data")
 
 # Use same priors as earlier simulated example
@@ -400,6 +387,7 @@ yeast_prior_para <- matrix(3, nrow = nrow(yeast_data) + 1, ncol = 2)
 yeast_prior_para[nrow(yeast_data) + 1, 1] <- 2
 yeast_prior_para[nrow(yeast_data) + 1, 2] <- 100
 
+set.seed(303)
 run_start <- Sys.time()
 
 # Run in independent mode: these 385 pooled columns include many distinct experimental
@@ -429,7 +417,7 @@ cat(
   nrow(yeast_data) * 4500, "node updates) in",
   round(as.numeric(difftime(run_end, run_start, units = "mins")), 2), "minutes\n"
 )
-#> Sampler completed 4500 iterations ( 63000 node updates) in 1.62 minutes
+#> Sampler completed 4500 iterations ( 63000 node updates) in 1.41 minutes
 ```
 
 The results of the MCMC chain are visualized with the following trace
@@ -455,6 +443,22 @@ plot_bbni(yeast_results, node_names = rownames(yeast_data), threshold = 0.5, lay
 
 plot of chunk yeast-plot
 
+Running BBNI on the pooled yeast cell-cycle dataset recovers a
+biologically consistent subnetwork, matching the specific relationships
+emphasized in the original [Han et
+al. (2014)](https://doi.org/10.1371/journal.pone.0115806) paper’s
+real-data analysis. The model identifies CLB2 as a direct regulator of
+SWI5, matching the paper’s reported finding. It also recovers all three
+“coupled” gene pairs that the original paper specifically mentions —
+CLN1/CLN2, CLB1/CLB2, and CLB5/CLB6 — as directly linked. The original
+paper acknowledges that “12.82% of the links in the reference yeast
+cell-cycle network… are identified in 100% of the posterior samples.”
+Similarly, the inferred network here is intentionally sparse rather than
+dense with interconnected genes. Furthermore, several genes (SIC1, CDH1,
+MCM1) show no high-confidence links in this dataset, reflecting the
+partial-recovery limitation of real biological data that the original
+authors reported.
+
 ## Next steps
 
 This vignette demonstrates the core `BBNI` workflow on simulated data.
@@ -471,6 +475,9 @@ From here:
   may require significantly more iterations.
 - For user-supplied expression data, format `GeneData` as a binary
   `num.node` x `SampleSize` matrix, as described above.
+- The current model assumes binary data, a directed acyclic graph, and
+  maximum in-degree two. For real data, run multiple chains or
+  sensitivity analysis when possible.
 
 ## Session information
 
@@ -497,7 +504,5 @@ sessionInfo()
 #> [1] BBNI_0.2.1
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] vctrs_0.7.3       cli_3.6.6         knitr_1.51        rlang_1.3.0       xfun_0.60         otel_0.2.0        processx_3.9.0    purrr_1.2.2       pkgload_1.5.3     glue_1.8.1        pkgbuild_1.4.8   
-#> [12] evaluate_1.0.5    ellipsis_0.3.3    fastmap_1.2.0     lifecycle_1.0.5   memoise_2.0.1     compiler_4.6.0    igraph_2.3.3      fs_2.1.0          sessioninfo_1.2.4 pkgconfig_2.0.3   R6_2.6.1         
-#> [23] usethis_3.2.1     callr_3.8.0       magrittr_2.0.5    tools_4.6.0       devtools_2.5.2    cachem_1.1.0      remotes_2.5.0     desc_1.4.3
+#>  [1] compiler_4.6.0  magrittr_2.0.5  cli_3.6.6       tools_4.6.0     igraph_2.3.3    otel_0.2.0      knitr_1.51      xfun_0.60       lifecycle_1.0.5 pkgconfig_2.0.3 rlang_1.3.0     evaluate_1.0.5
 ```
