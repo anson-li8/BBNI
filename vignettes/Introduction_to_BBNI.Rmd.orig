@@ -21,7 +21,7 @@ The `BBNI` (Bayesian Boolean Network Inference) package implements the Bayesian 
 
 This approach deliberately attempts to compensate for biological noise and model uncertainty, two central priorities stated in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806). Employing a Metropolis-within-Gibbs Markov chain Monte Carlo (MCMC) process, the `BBNI` sampler is able to estimate the posterior distribution of valid directed acyclic graph (DAG) topologies and their corresponding Boolean logic functions.
 
-This vignette presents an example simulated workflow utilizing the package. That is, simulating a noisy dataset from an initial topology and transition functions; running the implemented MCMC sampler; and lastly, running various evaluation tests to determine how well the algorithm recovered the original topology and Boolean functions.
+This vignette presents an example simulated workflow utilizing the package: simulating a noisy dataset from an initial topology and transition functions, running the implemented MCMC sampler, and evaluating how well the algorithm recovered the original topology and Boolean functions. The method assumes binary data, a directed acyclic graph, and a maximum in-degree of two; noise is modeled as independent Bernoulli bit flips.
 
 ## Setup and simulation
 
@@ -101,7 +101,7 @@ We next execute `run_bbni()` on the simulated data. The main arguments are:
 
 - `num_update` - total number of MCMC outer iterations.
 - `penalty` - structural-prior hyperparameter in $(0, 1]$. Values below `1` apply an edge-count penalty that favors sparser networks. Setting `penalty = 1` disables the sparsity prior and instead uses a uniform prior over valid topologies, matching [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806)'s original model. The default value is `0.1` (used throughout this vignette)
-- `prop.ratio` - mixing weight for the proposal distribution; specifically, the probability of selecting the empirical proposal rather than a uniform random move.
+- `prop.ratio` - final probability of selecting the empirical proposal after the first 10% of outer iterations. During the first 10% of outer iterations, the empirical proposal is used with probability 0.9.
 - `prior_para` - hyperparameter matrix in which the first `n` rows define Beta prior parameters for root-node Bernoulli activation probabilities; row `n+1` sets the prior parameters for the global noise rate $e$, with the required constraint $\beta_1 < \beta_2$.
 - `burn_in` - numeric value between 0 and 1 representing the proportion of initial MCMC samples to discard as burn-in. The leftover samples are used to calculate posterior edge probabilities.
 
@@ -216,7 +216,7 @@ Once again, some deviation is reasonable because this comparison uses only one s
 
 Instead of relying on a single sampled network, we can summarize the posterior distribution by Bayesian model averaging (BMA) over several retained network samples. This allows calculation of posterior edge-inclusion probabilities, which are often more informative than a single end sample. In biological applications, reducing false-positive edges is particularly important, as each predicted interaction may warrant costly experimental validation.
 
-We first discard an initial burn-in period, here set to 75% of the recorded chain to match the burn-in convention used in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806)'s own simulation studies, instead of `run_bbni()`'s own default `burn_in` value of 70%. This is to reduce the impact of the unpredictability of the arbitrary starting structure. We then retain one network per outer iteration (every `num.node` node-level updates) to account for the strong statistical dependence of within-iteration samples. For each directed edge, the posterior inclusion probability is calculated as the fraction of retained samples in which that edge appears:
+We first discard an initial burn-in period, here set to 75% of the recorded chain to match the burn-in convention used in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806)'s own simulation studies, instead of `run_bbni()`'s own default `burn_in` value of 70%. This is to reduce the impact of the arbitrary starting structure. `run_bbni()` computes `post_edge_prob` from all post-burn-in node-level samples; because consecutive node-level updates are dependent, the trace plot and burn-in choice should be apppropriately inspected. For each directed edge, the posterior inclusion probability is the fraction of post-burn-in samples in which that edge appears:
 
 ```{r model-averaging}
 bma_edges <- mcmc_results$post_edge_prob > 0.5
@@ -245,14 +245,9 @@ The workflow above uses simulated data so that the inferred network can be compa
 
 The original study by [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806) applied the Bayesian Boolean network framework to yeast cell-cycle expression data and compared the inferred relationships with a reference cell-cycle network. A package-level empirical example can follow the same structure: load a binary expression matrix, run `run_bbni()`, examine trace behavior, summarize posterior edge probabilities, and interpret high-probability interactions in relation to existing biological knowledge.
 
-Running BBNI on the pooled yeast cell-cycle dataset recovers a biologically consistent subnetwork, matching the specific relationships emphasized in the original [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806) paper's real-data analysis.
-The model identifies CLB2 as a direct regulator of SWI5, matching the paper's reported finding. It also recovers all three "coupled" gene pairs that the original paper specifically mentions — CLN1/CLN2, CLB1/CLB2, and CLB5/CLB6 — as directly linked.
-The original paper acknowledges that "12.82% of the links in the reference yeast cell-cycle network... are identified in 100% of the posterior samples." Similarly, the inferred network here is intentionally sparse rather than dense with interconnected genes.
-Furthermore, several genes (SIC1, CDH1, MCM1) show no high-confidence links in this dataset, reflecting the partial-recovery limitation of real biological data that the original authors reported.
-
 ```{r yeast-data}
-# Load empirical yeast cell-cycle dataset (14 genes x 385 pooled conditions)
-# from the original Han et al. 2014 paper
+# Load the included binary yeast cell-cycle data (14 genes x 385 complete pooled
+# conditions); see ?yeast_data for source and preprocessing details.
 data("yeast_data")
 
 # Use same priors as earlier simulated example
@@ -260,6 +255,7 @@ yeast_prior_para <- matrix(3, nrow = nrow(yeast_data) + 1, ncol = 2)
 yeast_prior_para[nrow(yeast_data) + 1, 1] <- 2
 yeast_prior_para[nrow(yeast_data) + 1, 2] <- 100
 
+set.seed(303)
 run_start <- Sys.time()
 
 # Run in independent mode: these 385 pooled columns include many distinct experimental
@@ -297,6 +293,10 @@ yeast_layout <- igraph::layout_with_fr(igraph::graph_from_adjacency_matrix(t((ye
 plot_bbni(yeast_results, node_names = rownames(yeast_data), threshold = 0.5, layout = yeast_layout)
 ```
 
+Running BBNI on the pooled yeast cell-cycle dataset recovers a biologically consistent subnetwork, matching the specific relationships emphasized in the original [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806) paper's real-data analysis.
+The model identifies CLB2 as a direct regulator of SWI5, matching the paper's reported finding. It also recovers all three "coupled" gene pairs that the original paper specifically mentions — CLN1/CLN2, CLB1/CLB2, and CLB5/CLB6 — as directly linked.
+The original paper acknowledges that "12.82% of the links in the reference yeast cell-cycle network... are identified in 100% of the posterior samples." Similarly, the inferred network here is intentionally sparse rather than dense with interconnected genes. Furthermore, several genes (SIC1, CDH1, MCM1) show no high-confidence links in this dataset, reflecting the partial-recovery limitation of real biological data that the original authors reported.
+
 ## Next steps
 
 This vignette demonstrates the core `BBNI` workflow on simulated data. From here:
@@ -304,6 +304,7 @@ This vignette demonstrates the core `BBNI` workflow on simulated data. From here
 - See `?run_bbni`, `?GenerateNetwork`, and `?GenerateSample` for function-level documentation.
 - The simulated example runs `r num_update` iterations on a 20-node network. Larger networks, noisier data, or higher-precision posterior summaries may require significantly more iterations.
 - For user-supplied expression data, format `GeneData` as a binary `num.node` x `SampleSize` matrix, as described above.
+- The current model assumes binary data, a directed acyclic graph, and maximum in-degree two. For real data, run multiple chains or sensitivity analysis when possible.
 
 ## Session information
 
