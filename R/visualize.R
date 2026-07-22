@@ -91,13 +91,13 @@ plot_bbni <- function(results, threshold = 0.5, node_names = NULL, true_network 
     e_lty[is_true & !is_inf] <- 2               # Dashed for missed edges
     igraph::E(g)$color <- e_colors
     igraph::E(g)$lty <- e_lty
-    main_title <- paste("Inferred vs True Network (Threshold >", threshold, ")")
+    main_title <- paste("Inferred vs True Network (Threshold >=", threshold, ")")
   } else {
     # default plotting w/o ground truth
     g <- igraph::graph_from_adjacency_matrix(t(adj_matrix), mode = "directed")
     igraph::E(g)$color <- "darkgray"
     igraph::E(g)$lty <- 1
-    main_title <- paste("Inferred Network (Threshold >", threshold, ")")
+    main_title <- paste("Inferred Network (Threshold >=", threshold, ")")
   }
   # plot graph
   igraph::plot.igraph(g,
@@ -195,7 +195,7 @@ plot_network <- function(trans_matrix, node_names = NULL, ...) {
 plot_trace <- function(results) {
   logpost <- results$log_posterior
   plot(logpost, type = "l", col = "darkblue",
-       xlab = "Iteration", ylab = "Log-Posterior",
+       xlab = "Node-level update", ylab = "Log-Posterior",
        main = "MCMC Trace Plot",
        lwd = 1.5)
   # add vertical line for burn-in if present
