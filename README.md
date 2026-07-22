@@ -10,9 +10,10 @@
 status](https://www.r-pkg.org/badges/version/BBNI)](https://CRAN.R-project.org/package=BBNI)
 <!-- badges: end -->
 
-BBNI is a Bayesian approach to Boolean gene regulatory network inference
-from noisy gene expression data. The method is discussed in more detail
-in [Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806).
+BBNI (<u>B</u>ayesian <u>B</u>oolean <u>N</u>etwork <u>I</u>nference) is
+a Bayesian approach to Boolean gene regulatory network inference from
+noisy gene expression data. The method is discussed in more detail in
+[Han et al. (2014)](https://doi.org/10.1371/journal.pone.0115806).
 Unlike methods that return a single best-fit network topology, such as
 REVEAL and BFE, found in
 [BoolNet](https://cran.r-project.org/package=BoolNet), BBNI uses Markov
@@ -41,7 +42,7 @@ devtools::install_github("anson-li8/BBNI")
 ## Performance
 
 BBNI’s MCMC sampler was significantly optimized after the initial CRAN
-release. Controlled benchmarks show roughly an 10-fold speedup for
+release. Controlled benchmarks show roughly a 10-fold speedup for
 20-node networks; exact runtimes depend on hardware and system load.
 
 ## Example

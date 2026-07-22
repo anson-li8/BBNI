@@ -176,7 +176,7 @@ plot_network <- function(trans_matrix, node_names = NULL, ...) {
 #' edge-probability calculations.
 #'
 #' @param results The list returned by \code{run_bbni()}, containing \code{networks} and \code{log_posterior}.
-#' @param An integer specifying the thinning interval (sampling frequency) for plotting. Default is 1, which plots all log-posterior values. Values greater than 1 plot every \code{every}-th iteration.
+#' @param every An integer specifying the thinning interval (sampling frequency) for plotting. Default is 1, which plots all log-posterior values. Values greater than 1 plot every \code{every}-th iteration.
 #'
 #' @return A base R trace plot.
 #'

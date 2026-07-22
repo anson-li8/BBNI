@@ -9,7 +9,7 @@ plot_trace(results, every = 1)
 \arguments{
 \item{results}{The list returned by \code{run_bbni()}, containing \code{networks} and \code{log_posterior}.}
 
-\item{An}{integer specifying the thinning interval (sampling frequency) for plotting. Default is 1, which plots all log-posterior values. Values greater than 1 plot every \code{every}-th iteration.}
+\item{every}{An integer specifying the thinning interval (sampling frequency) for plotting. Default is 1, which plots all log-posterior values. Values greater than 1 plot every \code{every}-th iteration.}
 }
 \value{
 A base R trace plot.
