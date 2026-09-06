@@ -31,11 +31,12 @@ print(x, ...)
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 set.seed(123)
 net <- GenerateNetwork(5)
 data <- GenerateSample(net, 100)
 res <- run_bbni(data, num_update = 50)
 print(res)
-} # }
+#> <bbni> Bayesian Boolean Network Inference MCMC output
+#> 5 nodes | 50 outer iterations | time-series data
+#> Use summary() for posterior edge statistics and plot() for the trace plot.
 ```

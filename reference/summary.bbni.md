@@ -39,11 +39,19 @@ with columns `child`, `parent`, and `posterior`).
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 set.seed(123)
 net <- GenerateNetwork(5)
 data <- GenerateSample(net, 100)
 res <- run_bbni(data, num_update = 50)
 summary(res, threshold = 0.6, n_top = 3)
-} # }
+#> BBNI MCMC summary
+#>   Nodes:                 5
+#>   Outer iterations:      50
+#>   Burn-in ratio:         0.70
+#>   Final log-posterior:   -87.922
+#>   Edges with P > 0.60:    5
+#>   Highest-posterior edges (child <- parent):
+#>     N3 <- N1 (P = 1.00)
+#>     N4 <- N1 (P = 1.00)
+#>     N5 <- N1 (P = 1.00)
 ```

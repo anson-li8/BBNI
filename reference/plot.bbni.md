@@ -32,11 +32,9 @@ The plot object (invisibly).
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 set.seed(123)
 net <- GenerateNetwork(5)
 data <- GenerateSample(net, 100)
 res <- run_bbni(data, num_update = 50)
 plot(res)
-} # }
 ```
