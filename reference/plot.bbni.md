@@ -1,9 +1,9 @@
 # Plot a BBNI MCMC Object
 
-Produces a trace plot of the log‑posterior over MCMC iterations. This
+Produces a trace plot of the log-posterior over MCMC iterations. This
 method delegates to
 [`plot_trace()`](https://anson-li8.github.io/BBNI/reference/plot_trace.md).
-For network visualisation, use
+For network visualization, use
 [`plot_bbni()`](https://anson-li8.github.io/BBNI/reference/plot_bbni.md).
 
 ## Usage

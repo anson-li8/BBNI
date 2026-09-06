@@ -23,7 +23,7 @@ summary(object, threshold = 0.5, n_top = 5, ...)
 
 - n_top:
 
-  Integer. Number of highest‑posterior edges to display and include in
+  Integer. Number of highest-posterior edges to display and include in
   `top_edges`.
 
 - ...:

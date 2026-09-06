@@ -12,14 +12,14 @@ list components remain directly accessible via `$`.
 
 Components:
 
-- `networks`: list of MCMC sampled transition‑function matrices.
+- `networks`: list of MCMC sampled transition-function matrices.
 
-- `log_posterior`: numeric vector of collapsed log‑posterior values.
+- `log_posterior`: numeric vector of collapsed log-posterior values.
 
 - `post_edge_prob`: matrix of marginal posterior edge probabilities;
   entry `[i, j]` is the probability of the directed edge `j -> i`.
 
-- `burn_in`: the burn‑in ratio used for posterior summarization.
+- `burn_in`: the burn-in ratio used for posterior summarization.
 
 Run metadata (`num.node`, `SampleSize`, `num_update`, `timeseries`) is
 stored as attributes.

@@ -1,6 +1,6 @@
 # Print a BBNI MCMC Object
 
-The default display method for `bbni` objects. It provides a one‑line
+The default display method for `bbni` objects. It provides a one-line
 overview instead of a statistical summary; use
 [`summary()`](https://rdrr.io/r/base/summary.html) for posterior
 statistics and [`plot()`](https://rdrr.io/r/graphics/plot.default.html)
